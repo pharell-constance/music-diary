@@ -1,0 +1,95 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Home from './pages/Home';
+import Profile from './pages/profile';
+import ArtistPage from './pages/ArtistPage';
+import AdminDashboard from './pages/AdminDashboard';
+
+// --- LE GARDIEN DE ROUTE (Protected Route) ---
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+// --- GARDIEN POUR LES PAGES PUBLIQUES (Public Only Route) ---
+const PublicOnlyRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
+// --- GARDIEN POUR LES PAGES ADMIN (Admin Only Route) ---
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  
+  if (!token || !user || user.role !== 'ADMIN') {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
+function App() {
+  return (
+    <div className="min-h-screen bg-black text-white font-sans">
+      <BrowserRouter>
+        <Routes>
+          {/* Route protégée : l'accueil (journal de bord) */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
+
+          {/* Routes d'authentification réservées aux visiteurs non connectés */}
+          <Route path="/register" element={
+            <PublicOnlyRoute>
+              <Register />
+            </PublicOnlyRoute>
+          } />
+          <Route path="/login" element={
+            <PublicOnlyRoute>
+              <Login />
+            </PublicOnlyRoute>
+          } />
+
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/profile/:userId" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/artist/:artistId" element={
+            <ProtectedRoute>
+              <ArtistPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin" element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          } />
+
+          {/* Si l'URL n'existe pas, on redirige vers l'accueil */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;

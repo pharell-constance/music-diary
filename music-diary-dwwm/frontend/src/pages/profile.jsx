@@ -1,0 +1,1244 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Music, Disc, Headphones, User, Trophy, Crown, Medal, Settings, Flag, Star } from 'lucide-react';
+import Sidebar from '../components/Sidebar';
+import ProfileEditModal from '../components/ProfileEditModal';
+import ReviewModal from '../components/ReviewModal';
+import ReviewCard from '../components/ReviewCard';
+import ReportModal from '../components/ReportModal';
+import ConfirmModal from '../components/ConfirmModal';
+import MusicWrappedModal from '../components/MusicWrappedModal';
+
+
+function Profile() {
+    const { userId } = useParams();
+    const token = localStorage.getItem('token');
+    const navigate = useNavigate();
+
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
+    const isOwnProfile = !userId || parseInt(userId) === user?.id;
+
+    const [connected, setConnected] = useState(false);
+    const [topArtists, setTopArtists] = useState([]);
+    const [topTracks, setTopTracks] = useState([]);
+    const [topAlbums, setTopAlbums] = useState([]);
+    const [topGenres, setTopGenres] = useState([]);
+    const [recent, setRecent] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    const [profileUser, setProfileUser] = useState(null);
+    const [livePlaying, setLivePlaying] = useState(null);
+    const [loadingProfile, setLoadingProfile] = useState(false);
+    const [profileTab, setProfileTab] = useState('journal');
+    const [userStats, setUserStats] = useState(null);
+    const [loadingStats, setLoadingStats] = useState(false);
+    const [showWrapped, setShowWrapped] = useState(false);
+
+    const [timeRange, setTimeRange] = useState('short_term');
+    const [activeSubTab, setActiveSubTab] = useState('artists');
+
+    const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [reviewContent, setReviewContent] = useState('');
+    const [rating, setRating] = useState(5);
+    const [reviewError, setReviewError] = useState('');
+    const [reviewSuccess, setReviewSuccess] = useState('');
+    const [editingReviewId, setEditingReviewId] = useState(null);
+
+    const [showFollowModal, setShowFollowModal] = useState(false);
+    const [followModalType, setFollowModalType] = useState('followers');
+    const [reportModalData, setReportModalData] = useState(null); // { type: 'review'|'member', id: number, name: string }
+    const [confirmModalData, setConfirmModalData] = useState(null);
+    const [followList, setFollowList] = useState([]);
+    const [loadingFollowList, setLoadingFollowList] = useState(false);
+
+
+
+    // GSAP refs
+    const heroRef = useRef(null);
+    const contentGridRef = useRef(null);
+    const followModalRef = useRef(null);
+
+    // ── Hero entrance animation (once profile loaded)
+    useLayoutEffect(() => {
+        if (!heroRef.current || !profileUser) return;
+        const ctx = gsap.context(() => {
+            gsap.from(heroRef.current.querySelector('.hero-avatar'), {
+                scale: 0.5,
+                opacity: 0,
+                duration: 0.7,
+                ease: 'back.out(1.7)',
+            });
+            gsap.from(heroRef.current.querySelectorAll('.hero-meta > *'), {
+                y: 24,
+                opacity: 0,
+                duration: 0.55,
+                stagger: 0.09,
+                ease: 'power3.out',
+                delay: 0.25,
+            });
+            gsap.from(heroRef.current.querySelectorAll('.hero-action > *'), {
+                y: 16,
+                opacity: 0,
+                duration: 0.45,
+                stagger: 0.08,
+                ease: 'power2.out',
+                delay: 0.5,
+            });
+        }, heroRef);
+        return () => ctx.revert();
+    }, [profileUser]);
+
+    // ── Staggered card animation on tab/data change
+    useEffect(() => {
+        if (!contentGridRef.current) return;
+        const cards = contentGridRef.current.querySelectorAll('.anim-card');
+        if (!cards.length) return;
+        gsap.fromTo(
+            cards,
+            { y: 40, opacity: 0, scale: 0.95 },
+            {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.45,
+                stagger: { each: 0.055, from: 'start' },
+                ease: 'power3.out',
+                clearProps: 'transform,opacity',
+            }
+        );
+    }, [activeSubTab, topArtists, topTracks, topAlbums, topGenres]);
+
+    // ── Follow modal slide-in
+    useLayoutEffect(() => {
+        if (!followModalRef.current || !showFollowModal) return;
+        gsap.fromTo(
+            followModalRef.current,
+            { y: 40, opacity: 0, scale: 0.95 },
+            { y: 0, opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.4)' }
+        );
+    }, [showFollowModal]);
+
+    useEffect(() => {
+        async function fetchProfileData() {
+            const profileId = userId || user?.id;
+            if (!profileId) return;
+            setLoadingProfile(true);
+            try {
+                const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error("Utilisateur non trouvé");
+                const data = await res.json();
+                setProfileUser(data);
+                setConnected(data.connected);
+                if (data.connected) {
+                    const recentUrl = isOwnProfile 
+                        ? 'http://127.0.0.1:5001/api/spotify/me/recent'
+                        : `http://127.0.0.1:5001/api/users/${profileId}/spotify/recent`;
+                    const recentRes = await fetch(recentUrl, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const recentData = await recentRes.json();
+                    setRecent(recentData || []);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoadingProfile(false);
+            }
+        }
+
+        fetchProfileData();
+    }, [token, userId, isOwnProfile, user]);
+
+    useEffect(() => {
+        const profileId = userId || user?.id;
+        if (!profileId || !token) return;
+
+        let intervalId;
+
+        const fetchLivePlaying = async () => {
+            try {
+                const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/live`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setLivePlaying(data);
+                }
+            } catch (err) {
+                console.error("Error fetching live listening status:", err);
+            }
+        };
+
+        fetchLivePlaying();
+
+        // Poll every 15 seconds
+        intervalId = setInterval(fetchLivePlaying, 15000);
+
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [userId, user, token]);
+
+    useEffect(() => {
+        const profileId = userId || user?.id;
+        if (!profileId || !token) return;
+
+        if (profileTab === 'stats' && !userStats) {
+            fetchUserStats(profileId);
+        }
+    }, [profileTab, userId, user, token, userStats]);
+
+    async function fetchUserStats(profileId) {
+        setLoadingStats(true);
+        try {
+            const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/stats`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setUserStats(data);
+            }
+        } catch (err) {
+            console.error("Error fetching stats:", err);
+        } finally {
+            setLoadingStats(false);
+        }
+    }
+
+    async function handleFollowToggle() {
+        const profileId = userId || user?.id;
+        if (!profileId || isOwnProfile || !profileUser) return;
+        const action = profileUser.isFollowing ? 'unfollow' : 'follow';
+        try {
+            const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/${action}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setProfileUser(prev => {
+                    if (!prev) return null;
+                    const change = prev.isFollowing ? -1 : 1;
+                    return {
+                        ...prev,
+                        isFollowing: !prev.isFollowing,
+                        followersCount: prev.followersCount + change
+                    };
+                });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function handleReportUser() {
+        const profileId = userId || user?.id;
+        if (!profileId || isOwnProfile || !profileUser) return;
+        setReportModalData({
+            type: 'member',
+            id: parseInt(profileId),
+            name: profileUser.pseudo
+        });
+    }
+
+    function handleReportReview(reviewId) {
+        const review = reviews.find(r => r.id === reviewId);
+        if (!review) return;
+        setReportModalData({
+            type: 'review',
+            id: parseInt(reviewId),
+            name: `Chronique de "${review.albumName}"`
+        });
+    }
+
+    async function handleReportSubmit(reason) {
+        if (!reportModalData) return;
+        const isReview = reportModalData.type === 'review';
+
+        const res = await fetch('http://127.0.0.1:5001/api/reports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                reason: reason,
+                reportedReviewId: isReview ? reportModalData.id : null,
+                reportedUserId: !isReview ? reportModalData.id : null
+            })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message);
+            setReportModalData(null);
+        } else {
+            throw new Error(data.error || "Erreur lors du signalement");
+        }
+    }
+
+    async function handleOpenFollowModal(type) {
+        const profileId = userId || user?.id;
+        if (!profileId) return;
+        setFollowModalType(type);
+        setShowFollowModal(true);
+        setLoadingFollowList(true);
+        try {
+            const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/${type}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setFollowList(data || []);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingFollowList(false);
+        }
+    }
+
+    function handleArtistClick(artistId) {
+        navigate(`/artist/${artistId}`);
+    }
+
+    useEffect(() => {
+        if (!connected) return;
+
+        async function fetchData() {
+            try {
+                let url = '';
+                const apiBase = isOwnProfile 
+                    ? 'http://127.0.0.1:5001/api/spotify/me' 
+                    : `http://127.0.0.1:5001/api/users/${userId}/spotify`;
+
+                if (activeSubTab === 'artists') {
+                    url = `${apiBase}/top-artists?limit=10&time_range=${timeRange}`;
+                } else if (activeSubTab === 'tracks') {
+                    url = `${apiBase}/top-tracks?limit=10&time_range=${timeRange}`;
+                } else if (activeSubTab === 'albums') {
+                    url = `${apiBase}/top-albums?limit=10&time_range=${timeRange}`;
+                } else if (activeSubTab === 'genres') {
+                    url = `${apiBase}/top-genres?limit=10&time_range=${timeRange}`;
+                }
+
+                const res = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (activeSubTab === 'artists') setTopArtists(data || []);
+                else if (activeSubTab === 'tracks') setTopTracks(data || []);
+                else if (activeSubTab === 'albums') setTopAlbums(data || []);
+                else if (activeSubTab === 'genres') setTopGenres(data || []);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        fetchData();
+    }, [token, connected, timeRange, activeSubTab, isOwnProfile, userId]);
+
+    async function handleConnect() {
+        try {
+            const res = await fetch('http://127.0.0.1:5001/api/spotify/authorize-url', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.url) window.location.href = data.url;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
+
+    useEffect(() => {
+        async function fetchReviews() {
+            try {
+                const url = isOwnProfile 
+                    ? 'http://127.0.0.1:5001/api/reviews' 
+                    : `http://127.0.0.1:5001/api/users/${userId}/reviews`;
+                const res = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                setReviews(data || []);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        fetchReviews();
+    }, [token, userId, isOwnProfile]);
+
+    const handleEditClick = (review) => {
+        setEditingReviewId(review.id);
+        setReviewContent(review.content);
+        setRating(review.rating);
+        setSelectedAlbum({
+            id: review.spotifyAlbumId,
+            name: review.albumName,
+            artists: [{ name: review.artistName }],
+            images: [{ url: review.albumCover }]
+        });
+    };
+
+    const handleDeleteReview = (reviewId) => {
+        setConfirmModalData({
+            title: "Supprimer la critique",
+            message: "Voulez-vous vraiment supprimer cette critique ? Cette action est irréversible et le contenu sera retiré définitivement.",
+            type: "danger",
+            confirmText: "Supprimer",
+            onConfirm: async () => {
+                const token = localStorage.getItem('token');
+                try {
+                    const response = await fetch(`http://127.0.0.1:5001/api/reviews/${reviewId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        setReviews(reviews.filter(r => r.id !== reviewId));
+                    }
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    setConfirmModalData(null);
+                }
+            }
+        });
+    };
+
+    const handleSubmitReview = async (e) => {
+        e.preventDefault();
+        setReviewError('');
+        setReviewSuccess('');
+        const token = localStorage.getItem('token');
+
+        const isEditing = editingReviewId !== null;
+        const url = isEditing
+            ? `http://127.0.0.1:5001/api/reviews/${editingReviewId}`
+            : 'http://127.0.0.1:5001/api/reviews';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    content: reviewContent,
+                    rating: rating,
+                    spotifyAlbumId: selectedAlbum.id,
+                    albumName: selectedAlbum.name,
+                    artistName: selectedAlbum.artists.map(a => a.name).join(', '),
+                    albumCover: selectedAlbum.images?.[0]?.url || ""
+                })
+            });
+
+            if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
+
+            setReviewSuccess(isEditing ? "Chronique modifiée !" : "Chronique enregistrée !");
+
+            // Refresh reviews
+            const reviewsRes = await fetch(isOwnProfile ? 'http://127.0.0.1:5001/api/reviews' : `http://127.0.0.1:5001/api/users/${userId}/reviews`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const reviewsData = await reviewsRes.json();
+            setReviews(reviewsData || []);
+
+            setTimeout(() => {
+                setSelectedAlbum(null);
+                setReviewContent('');
+                setRating(5);
+                setEditingReviewId(null);
+                setReviewSuccess('');
+            }, 1500);
+        } catch (err) {
+            setReviewError(err.message);
+        }
+    };
+
+    return (
+        <div className="flex h-screen bg-black text-white overflow-hidden font-sans">
+            
+            {/* Barre latérale */}
+            <Sidebar 
+                user={user} 
+                currentTab="profile" 
+                setCurrentTab={(tab) => navigate('/', { state: { tab } })} 
+                handleLogout={handleLogout} 
+            />
+
+            {/* Zone centrale */}
+            <div className="flex-1 bg-[#121212] my-2 mr-2 rounded-lg overflow-y-auto flex flex-col">
+                
+                {loadingProfile ? (
+                    <div className="p-8 text-center text-zinc-400">Chargement du profil...</div>
+                ) : !profileUser ? (
+                    <div className="p-8 text-center text-zinc-400">Utilisateur non trouvé.</div>
+                ) : (
+                    <>
+                        {/* Hero Header avec dégrade style Spotify */}
+                        <div ref={heroRef} className={`p-8 pt-12 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-b ${connected ? 'from-emerald-950/60' : 'from-zinc-800/40'} to-[#121212] border-b border-zinc-800/40`}>
+                            
+                            {/* Grand Avatar circulaire */}
+                            <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-black border-4 border-[#121212] transform hover:scale-105 transition-transform duration-300 flex-shrink-0 overflow-hidden">
+                                {profileUser.avatar ? (
+                                    <img src={profileUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    profileUser.pseudo ? profileUser.pseudo.substring(0, 2).toUpperCase() : <User size={48} />
+                                )}
+                            </div>
+
+                            {/* Informations du Profil */}
+                            <div className="hero-meta flex-1 text-center md:text-left space-y-3">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+                                    {isOwnProfile ? "Mon Profil" : `Profil de ${profileUser.pseudo}`}
+                                </span>
+                                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
+                                    {profileUser.pseudo || "Utilisateur"}
+                                </h1>
+                                <p className="text-[#A7A7A7] text-sm md:text-base font-medium flex items-center justify-center md:justify-start gap-2">
+                                    <span className="truncate">{profileUser.email}</span>
+                                    <span className="text-zinc-600">•</span>
+                                    <span>{connected ? "Compte Spotify associé" : "Spotify non connecté"}</span>
+                                </p>
+                                <div className="flex items-center justify-center md:justify-start gap-4 text-xs md:text-sm text-[#A7A7A7] font-semibold mt-1">
+                                    <button 
+                                        onClick={() => handleOpenFollowModal('followers')}
+                                        className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 outline-none flex items-center gap-1"
+                                    >
+                                        <span className="text-white font-extrabold">{profileUser.followersCount ?? 0}</span>
+                                        <span>{(profileUser.followersCount ?? 0) > 1 ? 'abonnés' : 'abonné'}</span>
+                                    </button>
+                                    <span className="text-zinc-700 font-normal">•</span>
+                                    <button 
+                                        onClick={() => handleOpenFollowModal('following')}
+                                        className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 outline-none flex items-center gap-1"
+                                    >
+                                        <span className="text-white font-extrabold">{profileUser.followingCount ?? 0}</span>
+                                        <span>{(profileUser.followingCount ?? 0) > 1 ? 'abonnements' : 'abonnement'}</span>
+                                    </button>
+                                </div>
+
+                                {livePlaying && livePlaying.isPlaying && (
+                                    <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-3 rounded-xl max-w-sm mt-3 mx-auto md:mx-0 shadow-sm animate-pulse">
+                                        <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 border border-emerald-500/30">
+                                            {livePlaying.albumCover ? (
+                                                <img src={livePlaying.albumCover} alt={livePlaying.albumName} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-zinc-800"><Music size={16} /></div>
+                                            )}
+                                        </div>
+                                        <div className="text-left min-w-0">
+                                            <div className="text-[9px] font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+                                                Écoute sur Spotify
+                                            </div>
+                                            <div className="font-bold text-xs text-white truncate mt-0.5" title={livePlaying.trackName}>{livePlaying.trackName}</div>
+                                            <div className="text-[10px] text-zinc-400 truncate" title={livePlaying.artistName}>{livePlaying.artistName}</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Bouton ou statut d'action rapide */}
+                            <div className="hero-action flex flex-col sm:flex-row items-center gap-3 flex-shrink-0">
+                                {isOwnProfile ? (
+                                    <button
+                                        onClick={() => setShowEditModal(true)}
+                                        className="flex items-center gap-2 bg-[#242424] hover:bg-[#2e2e2e] active:scale-95 text-white px-4 py-2 rounded-full border border-zinc-700/50 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
+                                    >
+                                        <Settings size={14} />
+                                        Modifier le profil
+                                    </button>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={handleFollowToggle}
+                                            className={`px-5 py-2 rounded-full font-black text-xs transition-all duration-200 cursor-pointer shadow-md active:scale-95 border ${
+                                                profileUser.isFollowing
+                                                    ? 'bg-transparent border-zinc-600 text-zinc-300 hover:text-red-400 hover:border-red-500/40'
+                                                    : 'bg-emerald-500 text-black border-transparent hover:bg-emerald-400'
+                                            }`}
+                                        >
+                                            {profileUser.isFollowing ? "Se désabonner" : "S'abonner"}
+                                        </button>
+                                        <button
+                                            onClick={handleReportUser}
+                                            className="px-4 py-2 rounded-full bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-transparent font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md active:scale-95 flex items-center gap-1.5"
+                                            title="Signaler ce membre"
+                                        >
+                                            <Flag size={14} /> Signaler
+                                        </button>
+                                    </div>
+                                )}
+
+                                {connected && (
+                                    <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/20 font-semibold text-xs">
+                                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                                        Synchronisé
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Contenu principal de la page */}
+                        <div className="p-8 space-y-8">
+                    
+                    {/* Navigation des onglets principaux du profil */}
+                    <div className="flex gap-6 border-b border-zinc-800/40 pb-2 mb-2 text-sm">
+                        <button
+                            onClick={() => setProfileTab('journal')}
+                            className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
+                                profileTab === 'journal'
+                                    ? 'border-emerald-500 text-white'
+                                    : 'border-transparent text-zinc-400 hover:text-white'
+                            }`}
+                        >
+                            Journal de Bord
+                        </button>
+                        {connected && (
+                            <button
+                                onClick={() => setProfileTab('spotify')}
+                                className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
+                                    profileTab === 'spotify'
+                                        ? 'border-emerald-500 text-white'
+                                        : 'border-transparent text-zinc-400 hover:text-white'
+                                }`}
+                            >
+                                Statistiques Spotify
+                            </button>
+                        )}
+                        <button
+                            onClick={() => setProfileTab('stats')}
+                            className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
+                                profileTab === 'stats'
+                                    ? 'border-emerald-500 text-white'
+                                    : 'border-transparent text-zinc-400 hover:text-white'
+                            }`}
+                        >
+                            Analyses & Wrapped
+                        </button>
+                    </div>
+
+                    {profileTab === 'journal' && (
+                        <div className="space-y-10">
+                            {/* Section Spotify Non Connecté */}
+                            {!connected && (
+                                <div className="bg-gradient-to-r from-zinc-900 via-zinc-900/95 to-zinc-950 p-6 md:p-8 rounded-2xl border border-zinc-800/60 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 w-full">
+                                    {isOwnProfile ? (
+                                        <>
+                                            <div className="space-y-2 max-w-lg text-center md:text-left">
+                                                <h3 className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 text-white">
+                                                    <Disc className="text-emerald-400 animate-spin" style={{ animationDuration: '6s' }} /> 
+                                                    Connectez votre compte Spotify
+                                                </h3>
+                                                <p className="text-sm text-zinc-400 leading-relaxed">
+                                                    Associez votre profil Music Diary à Spotify pour récupérer vos 10 artistes les plus écoutés ainsi que vos dernières lectures en temps réel.
+                                                </p>
+                                            </div>
+                                            <button 
+                                                onClick={handleConnect} 
+                                                className="bg-[#1DB954] hover:bg-[#1ED760] text-black font-bold py-3.5 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-100 flex items-center gap-3 w-full md:w-auto justify-center text-sm flex-shrink-0"
+                                            >
+                                                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                                    <path d="M12.012 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.521 17.34c-.225.359-.696.473-1.055.25-2.909-1.782-6.57-2.18-10.887-1.192-.41.096-.822-.16-.917-.571-.097-.41.161-.822.571-.917 4.717-1.077 8.744-.627 12.012 1.378.36.223.473.693.246 1.052zm1.477-3.267c-.283.456-.881.605-1.337.321-3.33-2.046-8.406-2.639-12.345-1.443-.513.156-1.05-.138-1.207-.65-.156-.513.138-1.05.65-1.207 4.512-1.37 10.102-.716 13.918 1.631.456.282.605.88.321 1.348zm.094-3.393c-3.99-2.37-10.573-2.589-14.385-1.433-.613.186-1.258-.171-1.444-.784-.186-.613.172-1.258.784-1.444 4.384-1.33 11.639-1.077 16.224 1.644.553.329.738 1.042.41 1.595-.329.553-1.043.737-1.589.422z"/>
+                                                </svg>
+                                                Se connecter à Spotify
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <div className="space-y-2 max-w-lg text-center md:text-left">
+                                            <h3 className="text-xl font-bold flex items-center justify-center md:justify-start gap-2 text-white">
+                                                <Disc className="text-zinc-650" /> 
+                                                Spotify non connecté
+                                            </h3>
+                                            <p className="text-sm text-zinc-400 leading-relaxed">
+                                                Cet utilisateur n'a pas encore connecté son profil Spotify à Music Diary.
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Journal de Bord (Chroniques de l'utilisateur) */}
+                            <div className="space-y-4 pt-4">
+                                <div className="flex items-center gap-2">
+                                    <Music className="text-emerald-400" size={24} />
+                                    <h2 className="text-2xl font-bold tracking-tight">Journal de bord</h2>
+                                </div>
+                                {reviews.length === 0 ? (
+                                    <div className="text-center py-12 bg-[#181818] rounded-xl border border-zinc-800/50">
+                                        <p className="text-zinc-500 text-sm">Aucune critique publiée pour le moment.</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                                        {reviews.map((review) => (
+                                            <ReviewCard
+                                                key={review.id}
+                                                review={review}
+                                                onEdit={isOwnProfile ? handleEditClick : null}
+                                                onDelete={isOwnProfile ? handleDeleteReview : null}
+                                                onReport={!isOwnProfile ? handleReportReview : null}
+                                                currentUserId={user?.id}
+                                                currentUserRole={user?.role}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {profileTab === 'spotify' && connected && (
+                        <div className="space-y-10">
+                            {/* Top Stats Section with Sub-tabs */}
+                            <div className="space-y-6">
+                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-800/40 pb-4">
+                                    {/* Sub-tabs */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <button
+                                            onClick={() => setActiveSubTab('artists')}
+                                            className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+                                                activeSubTab === 'artists'
+                                                    ? 'bg-white text-black shadow-md'
+                                                    : 'bg-[#181818] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            }`}
+                                        >
+                                            Artistes
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveSubTab('tracks')}
+                                            className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+                                                activeSubTab === 'tracks'
+                                                    ? 'bg-white text-black shadow-md'
+                                                    : 'bg-[#181818] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            }`}
+                                        >
+                                            Sons
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveSubTab('albums')}
+                                            className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+                                                activeSubTab === 'albums'
+                                                    ? 'bg-white text-black shadow-md'
+                                                    : 'bg-[#181818] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            }`}
+                                        >
+                                            Albums
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveSubTab('genres')}
+                                            className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+                                                activeSubTab === 'genres'
+                                                    ? 'bg-white text-black shadow-md'
+                                                    : 'bg-[#181818] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            }`}
+                                        >
+                                            Genres
+                                        </button>
+                                    </div>
+
+                                    {/* Time range selector */}
+                                    <div className="bg-[#181818] p-1 rounded-full flex gap-1 border border-zinc-800/40 self-start lg:self-auto text-xs font-semibold">
+                                        <button
+                                            onClick={() => setTimeRange('short_term')}
+                                            className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
+                                                timeRange === 'short_term'
+                                                    ? 'bg-zinc-700 text-white'
+                                                    : 'text-zinc-400 hover:text-zinc-200'
+                                            }`}
+                                        >
+                                            4 Semaines
+                                        </button>
+                                        <button
+                                            onClick={() => setTimeRange('medium_term')}
+                                            className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
+                                                timeRange === 'medium_term'
+                                                    ? 'bg-zinc-700 text-white'
+                                                    : 'text-zinc-400 hover:text-zinc-200'
+                                            }`}
+                                        >
+                                            6 Mois
+                                        </button>
+                                        <button
+                                            onClick={() => setTimeRange('long_term')}
+                                            className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
+                                                timeRange === 'long_term'
+                                                    ? 'bg-zinc-700 text-white'
+                                                    : 'text-zinc-400 hover:text-zinc-200'
+                                            }`}
+                                        >
+                                            Plusieurs Années
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* List grids for Spotify stats (from existing code) */}
+                                {activeSubTab === 'artists' && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                                        {topArtists.length === 0 ? (
+                                            <p className="text-zinc-500 text-sm italic col-span-full">Aucun artiste trouvé.</p>
+                                        ) : (
+                                            topArtists.map((artist, idx) => (
+                                                <div 
+                                                    key={artist.id} 
+                                                    onClick={() => handleArtistClick(artist.id)}
+                                                    className="anim-card bg-[#181818] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#222222] transition duration-200"
+                                                >
+                                                    <div className="w-20 h-20 rounded-full overflow-hidden mb-3 bg-zinc-800 border border-zinc-800/60 shadow">
+                                                        {artist.images?.[0] ? (
+                                                            <img src={artist.images[0].url} alt={artist.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center"><User size={24} className="text-zinc-650" /></div>
+                                                        )}
+                                                    </div>
+                                                    <div className="font-bold text-xs text-white truncate w-full">{artist.name}</div>
+                                                    <div className="text-[10px] text-zinc-500 font-bold mt-1">N° {idx + 1}</div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+
+                                {activeSubTab === 'tracks' && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {topTracks.length === 0 ? (
+                                            <p className="text-zinc-500 text-sm italic col-span-full">Aucun titre trouvé.</p>
+                                        ) : (
+                                            topTracks.map((track, idx) => (
+                                                <div 
+                                                    key={track.id} 
+                                                    onClick={() => setSelectedAlbum(track.album)}
+                                                    className="anim-card bg-[#181818] border border-zinc-800/40 p-3.5 rounded-xl flex items-center gap-4 cursor-pointer hover:bg-[#222222] transition duration-150"
+                                                >
+                                                    <span className="text-xs font-black text-zinc-500 w-5 text-center">{idx + 1}</span>
+                                                    <div className="w-11 h-11 rounded bg-zinc-800 overflow-hidden shadow">
+                                                        {track.album?.images?.[0] ? (
+                                                            <img src={track.album.images[0].url} alt={track.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center"><Music size={16} className="text-zinc-605" /></div>
+                                                        )}
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="font-bold text-xs text-white truncate">{track.name}</div>
+                                                        <div className="text-[10px] text-zinc-400 truncate mt-0.5">{track.artists?.map(a => a.name).join(', ')}</div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+
+                                {activeSubTab === 'albums' && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                                        {topAlbums.length === 0 ? (
+                                            <p className="text-zinc-500 text-sm italic col-span-full">Aucun album trouvé.</p>
+                                        ) : (
+                                            topAlbums.map((album, idx) => (
+                                                <div 
+                                                    key={album.id} 
+                                                    onClick={() => setSelectedAlbum(album)}
+                                                    className="anim-card bg-[#181818] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#222222] transition duration-200"
+                                                >
+                                                    <div className="w-20 h-20 rounded bg-zinc-800 overflow-hidden mb-3 shadow border border-zinc-800/60">
+                                                        {album.images?.[0] ? (
+                                                            <img src={album.images[0].url} alt={album.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center"><Music size={24} className="text-zinc-650" /></div>
+                                                        )}
+                                                    </div>
+                                                    <div className="font-bold text-xs text-white truncate w-full">{album.name}</div>
+                                                    <div className="text-[10px] text-zinc-500 truncate w-full mt-0.5">{album.artists?.map(a => a.name).join(', ')}</div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+
+                                {activeSubTab === 'genres' && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                                        {topGenres.length === 0 ? (
+                                            <p className="text-zinc-500 text-sm italic col-span-full">Aucun genre trouvé.</p>
+                                        ) : (
+                                            topGenres.slice(0, 12).map(([genre, count], idx) => {
+                                                const isTopThree = idx < 3;
+                                                const badgeText = idx === 0 ? "Or" : idx === 1 ? "Argent" : "Bronze";
+                                                const badgeColor = idx === 0 ? "bg-yellow-500/25 border-yellow-500/40 text-yellow-400" : idx === 1 ? "bg-zinc-400/25 border-zinc-400/40 text-zinc-300" : "bg-amber-600/25 border-amber-600/40 text-amber-500";
+                                                const badgeIcon = idx === 0 ? "🥇" : idx === 1 ? "🥈" : "🥉";
+
+                                                const gradients = [
+                                                    "from-emerald-600 to-teal-500",
+                                                    "from-blue-600 to-cyan-500",
+                                                    "from-purple-600 to-indigo-500",
+                                                    "from-fuchsia-600 to-pink-500",
+                                                    "from-violet-600 to-purple-500",
+                                                    "from-yellow-600 to-amber-500",
+                                                    "from-red-600 to-rose-500"
+                                                ];
+                                                const gradient = gradients[idx % gradients.length];
+
+                                                return (
+                                                    <div key={genre} className={`anim-card bg-gradient-to-br ${gradient} p-5 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl relative flex flex-col justify-between h-36 group cursor-default shadow-md`}>
+                                                        {isTopThree && (
+                                                            <span className={`absolute top-2 right-2 text-[10px] font-black px-2 py-0.5 rounded-full ${badgeColor} shadow-md z-10 flex items-center gap-1`}>
+                                                                {badgeIcon} {badgeText}
+                                                            </span>
+                                                        )}
+                                                        <div className="text-lg font-black text-white capitalize leading-tight mt-4 break-words drop-shadow-md pr-6">
+                                                            {genre}
+                                                        </div>
+                                                        <div className="text-[10px] text-white/90 font-bold bg-black/20 self-start px-2.5 py-1 rounded-full mt-2">
+                                                            {count} {count > 1 ? 'artistes' : 'artiste'}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Dernières Écoutes */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <Headphones className="text-emerald-400" size={24} />
+                                    <h2 className="text-2xl font-bold tracking-tight">Dernières écoutes</h2>
+                                </div>
+                                <div className="bg-[#181818]/30 rounded-xl border border-zinc-800/50 overflow-hidden divide-y divide-zinc-800/40">
+                                    {recent.map((item, idx) => {
+                                        const track = item.track || item;
+                                        return (
+                                            <div 
+                                                key={idx} 
+                                                onClick={() => setSelectedAlbum(track.album)}
+                                                className="p-4 flex items-center justify-between gap-4 transition-colors duration-200 group cursor-pointer hover:bg-[#222222]/30"
+                                            >
+                                                <div className="flex items-center gap-4 min-w-0 flex-1">
+                                                    <span className="text-sm font-bold text-zinc-500 w-6 text-center group-hover:text-emerald-400 transition-colors flex justify-center">
+                                                        {idx + 1}
+                                                    </span>
+                                                    <div className="w-12 h-12 rounded-md bg-zinc-800 overflow-hidden shadow-md flex-shrink-0 relative group-hover:scale-105 transition-transform duration-300">
+                                                        {track.album?.images?.[0] ? (
+                                                            <img src={track.album.images[0].url} alt={track.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center"><Music size={20} className="text-zinc-650" /></div>
+                                                        )}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <div className="font-bold text-sm text-white truncate group-hover:text-emerald-400 transition-colors duration-200">
+                                                            {track.name}
+                                                        </div>
+                                                        <div className="text-xs text-zinc-400 truncate mt-0.5">
+                                                            {track.artists?.map(a => a.name).join(', ')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="hidden md:block text-xs text-zinc-500 font-medium max-w-xs truncate">
+                                                    {track.album?.name}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {profileTab === 'stats' && (
+                        <div className="space-y-8">
+                            {loadingStats ? (
+                                <p className="text-zinc-400 text-sm italic">Génération des analyses en cours...</p>
+                            ) : !userStats ? (
+                                <p className="text-zinc-505 text-sm italic">Erreur lors de la récupération des analyses.</p>
+                            ) : (
+                                <>
+                                    {/* Annual Wrapped Banner */}
+                                    <div className="bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-transparent p-6 rounded-2xl border border-emerald-500/20 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg">
+                                        <div className="space-y-1">
+                                            <h3 className="text-lg font-black text-white flex items-center gap-2">
+                                                🎬 Music Wrapped 2026
+                                            </h3>
+                                            <p className="text-xs text-zinc-400 leading-relaxed max-w-md">
+                                                Visualisez votre rétrospective musicale sous la forme d'une Story animée et interactive basée sur vos critiques rédigées.
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => setShowWrapped(true)}
+                                            className="bg-white hover:bg-zinc-200 text-black font-black py-2.5 px-6 rounded-full text-xs cursor-pointer transition shadow-md self-start md:self-center active:scale-95"
+                                        >
+                                            Lancer mon Wrapped
+                                        </button>
+                                    </div>
+
+                                    {/* Stats grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Critiques totales</span>
+                                            <div className="text-4xl font-black text-white mt-4">{userStats.totalReviews}</div>
+                                            <p className="text-[10px] text-zinc-500 mt-2">Disques analysés dans Music Diary.</p>
+                                        </div>
+
+                                        <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Note moyenne</span>
+                                            <div className="flex items-baseline gap-1 mt-4">
+                                                <span className="text-4xl font-black text-white">{userStats.averageRating}</span>
+                                                <span className="text-sm text-zinc-505">/5</span>
+                                            </div>
+                                            {/* Small rating distribution summary */}
+                                            <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-zinc-850/60">
+                                                {Object.entries(userStats.ratingDistribution).reverse().map(([rating, count]) => (
+                                                    <div key={rating} className="flex-1 flex flex-col items-center gap-1">
+                                                        <div className="w-full bg-zinc-800 h-8 rounded relative overflow-hidden flex items-end">
+                                                            <div 
+                                                                className="bg-emerald-500 w-full"
+                                                                style={{ 
+                                                                    height: `${userStats.totalReviews > 0 ? (count / userStats.totalReviews) * 100 : 0}%` 
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <span className="text-[8px] text-zinc-500 font-bold">{rating}★</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Genre favori</span>
+                                            <div className="text-2xl font-black text-emerald-400 capitalize mt-4">
+                                                {userStats.topGenres?.[0]?.genre || "N/A"}
+                                            </div>
+                                            <p className="text-[10px] text-zinc-500 mt-2">
+                                                {userStats.topGenres?.[0]?.genre 
+                                                    ? `Avec ${userStats.topGenres[0].count} critiques écrites.`
+                                                    : "Rédigez des critiques pour voir vos préférences."}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Distribution Charts */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                                        {/* Genres Favorite Chart */}
+                                        <div className="bg-[#181818]/60 border border-zinc-800/40 p-5 rounded-2xl space-y-4">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-zinc-400">Genres musicaux les plus notés</h4>
+                                            
+                                            <div className="space-y-3.5">
+                                                {userStats.topGenres.length === 0 ? (
+                                                    <p className="text-zinc-505 text-xs italic">Aucune donnée disponible.</p>
+                                                ) : (
+                                                    userStats.topGenres.map((item) => {
+                                                        const pct = userStats.totalReviews > 0 ? (item.count / userStats.totalReviews) * 100 : 0;
+                                                        return (
+                                                            <div key={item.genre} className="space-y-1">
+                                                                <div className="flex justify-between text-xs">
+                                                                    <span className="font-bold text-white capitalize">{item.genre}</span>
+                                                                    <span className="text-zinc-400 font-semibold">{item.count} {item.count > 1 ? 'critiques' : 'critique'}</span>
+                                                                </div>
+                                                                <div className="w-full bg-zinc-850 h-2 rounded-full overflow-hidden">
+                                                                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${pct}%` }} />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Decades Distribution Chart */}
+                                        <div className="bg-[#181818]/60 border border-zinc-800/40 p-5 rounded-2xl space-y-4">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-zinc-400">Décennies préférées</h4>
+                                            
+                                            <div className="space-y-3.5">
+                                                {userStats.decadeDistribution.length === 0 ? (
+                                                    <p className="text-zinc-550 text-xs italic">Aucune donnée disponible.</p>
+                                                ) : (
+                                                    userStats.decadeDistribution.map((item) => {
+                                                        const maxCount = Math.max(...userStats.decadeDistribution.map(d => d.count));
+                                                        const pct = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+                                                        return (
+                                                            <div key={item.decade} className="space-y-1">
+                                                                <div className="flex justify-between text-xs">
+                                                                    <span className="font-bold text-white">{item.decade}</span>
+                                                                    <span className="text-zinc-400 font-semibold">{item.count} {item.count > 1 ? 'albums' : 'album'}</span>
+                                                                </div>
+                                                                <div className="w-full bg-zinc-850 h-2 rounded-full overflow-hidden">
+                                                                    <div className="bg-[#1DB954] h-full rounded-full" style={{ width: `${pct}%` }} />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Album Favorites */}
+                                    <div className="space-y-4 pt-4">
+                                        <h4 className="text-xs font-black uppercase tracking-widest text-zinc-400">Coups de cœur (Albums les mieux notés)</h4>
+                                        {userStats.highestRatedAlbums.length === 0 ? (
+                                            <p className="text-zinc-550 text-xs italic">Aucun album noté à 4★ ou 5★ pour le moment.</p>
+                                        ) : (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                                                {userStats.highestRatedAlbums.map((album) => (
+                                                    <div 
+                                                        key={album.id}
+                                                        className="bg-[#181818] border border-zinc-800/40 p-3 rounded-xl flex flex-col items-center text-center shadow-sm hover:bg-[#222222] transition"
+                                                    >
+                                                        <div className="w-16 h-16 rounded overflow-hidden mb-2 shadow border border-zinc-800/60">
+                                                            <img src={album.albumCover} alt={album.albumName} className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <div className="font-bold text-[11px] text-white truncate w-full leading-tight">{album.albumName}</div>
+                                                        <div className="text-[9px] text-zinc-500 truncate w-full mt-0.5">{album.artistName}</div>
+                                                        <div className="text-[10px] text-emerald-400 font-black mt-1.5 flex items-center gap-0.5">
+                                                            {album.rating}/5 <Star size={10} fill="currentColor" />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Modal d'édition de profil */}
+                    {showEditModal && isOwnProfile && (
+                        <ProfileEditModal
+                            user={user}
+                            onSave={(updatedUser) => {
+                                setUser(updatedUser);
+                                setProfileUser(prev => prev ? { ...prev, ...updatedUser } : updatedUser);
+                                localStorage.setItem('user', JSON.stringify(updatedUser));
+                            }}
+                            onClose={() => setShowEditModal(false)}
+                        />
+                    )}
+
+                    {/* Modal de note/chronique */}
+                    {selectedAlbum && (
+                        <ReviewModal 
+                            selectedAlbum={selectedAlbum}
+                            editingReviewId={editingReviewId}
+                            reviewContent={reviewContent}
+                            setReviewContent={setReviewContent}
+                            rating={rating}
+                            setRating={setRating}
+                            reviewError={reviewError}
+                            reviewSuccess={reviewSuccess}
+                            onSubmit={handleSubmitReview}
+                            onClose={() => { setSelectedAlbum(null); setEditingReviewId(null); }}
+                        />
+                    )}
+
+                    {/* Modal Followers/Following */}
+                    {showFollowModal && (
+                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                            <div ref={followModalRef} className="bg-[#181818] border border-zinc-800 w-full max-w-md overflow-hidden flex flex-col shadow-2xl rounded-2xl">
+                                {/* Header */}
+                                <div className="p-5 border-b border-zinc-800/80 flex items-center justify-between">
+                                    <h3 className="text-lg font-black tracking-tight text-white capitalize">
+                                        {followModalType === 'followers' ? 'Abonnés' : 'Abonnements'}
+                                    </h3>
+                                    <button
+                                        onClick={() => setShowFollowModal(false)}
+                                        className="text-zinc-400 hover:text-white transition-colors cursor-pointer text-sm font-semibold p-1 bg-transparent border-none outline-none"
+                                    >
+                                        Fermer
+                                    </button>
+                                </div>
+
+                                {/* List Area */}
+                                <div className="p-4 max-h-[350px] overflow-y-auto flex-1 space-y-2">
+                                    {loadingFollowList ? (
+                                        <div className="text-center py-8 text-zinc-400 text-sm">
+                                            Chargement...
+                                        </div>
+                                    ) : followList.length === 0 ? (
+                                        <div className="text-center py-8 text-zinc-500 text-sm">
+                                            {followModalType === 'followers' 
+                                                ? "Aucun abonné pour le moment." 
+                                                : "Aucun abonnement pour le moment."}
+                                        </div>
+                                    ) : (
+                                        followList.map((usr) => (
+                                            <div
+                                                key={usr.id}
+                                                onClick={() => {
+                                                    setShowFollowModal(false);
+                                                    navigate(`/profile/${usr.id}`);
+                                                }}
+                                                className="flex items-center gap-3 p-3 bg-zinc-900/40 hover:bg-zinc-800/60 border border-zinc-800/30 rounded-xl transition-all duration-200 cursor-pointer group hover:border-emerald-500/20"
+                                            >
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 shadow-md flex items-center justify-center font-bold text-sm text-black border border-zinc-800 group-hover:border-emerald-500/40 transition-colors duration-200 flex-shrink-0 overflow-hidden">
+                                                    {usr.avatar ? (
+                                                        <img src={usr.avatar} alt={usr.pseudo} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        usr.pseudo ? usr.pseudo.substring(0, 2).toUpperCase() : <User size={16} />
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0 flex-1 text-left">
+                                                    <div className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors duration-200">
+                                                        {usr.pseudo}
+                                                    </div>
+                                                    <div className="text-xs text-zinc-500 truncate mt-0.5">
+                                                        {usr.email}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal de signalement */}
+                    {reportModalData && (
+                        <ReportModal
+                            reportedType={reportModalData.type}
+                            reportedName={reportModalData.name}
+                            onSubmit={handleReportSubmit}
+                            onClose={() => setReportModalData(null)}
+                        />
+                    )}
+
+                    {/* Modal de confirmation */}
+                    {confirmModalData && (
+                        <ConfirmModal
+                            title={confirmModalData.title}
+                            message={confirmModalData.message}
+                            type={confirmModalData.type}
+                            confirmText={confirmModalData.confirmText}
+                            onConfirm={confirmModalData.onConfirm}
+                            onCancel={() => setConfirmModalData(null)}
+                        />
+                    )}
+
+                    {/* Music Wrapped Modal */}
+                    {showWrapped && userStats && (
+                        <MusicWrappedModal
+                            stats={userStats}
+                            onClose={() => setShowWrapped(false)}
+                        />
+                    )}
+                </div>
+            </>
+        )}
+        </div>
+    </div>
+    );
+}
+
+export default Profile;
