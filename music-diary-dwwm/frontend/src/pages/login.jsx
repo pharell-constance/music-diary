@@ -50,14 +50,14 @@ function Login() {
 
             {/* Logo / Header */}
             <div className="mb-12 text-center flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#1DB954] rounded-full"></div>
+                <div className="w-8 h-8 bg-[#8B5CF6] rounded-full"></div>
                 <h1 className="text-2xl font-bold tracking-tight text-white">
                     Music Diary
                 </h1>
             </div>
 
             {/* Conteneur Formulaire style Spotify */}
-            <div className="bg-[#121212] p-10 md:p-14 rounded-lg w-full max-w-[734px]">
+            <div className="bg-[#12101b] p-10 md:p-14 rounded-lg w-full max-w-[734px]">
 
                 <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white mb-10 text-center">
                     Connectez-vous à Music Diary
@@ -69,7 +69,7 @@ function Login() {
                     </div>
                 )}
                 {success && (
-                    <div className="bg-[#1DB954] text-white p-3 mb-6 rounded text-sm font-semibold text-center">
+                    <div className="bg-[#8B5CF6] text-white p-3 mb-6 rounded text-sm font-semibold text-center">
                         {success}
                     </div>
                 )}
@@ -86,7 +86,7 @@ function Login() {
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-[#121212] border border-[#727272] hover:border-white focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] p-3 rounded text-base text-zinc-100 placeholder:text-[#727272] outline-none transition"
+                            className="w-full bg-[#12101b] border border-[#727272] hover:border-white focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] p-3 rounded text-base text-zinc-100 placeholder:text-[#727272] outline-none transition"
                             placeholder="Adresse e-mail"
                         />
                     </div>
@@ -101,7 +101,7 @@ function Login() {
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-[#121212] border border-[#727272] hover:border-white focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] p-3 rounded text-base text-zinc-100 placeholder:text-[#727272] outline-none transition"
+                            className="w-full bg-[#12101b] border border-[#727272] hover:border-white focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] p-3 rounded text-base text-zinc-100 placeholder:text-[#727272] outline-none transition"
                             placeholder="Mot de passe"
                         />
                     </div>
@@ -110,7 +110,7 @@ function Login() {
                     <div className="flex justify-center pt-4">
                         <button
                             type="submit"
-                            className="bg-[#1DB954] hover:bg-[#1ED760] hover:scale-105 text-black font-bold py-3.5 px-12 rounded-full text-base transition-all duration-100 ease-in-out active:scale-100"
+                            className="bg-[#8B5CF6] hover:bg-[#A78BFA] hover:scale-105 text-black font-bold py-3.5 px-12 rounded-full text-base transition-all duration-100 ease-in-out active:scale-100"
                         >
                             Se connecter
                         </button>
@@ -121,7 +121,7 @@ function Login() {
 
                 <p className="text-center text-[#A7A7A7] text-sm">
                     Vous n'avez pas de compte ?{' '}
-                    <Link to="/register" className="text-white hover:text-[#1DB954] underline">
+                    <Link to="/register" className="text-white hover:text-[#8B5CF6] underline">
                         Inscrivez-vous ici
                     </Link>.
                 </p>

@@ -85,14 +85,14 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
     };
 
     return (
-        <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-lg flex flex-col gap-4 relative group hover:bg-[#202020] transition duration-150">
+        <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-lg flex flex-col gap-4 relative group hover:bg-[#252333] transition duration-150">
             <div className="flex gap-4">
                 {/* ZONE ACTIONS (Modifier / Supprimer / Signaler) */}
                 {onEdit && onDelete ? (
                     <div className="absolute top-4 right-4 flex items-center gap-3 md:opacity-0 md:group-hover:opacity-100 transition focus-within:opacity-100">
                         <button
                             onClick={() => onEdit(review)}
-                            className="text-zinc-500 hover:text-[#1DB954] transition cursor-pointer"
+                            className="text-zinc-500 hover:text-[#8B5CF6] transition cursor-pointer"
                             title="Modifier cette chronique"
                         >
                             <Pencil size={15} />
@@ -139,8 +139,8 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                                 <Star 
                                     key={star} 
                                     size={14} 
-                                    fill={star <= review.rating ? "#1DB954" : "none"} 
-                                    className={star <= review.rating ? "text-[#1DB954]" : "text-zinc-700"} 
+                                    fill={star <= review.rating ? "#8B5CF6" : "none"} 
+                                    className={star <= review.rating ? "text-[#8B5CF6]" : "text-zinc-700"} 
                                 />
                             ))}
                         </div>
@@ -253,7 +253,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
                             placeholder="Ajouter un commentaire..."
-                            className="flex-1 bg-[#242424] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-700 px-3 py-2 rounded text-xs text-white outline-none transition font-medium"
+                            className="flex-1 bg-[#292738] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-700 px-3 py-2 rounded text-xs text-white outline-none transition font-medium"
                         />
                         <button
                             type="submit"

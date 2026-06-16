@@ -16,7 +16,7 @@ function ReviewModal({
 
     return (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-[#181818] border border-zinc-800 p-6 rounded-lg w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+            <div className="bg-[#1a1824] border border-zinc-800 p-6 rounded-lg w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
                 
                 <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white">
                     <X size={20} />
@@ -65,8 +65,8 @@ function ReviewModal({
                                 >
                                     <Star 
                                         size={28} 
-                                        fill={num <= rating ? "#1DB954" : "none"} 
-                                        className={num <= rating ? "text-[#1DB954]" : "text-zinc-500"} 
+                                        fill={num <= rating ? "#8B5CF6" : "none"} 
+                                        className={num <= rating ? "text-[#8B5CF6]" : "text-zinc-500"} 
                                     />
                                 </button>
                             ))}
@@ -81,7 +81,7 @@ function ReviewModal({
                             value={reviewContent} 
                             onChange={(e) => setReviewContent(e.target.value)} 
                             placeholder="Qu'avez-vous pensé de la production..." 
-                            className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none h-32 resize-none" 
+                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none h-32 resize-none" 
                         />
                     </div>
 
@@ -95,7 +95,7 @@ function ReviewModal({
                         </button>
                         <button 
                             type="submit" 
-                            className="bg-[#1DB954] hover:bg-[#1ED760] text-black font-bold py-2 px-6 rounded-full text-sm"
+                            className="bg-[#8B5CF6] hover:bg-[#A78BFA] text-black font-bold py-2 px-6 rounded-full text-sm"
                         >
                             {isEditing ? "Enregistrer les modifications" : "Publier la note"}
                         </button>

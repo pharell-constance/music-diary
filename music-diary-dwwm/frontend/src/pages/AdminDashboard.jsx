@@ -491,7 +491,7 @@ function AdminDashboard() {
                 handleLogout={() => { localStorage.clear(); navigate('/login'); }}
             />
 
-            <div className="flex-1 bg-[#121212] my-2 mr-2 rounded-lg overflow-y-auto no-scrollbar flex flex-col p-6 md:p-8">
+            <div className="flex-1 bg-[#12101b] my-2 mr-2 rounded-lg overflow-y-auto no-scrollbar flex flex-col p-6 md:p-8">
                 
                 {/* Error */}
                 {error && (
@@ -542,7 +542,7 @@ function AdminDashboard() {
 
                         {/* Stats Grid */}
                         <div ref={statsGridRef} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-zinc-800 transition duration-200">
+                            <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-zinc-800 transition duration-200">
                                 <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0">
                                     <Users size={24} />
                                 </div>
@@ -552,7 +552,7 @@ function AdminDashboard() {
                                 </div>
                             </div>
 
-                            <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-zinc-800 transition duration-200">
+                            <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-zinc-800 transition duration-200">
                                 <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
                                     <MessageSquare size={24} />
                                 </div>
@@ -562,7 +562,7 @@ function AdminDashboard() {
                                 </div>
                             </div>
 
-                            <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-zinc-800 transition duration-200">
+                            <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-zinc-800 transition duration-200">
                                 <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 flex-shrink-0">
                                     <Headphones size={24} />
                                 </div>
@@ -574,14 +574,14 @@ function AdminDashboard() {
                         </div>
 
                         {/* Tabs & Search Header */}
-                        <div ref={tabsRef} className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#181818]/60 p-4 border border-zinc-800/40 rounded-2xl">
+                        <div ref={tabsRef} className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#1a1824]/60 p-4 border border-zinc-800/40 rounded-2xl">
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setActiveTab('users')}
                                     className={`px-5 py-2.5 rounded-full text-xs font-black transition-all cursor-pointer ${
                                         activeTab === 'users'
                                             ? 'bg-white text-black shadow-md'
-                                            : 'bg-[#242424] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            : 'bg-[#292738] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
                                     }`}
                                 >
                                     Utilisateurs ({filteredUsers.length})
@@ -591,7 +591,7 @@ function AdminDashboard() {
                                     className={`px-5 py-2.5 rounded-full text-xs font-black transition-all cursor-pointer ${
                                         activeTab === 'reviews'
                                             ? 'bg-white text-black shadow-md'
-                                            : 'bg-[#242424] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            : 'bg-[#292738] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
                                     }`}
                                 >
                                     Critiques ({filteredReviews.length})
@@ -601,7 +601,7 @@ function AdminDashboard() {
                                     className={`px-5 py-2.5 rounded-full text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
                                         activeTab === 'reports'
                                             ? 'bg-white text-black shadow-md'
-                                            : 'bg-[#242424] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                            : 'bg-[#292738] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
                                     }`}
                                 >
                                     <Flag size={12} className={activeTab === 'reports' ? 'text-red-500' : 'text-zinc-500'} />
@@ -622,7 +622,7 @@ function AdminDashboard() {
                                         value={userSearch} 
                                         onChange={(e) => setUserSearch(e.target.value)} 
                                         placeholder="Filtrer par pseudo, email, rôle..." 
-                                        className="w-full bg-[#242424] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
+                                        className="w-full bg-[#292738] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
                                     />
                                 ) : activeTab === 'reviews' ? (
                                     <input 
@@ -630,7 +630,7 @@ function AdminDashboard() {
                                         value={reviewSearch} 
                                         onChange={(e) => setReviewSearch(e.target.value)} 
                                         placeholder="Filtrer par album, auteur, contenu..." 
-                                        className="w-full bg-[#242424] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
+                                        className="w-full bg-[#292738] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
                                     />
                                 ) : (
                                     <input 
@@ -638,21 +638,21 @@ function AdminDashboard() {
                                         value={reportSearch} 
                                         onChange={(e) => setReportSearch(e.target.value)} 
                                         placeholder="Filtrer par motif, auteur, cible..." 
-                                        className="w-full bg-[#242424] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
+                                        className="w-full bg-[#292738] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
                                     />
                                 )}
                             </div>
                         </div>
 
                         {/* List Area */}
-                        <div ref={contentAreaRef} className="bg-[#181818]/30 border border-zinc-800/40 rounded-2xl overflow-hidden">
+                        <div ref={contentAreaRef} className="bg-[#1a1824]/30 border border-zinc-800/40 rounded-2xl overflow-hidden">
                             
                             {/* Users Tab */}
                             {activeTab === 'users' && (
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#181818]/60">
+                                            <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60">
                                                 <th className="py-4 px-6">Avatar</th>
                                                 <th className="py-4 px-6">Pseudo</th>
                                                 <th className="py-4 px-6">Email</th>
@@ -751,7 +751,7 @@ function AdminDashboard() {
                                                                     disabled={targetUser.id === user.id || targetUser.isBanned}
                                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
                                                                         targetUser.role === 'ADMIN'
-                                                                            ? 'bg-[#242424] hover:bg-zinc-800 text-zinc-300'
+                                                                            ? 'bg-[#292738] hover:bg-zinc-800 text-zinc-300'
                                                                             : 'bg-white hover:bg-zinc-200 text-black border border-zinc-700/30'
                                                                     }`}
                                                                     title={targetUser.role === 'ADMIN' ? "Rendre utilisateur standard" : "Promouvoir administrateur"}
@@ -781,7 +781,7 @@ function AdminDashboard() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#181818]/60">
+                                            <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60">
                                                 <th className="py-4 px-6">Album / Artiste</th>
                                                 <th className="py-4 px-6 text-center">Note</th>
                                                 <th className="py-4 px-6">Critique</th>
@@ -859,7 +859,7 @@ function AdminDashboard() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#181818]/60">
+                                            <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60">
                                                 <th className="py-4 px-6">Type / Cible</th>
                                                 <th className="py-4 px-6">Motif du signalement</th>
                                                 <th className="py-4 px-6">Signalé par</th>
@@ -1000,7 +1000,7 @@ function AdminDashboard() {
 
                                                                 <button
                                                                     onClick={() => handleResolveReport(report.id)}
-                                                                    className="bg-[#242424] hover:bg-zinc-800 text-zinc-300 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer"
+                                                                    className="bg-[#292738] hover:bg-zinc-800 text-zinc-300 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer"
                                                                     title="Conserver le contenu signalé et archiver le signalement"
                                                                 >
                                                                     Conserver

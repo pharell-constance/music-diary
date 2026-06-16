@@ -91,7 +91,7 @@ function ArtistDetailModal({ artist, onClose }) {
 
     return (
         <div ref={backdropRef} className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <div ref={modalRef} className="bg-[#121212] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
+            <div ref={modalRef} className="bg-[#12101b] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
                 
                 {/* Header d'artiste avec couverture et overlay dégradé */}
                 <div className="relative h-48 md:h-56 w-full flex-shrink-0">
@@ -108,7 +108,7 @@ function ArtistDetailModal({ artist, onClose }) {
                     )}
                     
                     {/* Dégradés Spotify styles */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/50 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#12101b] via-[#12101b]/50 to-transparent"></div>
                     <div className="absolute inset-0 bg-black/30"></div>
                     
                     {/* Bouton Fermer */}
@@ -140,7 +140,7 @@ function ArtistDetailModal({ artist, onClose }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         
                         {/* Écouteurs par mois */}
-                        <div className="bg-[#181818] border border-zinc-800/40 p-4 rounded-xl flex items-center gap-4">
+                        <div className="bg-[#1a1824] border border-zinc-800/40 p-4 rounded-xl flex items-center gap-4">
                             <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 flex-shrink-0">
                                 <Headphones size={24} />
                             </div>
@@ -153,7 +153,7 @@ function ArtistDetailModal({ artist, onClose }) {
                         </div>
 
                         {/* Abonnés Spotify */}
-                        <div className="bg-[#181818] border border-zinc-800/40 p-4 rounded-xl flex items-center gap-4">
+                        <div className="bg-[#1a1824] border border-zinc-800/40 p-4 rounded-xl flex items-center gap-4">
                             <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 flex-shrink-0">
                                 <Users size={24} />
                             </div>
@@ -167,7 +167,7 @@ function ArtistDetailModal({ artist, onClose }) {
                     </div>
 
                     {/* Popularité Score Slider */}
-                    <div className="space-y-3 bg-[#181818] border border-zinc-800/40 p-5 rounded-xl">
+                    <div className="space-y-3 bg-[#1a1824] border border-zinc-800/40 p-5 rounded-xl">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Score de Popularité</span>
                             <span className="text-sm font-black text-white">{artist.popularity} / 100</span>
@@ -191,7 +191,7 @@ function ArtistDetailModal({ artist, onClose }) {
                                 {artist.genres.map(genre => (
                                     <span 
                                         key={genre}
-                                        className="text-xs font-bold bg-[#242424] hover:bg-[#2e2e2e] text-zinc-300 border border-zinc-800 px-3 py-1.5 rounded-full capitalize transition cursor-default"
+                                        className="text-xs font-bold bg-[#292738] hover:bg-[#2e2e2e] text-zinc-300 border border-zinc-800 px-3 py-1.5 rounded-full capitalize transition cursor-default"
                                     >
                                         {genre}
                                     </span>
@@ -204,7 +204,7 @@ function ArtistDetailModal({ artist, onClose }) {
                     {artist.topTracks?.length > 0 && (
                         <div className="space-y-4">
                             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Titres les plus populaires</h4>
-                            <div ref={trackListRef} className="bg-[#181818]/60 border border-zinc-800/40 rounded-xl overflow-hidden divide-y divide-zinc-800/40">
+                            <div ref={trackListRef} className="bg-[#1a1824]/60 border border-zinc-800/40 rounded-xl overflow-hidden divide-y divide-zinc-800/40">
                                 {artist.topTracks.map((track, idx) => (
                                     <div 
                                         key={track.id} 

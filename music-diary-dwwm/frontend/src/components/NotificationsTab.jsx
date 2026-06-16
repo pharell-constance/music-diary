@@ -144,7 +144,7 @@ function NotificationsTab() {
                     <div className="flex gap-2.5">
                         <button
                             onClick={handleMarkAllAsRead}
-                            className="bg-[#242424] hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                            className="bg-[#292738] hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
                         >
                             <CheckCheck size={14} /> Tout lu
                         </button>
@@ -168,14 +168,14 @@ function NotificationsTab() {
             {/* Loading view */}
             {loading && (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <Disc size={44} className="text-[#1DB954] animate-spin" style={{ animationDuration: '2s' }} />
+                    <Disc size={44} className="text-[#8B5CF6] animate-spin" style={{ animationDuration: '2s' }} />
                     <p className="text-zinc-500 font-semibold text-xs tracking-wider">Chargement des notifications...</p>
                 </div>
             )}
 
             {/* Empty view */}
             {!loading && notifications.length === 0 && (
-                <div className="text-center py-20 bg-[#181818]/60 border border-zinc-800/30 rounded-2xl flex flex-col items-center justify-center p-6 shadow-sm">
+                <div className="text-center py-20 bg-[#1a1824]/60 border border-zinc-800/30 rounded-2xl flex flex-col items-center justify-center p-6 shadow-sm">
                     <div className="w-14 h-14 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-600 mb-4 shadow-inner">
                         <Bell size={24} />
                     </div>
@@ -196,13 +196,13 @@ function NotificationsTab() {
                                 key={notif.id}
                                 className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 group ${
                                     notif.read 
-                                        ? 'bg-[#181818]/20 border-zinc-800/30 opacity-70' 
-                                        : `bg-[#181818] border-zinc-800/80 hover:border-zinc-700/80 shadow-md`
+                                        ? 'bg-[#1a1824]/20 border-zinc-800/30 opacity-70' 
+                                        : `bg-[#1a1824] border-zinc-800/80 hover:border-zinc-700/80 shadow-md`
                                 }`}
                             >
                                 {/* Unread dot indicator */}
                                 {!notif.read && (
-                                    <span className="w-2.5 h-2.5 rounded-full bg-[#1DB954] flex-shrink-0 animate-pulse" title="Non lu" />
+                                    <span className="w-2.5 h-2.5 rounded-full bg-[#8B5CF6] flex-shrink-0 animate-pulse" title="Non lu" />
                                 )}
 
                                 {/* Icon Category */}
@@ -231,7 +231,7 @@ function NotificationsTab() {
                                     {!notif.read && (
                                         <button
                                             onClick={() => handleMarkAsRead(notif.id)}
-                                            className="p-2 bg-[#242424] hover:bg-[#1DB954] text-zinc-400 hover:text-black rounded-lg transition cursor-pointer"
+                                            className="p-2 bg-[#292738] hover:bg-[#8B5CF6] text-zinc-400 hover:text-black rounded-lg transition cursor-pointer"
                                             title="Marquer comme lu"
                                         >
                                             <Check size={14} />

@@ -143,7 +143,7 @@ function ArtistPage() {
                 handleLogout={() => { localStorage.clear(); navigate('/login'); }}
             />
 
-            <div className="flex-1 bg-[#121212] my-2 mr-2 rounded-lg overflow-y-auto no-scrollbar flex flex-col">
+            <div className="flex-1 bg-[#12101b] my-2 mr-2 rounded-lg overflow-y-auto no-scrollbar flex flex-col">
 
                 {/* Loading */}
                 {loading && (
@@ -182,7 +182,7 @@ function ArtistPage() {
                             )}
 
                             {/* Gradient overlays */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/60 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#12101b] via-[#12101b]/60 to-transparent" />
                             <div className="absolute inset-0 bg-black/20" />
 
                             {/* Back button */}
@@ -210,7 +210,7 @@ function ArtistPage() {
                             {/* Stats row */}
                             <div className="anim-section grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 {/* Auditeurs */}
-                                <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4">
+                                <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
                                         <Headphones size={22} />
                                     </div>
@@ -221,7 +221,7 @@ function ArtistPage() {
                                 </div>
 
                                 {/* Abonnés */}
-                                <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4">
+                                <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0">
                                         <Users size={22} />
                                     </div>
@@ -232,7 +232,7 @@ function ArtistPage() {
                                 </div>
 
                                 {/* Popularity score */}
-                                <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-center gap-3">
+                                <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-center gap-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Score de popularité</span>
                                         <span className="text-lg font-black text-white">{artist.popularity}<span className="text-xs text-zinc-500 font-semibold">/100</span></span>
@@ -255,7 +255,7 @@ function ArtistPage() {
                                         {artist.genres.map(genre => (
                                             <span
                                                 key={genre}
-                                                className="text-xs font-bold bg-[#242424] hover:bg-[#2e2e2e] text-zinc-300 border border-zinc-800 px-3 py-1.5 rounded-full capitalize transition-colors cursor-default"
+                                                className="text-xs font-bold bg-[#292738] hover:bg-[#2e2e2e] text-zinc-300 border border-zinc-800 px-3 py-1.5 rounded-full capitalize transition-colors cursor-default"
                                             >
                                                 {genre}
                                             </span>
@@ -281,7 +281,7 @@ function ArtistPage() {
                                         </a>
                                     </div>
 
-                                    <div ref={trackListRef} className="bg-[#181818]/70 border border-zinc-800/40 rounded-2xl overflow-hidden divide-y divide-zinc-800/40">
+                                    <div ref={trackListRef} className="bg-[#1a1824]/70 border border-zinc-800/40 rounded-2xl overflow-hidden divide-y divide-zinc-800/40">
                                         {artist.topTracks.map((track, idx) => (
                                             <div
                                                 key={track.id}

@@ -41,12 +41,8 @@ function App() {
     <div className="min-h-screen bg-black text-white font-sans">
       <BrowserRouter>
         <Routes>
-          {/* Route protégée : l'accueil (journal de bord) */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          } />
+          {/* L'accueil : présente le site si non connecté, et affiche le journal si connecté */}
+          <Route path="/" element={<Home />} />
 
           {/* Routes d'authentification réservées aux visiteurs non connectés */}
           <Route path="/register" element={

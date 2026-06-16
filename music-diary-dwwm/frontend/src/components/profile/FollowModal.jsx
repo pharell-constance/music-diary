@@ -20,7 +20,7 @@ function FollowModal({ show, type, followList, loadingFollowList, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div ref={modalRef} className="bg-[#181818] border border-zinc-800 w-full max-w-md overflow-hidden flex flex-col shadow-2xl rounded-2xl">
+            <div ref={modalRef} className="bg-[#1a1824] border border-zinc-800 w-full max-w-md overflow-hidden flex flex-col shadow-2xl rounded-2xl">
                 {/* Header */}
                 <div className="p-5 border-b border-zinc-800/80 flex items-center justify-between">
                     <h3 className="text-lg font-black tracking-tight text-white capitalize">

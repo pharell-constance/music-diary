@@ -178,6 +178,68 @@ app.get('/api/spotify/me/recent', authenticateToken, async (req, res) => {
     }
 });
 
+// Helper pour calculer le top 10 des sons écoutés récemment (approximation du top hebdo)
+async function getWeeklyTopTracks(accessToken) {
+    const spotifyRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=50', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    
+    if (!spotifyRes.ok) {
+        const err = await spotifyRes.text();
+        console.error('Spotify weekly top fetch error:', err);
+        throw new Error('Impossible de récupérer l\'historique d\'écoutes Spotify.');
+    }
+
+    const data = await spotifyRes.json();
+    const items = data.items || [];
+
+    // Aggrégation par id de track
+    const trackMap = {};
+    items.forEach(item => {
+        const track = item.track;
+        if (!track || !track.id) return;
+        if (!trackMap[track.id]) {
+            trackMap[track.id] = {
+                id: track.id,
+                name: track.name,
+                album: track.album,
+                artists: track.artists,
+                preview_url: track.preview_url,
+                duration_ms: track.duration_ms,
+                count: 0
+            };
+        }
+        trackMap[track.id].count += 1;
+    });
+
+    // Tri par count descendant
+    return Object.values(trackMap)
+        .sort((a, b) => b.count - a.count)
+        .map(item => ({
+            id: item.id,
+            name: item.name,
+            album: item.album,
+            artists: item.artists,
+            previewUrl: item.preview_url,
+            durationMs: item.duration_ms
+        }))
+        .slice(0, 10);
+}
+
+// Récupérer les top tracks hebdomadaires de l'utilisateur connecté
+app.get('/api/spotify/me/weekly-top', authenticateToken, async (req, res) => {
+    try {
+        const accessToken = await getValidUserAccessToken(req.user.userId);
+        if (!accessToken) return res.status(400).json({ error: 'Utilisateur Spotify non connecté' });
+
+        const tracks = await getWeeklyTopTracks(accessToken);
+        res.json(tracks);
+    } catch (err) {
+        console.error('Erreur weekly-top:', err);
+        res.status(500).json({ error: err.message || 'Erreur lors de la génération du top hebdomadaire' });
+    }
+});
+
 // Récupérer les top artists de l'utilisateur connecté
 app.get('/api/spotify/me/top-artists', authenticateToken, async (req, res) => {
     try {
@@ -1384,6 +1446,21 @@ app.get('/api/users/:userId/spotify/recent', authenticateToken, async (req, res)
     }
 });
 
+// Top tracks hebdomadaires d'un autre utilisateur
+app.get('/api/users/:userId/spotify/weekly-top', authenticateToken, async (req, res) => {
+    try {
+        const targetUserId = parseInt(req.params.userId);
+        const accessToken = await getValidUserAccessToken(targetUserId);
+        if (!accessToken) return res.status(400).json({ error: 'Utilisateur Spotify non connecté' });
+
+        const tracks = await getWeeklyTopTracks(accessToken);
+        res.json(tracks);
+    } catch (err) {
+        console.error('Erreur weekly-top target:', err);
+        res.status(500).json({ error: err.message || 'Erreur lors de la génération du top hebdomadaire' });
+    }
+});
+
 // Top artistes d'un autre utilisateur
 app.get('/api/users/:userId/spotify/top-artists', authenticateToken, async (req, res) => {
     try {
@@ -2375,6 +2452,120 @@ app.get('/api/users/:userId/stats', authenticateToken, async (req, res) => {
         res.status(500).json({ error: "Erreur lors de la génération des statistiques." });
     }
 });
+
+// ─── TRENDING ──────────────────────────────────────────────────────────────────
+
+// Recherche des titres populaires récents (alternative aux playlists officielles restreintes)
+app.get('/api/spotify/trending', async (req, res) => {
+    try {
+        const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+        const token = await getSpotifyToken(); // client credentials
+
+        const currentYear = new Date().getFullYear();
+        const searchRes = await fetch(
+            `https://api.spotify.com/v1/search?q=year:${currentYear-1}-${currentYear}&type=track&limit=${limit}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!searchRes.ok) {
+            const err = await searchRes.text();
+            console.error('Spotify trending search error:', err);
+            return res.status(502).json({ error: 'Impossible de récupérer les tendances Spotify.' });
+        }
+
+        const data = await searchRes.json();
+        const tracks = (data.tracks?.items || [])
+            .map((track, idx) => ({
+                rank: idx + 1,
+                id: track.id,
+                name: track.name,
+                artists: track.artists?.map(a => a.name).join(', '),
+                albumName: track.album?.name,
+                albumCover: track.album?.images?.[0]?.url || null,
+                albumId: track.album?.id,
+                popularity: track.popularity,
+                previewUrl: track.preview_url,
+                durationMs: track.duration_ms,
+            }))
+            .filter(t => t.id);
+
+        res.json(tracks);
+    } catch (err) {
+        console.error('Erreur trending:', err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// ─── LYRIC PINS ────────────────────────────────────────────────────────────────
+
+
+// GET — pins de l'utilisateur connecté
+app.get('/api/lyric-pins', authenticateToken, async (req, res) => {
+    try {
+        const pins = await prisma.lyricPin.findMany({
+            where: { authorId: req.user.userId },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(pins);
+    } catch (err) {
+        console.error('Erreur lyric-pins GET:', err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// GET — pins d'un autre utilisateur (lecture seule)
+app.get('/api/users/:userId/lyric-pins', authenticateToken, async (req, res) => {
+    try {
+        const pins = await prisma.lyricPin.findMany({
+            where: { authorId: parseInt(req.params.userId) },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(pins);
+    } catch (err) {
+        console.error('Erreur lyric-pins GET user:', err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// POST — créer un pin
+app.post('/api/lyric-pins', authenticateToken, async (req, res) => {
+    try {
+        const { lyric, trackName, artistName, albumCover, color } = req.body;
+        if (!lyric || !trackName || !artistName) {
+            return res.status(400).json({ error: 'Paroles, titre et artiste sont requis.' });
+        }
+        const pin = await prisma.lyricPin.create({
+            data: {
+                lyric,
+                trackName,
+                artistName,
+                albumCover: albumCover || null,
+                color: color || '#1DB954',
+                authorId: req.user.userId
+            }
+        });
+        res.status(201).json(pin);
+    } catch (err) {
+        console.error('Erreur lyric-pins POST:', err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// DELETE — supprimer un pin (propriétaire uniquement)
+app.delete('/api/lyric-pins/:id', authenticateToken, async (req, res) => {
+    try {
+        const pin = await prisma.lyricPin.findUnique({ where: { id: parseInt(req.params.id) } });
+        if (!pin) return res.status(404).json({ error: 'Pin non trouvé.' });
+        if (pin.authorId !== req.user.userId) return res.status(403).json({ error: 'Interdit.' });
+        await prisma.lyricPin.delete({ where: { id: pin.id } });
+        res.json({ message: 'Pin supprimé.' });
+    } catch (err) {
+        console.error('Erreur lyric-pins DELETE:', err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// ───────────────────────────────────────────────────────────────────────────────
 
 // 4. Lancement du serveur (TOUJOURS À LA FIN)
 const PORT = process.env.PORT || 5001;

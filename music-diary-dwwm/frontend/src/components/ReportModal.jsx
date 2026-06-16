@@ -67,7 +67,7 @@ function ReportModal({ reportedType, reportedName, onSubmit, onClose }) {
 
     return (
         <div ref={backdropRef} className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div ref={modalRef} className="bg-[#181818] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4">
+            <div ref={modalRef} className="bg-[#1a1824] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4">
                 
                 {/* Close Button */}
                 <button 
@@ -112,7 +112,7 @@ function ReportModal({ reportedType, reportedName, onSubmit, onClose }) {
                                     className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition border flex items-center justify-between cursor-pointer ${
                                         selectedReason === reason
                                             ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-sm'
-                                            : 'bg-[#242424] border-zinc-800/40 text-zinc-300 hover:text-white hover:bg-zinc-800/60'
+                                            : 'bg-[#292738] border-zinc-800/40 text-zinc-300 hover:text-white hover:bg-zinc-800/60'
                                     }`}
                                 >
                                     <span>{reason}</span>
@@ -130,7 +130,7 @@ function ReportModal({ reportedType, reportedName, onSubmit, onClose }) {
                             onChange={(e) => setDetails(e.target.value)}
                             placeholder={selectedReason.includes("Autre") ? "Veuillez expliquer en détail..." : "Ajoutez des précisions complémentaires..."}
                             rows={3}
-                            className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded-xl text-xs text-white outline-none resize-none h-20 transition"
+                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded-xl text-xs text-white outline-none resize-none h-20 transition"
                             disabled={submitting}
                         />
                     </div>

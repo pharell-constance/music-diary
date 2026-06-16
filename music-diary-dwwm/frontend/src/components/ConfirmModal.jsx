@@ -98,7 +98,7 @@ function ConfirmModal({
         >
             <div 
                 ref={modalRef} 
-                className="bg-[#181818] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4"
+                className="bg-[#1a1824] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close Button */}

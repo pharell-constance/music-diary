@@ -2,45 +2,47 @@ import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Music, User, Disc, Settings, Flag } from 'lucide-react';
 
+function formatCount(n) {
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(n % 1_000_000_000 === 0 ? 0 : 1) + 'B';
+    if (n >= 1_000_000)     return (n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1) + 'M';
+    if (n >= 1_000)         return (n / 1_000).toFixed(n % 1_000 === 0 ? 0 : 1) + 'K';
+    return String(n);
+}
+
+
 function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEditClick, onFollowToggle, onReportUser, onOpenFollowModal }) {
     const heroRef = useRef(null);
 
     useLayoutEffect(() => {
         if (!heroRef.current || !profileUser) return;
         const ctx = gsap.context(() => {
-            gsap.from(heroRef.current.querySelector('.hero-avatar'), {
-                scale: 0.5,
-                opacity: 0,
-                duration: 0.7,
-                ease: 'back.out(1.7)',
-            });
-            gsap.from(heroRef.current.querySelectorAll('.hero-meta > *'), {
-                y: 24,
-                opacity: 0,
-                duration: 0.55,
-                stagger: 0.09,
-                ease: 'power3.out',
-                delay: 0.25,
-            });
-            gsap.from(heroRef.current.querySelectorAll('.hero-action > *'), {
-                y: 16,
-                opacity: 0,
-                duration: 0.45,
-                stagger: 0.08,
-                ease: 'power2.out',
-                delay: 0.5,
-            });
+            gsap.fromTo(
+                heroRef.current.querySelector('.hero-avatar'),
+                { scale: 0.5, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.7)', clearProps: 'all' }
+            );
+            gsap.fromTo(
+                heroRef.current.querySelectorAll('.hero-meta > *'),
+                { y: 24, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.55, stagger: 0.09, ease: 'power3.out', delay: 0.25, clearProps: 'all' }
+            );
+            gsap.fromTo(
+                heroRef.current.querySelectorAll('.hero-action > *'),
+                { y: 16, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.45, stagger: 0.08, ease: 'power2.out', delay: 0.5, clearProps: 'all' }
+            );
         }, heroRef);
         return () => ctx.revert();
     }, [profileUser]);
 
+
     return (
         <div
             ref={heroRef}
-            className={`p-8 pt-12 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-b ${connected ? 'from-emerald-950/60' : 'from-zinc-800/40'} to-[#121212] border-b border-zinc-800/40`}
+            className={`p-8 pt-12 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-b ${connected ? 'from-emerald-950/60' : 'from-zinc-800/40'} to-[#12101b] border-b border-zinc-800/40`}
         >
             {/* Grand Avatar circulaire */}
-            <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-black border-4 border-[#121212] transform hover:scale-105 transition-transform duration-300 flex-shrink-0 overflow-hidden">
+            <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-black border-4 border-[#12101b] transform hover:scale-105 transition-transform duration-300 flex-shrink-0 overflow-hidden">
                 {profileUser.avatar ? (
                     <img src={profileUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -66,7 +68,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                         onClick={() => onOpenFollowModal('followers')}
                         className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 outline-none flex items-center gap-1"
                     >
-                        <span className="text-white font-extrabold">{profileUser.followersCount ?? 0}</span>
+                        <span className="text-white font-extrabold">{formatCount(profileUser.followersCount ?? 0)}</span>
                         <span>{(profileUser.followersCount ?? 0) > 1 ? 'abonnés' : 'abonné'}</span>
                     </button>
                     <span className="text-zinc-700 font-normal">•</span>
@@ -74,7 +76,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                         onClick={() => onOpenFollowModal('following')}
                         className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 outline-none flex items-center gap-1"
                     >
-                        <span className="text-white font-extrabold">{profileUser.followingCount ?? 0}</span>
+                        <span className="text-white font-extrabold">{formatCount(profileUser.followingCount ?? 0)}</span>
                         <span>{(profileUser.followingCount ?? 0) > 1 ? 'abonnements' : 'abonnement'}</span>
                     </button>
                 </div>
@@ -109,7 +111,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 {isOwnProfile ? (
                     <button
                         onClick={onEditClick}
-                        className="flex items-center gap-2 bg-[#242424] hover:bg-[#2e2e2e] active:scale-95 text-white px-4 py-2 rounded-full border border-zinc-700/50 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
+                        className="flex items-center gap-2 bg-[#292738] hover:bg-[#2e2e2e] active:scale-95 text-white px-4 py-2 rounded-full border border-zinc-700/50 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
                     >
                         <Settings size={14} />
                         Modifier le profil

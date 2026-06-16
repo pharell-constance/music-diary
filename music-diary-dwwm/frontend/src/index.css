@@ -1,5 +1,40 @@
 @import "tailwindcss";
 
+@theme {
+  --color-emerald-50: var(--color-violet-50);
+  --color-emerald-100: var(--color-violet-100);
+  --color-emerald-200: var(--color-violet-200);
+  --color-emerald-300: var(--color-violet-300);
+  --color-emerald-400: var(--color-violet-400);
+  --color-emerald-500: var(--color-violet-500);
+  --color-emerald-600: var(--color-violet-600);
+  --color-emerald-700: var(--color-violet-700);
+  --color-emerald-800: var(--color-violet-800);
+  --color-emerald-900: var(--color-violet-900);
+  --color-emerald-950: var(--color-violet-950);
+
+  --color-green-50: var(--color-fuchsia-50);
+  --color-green-100: var(--color-fuchsia-100);
+  --color-green-200: var(--color-fuchsia-200);
+  --color-green-300: var(--color-fuchsia-300);
+  --color-green-400: var(--color-fuchsia-400);
+  --color-green-500: var(--color-fuchsia-500);
+  --color-green-600: var(--color-fuchsia-600);
+  --color-green-700: var(--color-fuchsia-700);
+  --color-green-800: var(--color-fuchsia-800);
+  --color-green-900: var(--color-fuchsia-900);
+  --color-green-950: var(--color-fuchsia-950);
+}
+
+html, body {
+  background-color: #080710 !important; /* Midnight purple-blue background */
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -29,10 +64,23 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #1ed760; /* Spotify green highlight */
+  background: #A78BFA; /* Spotify green highlight */
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 63, 70, 0.7) rgba(24, 24, 24, 0.5);
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
 }

@@ -97,7 +97,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-[#181818] border border-zinc-800 p-6 rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div className="bg-[#1a1824] border border-zinc-800 p-6 rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
                 
                 <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white transition cursor-pointer">
                     <X size={20} />
@@ -120,9 +120,9 @@ function ProfileEditModal({ user, onSave, onClose }) {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Image de profil (PFP) Upload */}
-                    <div className="flex flex-col items-center gap-3 mb-6 bg-[#242424]/40 p-4 rounded-lg border border-zinc-800/60">
+                    <div className="flex flex-col items-center gap-3 mb-6 bg-[#292738]/40 p-4 rounded-lg border border-zinc-800/60">
                         <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Photo de profil</label>
-                        <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-zinc-700 bg-[#121212] flex items-center justify-center group shadow-inner">
+                        <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-zinc-700 bg-[#12101b] flex items-center justify-center group shadow-inner">
                             {avatar ? (
                                 <img src={avatar} alt="Aperçu" className="w-full h-full object-cover" />
                             ) : (
@@ -159,7 +159,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                             value={pseudo}
                             onChange={(e) => setPseudo(e.target.value)}
                             placeholder="Votre pseudo"
-                            className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
+                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
                         />
                     </div>
 
@@ -171,7 +171,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Votre adresse email"
-                            className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
+                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
                         />
                     </div>
 
@@ -186,7 +186,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Laissez vide si inchangé"
-                                    className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
+                                    className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
                                 />
                             </div>
 
@@ -197,7 +197,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     placeholder="Confirmez le mot de passe"
-                                    className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
+                                    className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
                                 />
                             </div>
                         </div>
@@ -214,7 +214,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                         </button>
                         <button
                             type="submit"
-                            className="bg-[#1DB954] hover:bg-[#1ED760] disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-black py-2.5 px-6 rounded-full text-xs cursor-pointer transition shadow-lg"
+                            className="bg-[#8B5CF6] hover:bg-[#A78BFA] disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-black py-2.5 px-6 rounded-full text-xs cursor-pointer transition shadow-lg"
                             disabled={loading}
                         >
                             {loading ? "Enregistrement..." : "Enregistrer"}

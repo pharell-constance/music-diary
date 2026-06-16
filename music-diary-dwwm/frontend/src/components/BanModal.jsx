@@ -85,7 +85,7 @@ function BanModal({ userToBan, onConfirm, onClose }) {
         >
             <div 
                 ref={modalRef} 
-                className="bg-[#181818] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4"
+                className="bg-[#1a1824] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close Button */}
@@ -144,7 +144,7 @@ function BanModal({ userToBan, onConfirm, onClose }) {
                                     className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition border flex items-center justify-between cursor-pointer ${
                                         presetReason === preset
                                             ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-sm'
-                                             : 'bg-[#242424] border-zinc-800/40 text-zinc-300 hover:text-white hover:bg-[#2c2c2c]'
+                                             : 'bg-[#292738] border-zinc-800/40 text-zinc-300 hover:text-white hover:bg-[#2c2c2c]'
                                     }`}
                                 >
                                     <span>{preset}</span>
@@ -161,7 +161,7 @@ function BanModal({ userToBan, onConfirm, onClose }) {
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="Saisissez des précisions sur le bannissement..."
                             rows={3}
-                            className="w-full bg-[#242424] border border-transparent focus:border-zinc-500 p-3 rounded-xl text-xs text-white outline-none resize-none h-20 transition"
+                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded-xl text-xs text-white outline-none resize-none h-20 transition"
                             disabled={submitting}
                         />
                     </div>

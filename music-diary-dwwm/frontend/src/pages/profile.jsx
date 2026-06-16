@@ -14,6 +14,7 @@ import JournalTab from '../components/profile/JournalTab';
 import SpotifyTab from '../components/profile/SpotifyTab';
 import StatsTab from '../components/profile/StatsTab';
 import FollowModal from '../components/profile/FollowModal';
+import LyricWall from '../components/profile/LyricWall';
 
 function Profile() {
     const { userId } = useParams();
@@ -54,6 +55,10 @@ function Profile() {
     const [reviewError, setReviewError] = useState('');
     const [reviewSuccess, setReviewSuccess] = useState('');
     const [editingReviewId, setEditingReviewId] = useState(null);
+
+    // ── Lyric Pins
+    const [lyricPins, setLyricPins] = useState([]);
+    const [loadingPins, setLoadingPins] = useState(false);
 
     // ── UI state
     const [profileTab, setProfileTab] = useState('journal');
@@ -130,6 +135,18 @@ function Profile() {
         if (!connected) return;
         async function fetchSpotifyData() {
             try {
+                if (activeSubTab === 'tracks' && timeRange === 'week') {
+                    const weeklyUrl = isOwnProfile
+                        ? 'http://127.0.0.1:5001/api/spotify/me/weekly-top'
+                        : `http://127.0.0.1:5001/api/users/${userId}/spotify/weekly-top`;
+                    const res = await fetch(weeklyUrl, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    setTopTracks(Array.isArray(data) ? data : []);
+                    return;
+                }
+
                 const apiBase = isOwnProfile
                     ? 'http://127.0.0.1:5001/api/spotify/me'
                     : `http://127.0.0.1:5001/api/users/${userId}/spotify`;
@@ -143,12 +160,17 @@ function Profile() {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await res.json();
-                if (activeSubTab === 'artists') setTopArtists(data || []);
-                else if (activeSubTab === 'tracks') setTopTracks(data || []);
-                else if (activeSubTab === 'albums') setTopAlbums(data || []);
-                else if (activeSubTab === 'genres') setTopGenres(data || []);
+                const arr = Array.isArray(data) ? data : [];
+                if (activeSubTab === 'artists') setTopArtists(arr);
+                else if (activeSubTab === 'tracks') setTopTracks(arr);
+                else if (activeSubTab === 'albums') setTopAlbums(arr);
+                else if (activeSubTab === 'genres') setTopGenres(arr);
             } catch (err) {
                 console.error(err);
+                if (activeSubTab === 'artists') setTopArtists([]);
+                else if (activeSubTab === 'tracks') setTopTracks([]);
+                else if (activeSubTab === 'albums') setTopAlbums([]);
+                else if (activeSubTab === 'genres') setTopGenres([]);
             }
         }
         fetchSpotifyData();
@@ -168,6 +190,20 @@ function Profile() {
         }
         fetchReviews();
     }, [token, userId, isOwnProfile]);
+
+    useEffect(() => {
+        const profileId = userId || user?.id;
+        if (!profileId || !token) return;
+        setLoadingPins(true);
+        const url = isOwnProfile
+            ? 'http://127.0.0.1:5001/api/lyric-pins'
+            : `http://127.0.0.1:5001/api/users/${profileId}/lyric-pins`;
+        fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(data => setLyricPins(Array.isArray(data) ? data : []))
+            .catch(console.error)
+            .finally(() => setLoadingPins(false));
+    }, [token, userId, isOwnProfile, user]);
 
     // ─────────────────────────────────────────────────────────────────────────
     // Handlers
@@ -252,6 +288,22 @@ function Profile() {
             console.error(err);
         } finally {
             setLoadingFollowList(false);
+        }
+    }
+
+    async function handleAddPin(newPin) {
+        setLyricPins(prev => [newPin, ...prev]);
+    }
+
+    async function handleDeletePin(pinId) {
+        try {
+            await fetch(`http://127.0.0.1:5001/api/lyric-pins/${pinId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setLyricPins(prev => prev.filter(p => p.id !== pinId));
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -355,7 +407,7 @@ function Profile() {
                 handleLogout={handleLogout}
             />
 
-            <div className="flex-1 bg-[#121212] my-2 mr-2 rounded-lg overflow-y-auto flex flex-col">
+            <div className="flex-1 bg-[#12101b] my-2 mr-2 rounded-lg overflow-y-auto flex flex-col">
 
                 {loadingProfile ? (
                     <div className="p-8 text-center text-zinc-400">Chargement du profil...</div>
@@ -392,6 +444,16 @@ function Profile() {
                                     onDeleteReview={handleDeleteReview}
                                     onReportReview={handleReportReview}
                                     onSelectAlbum={setSelectedAlbum}
+                                />
+                            )}
+
+                            {profileTab === 'mur' && (
+                                <LyricWall
+                                    pins={lyricPins}
+                                    isOwnProfile={isOwnProfile}
+                                    onAdd={handleAddPin}
+                                    onDelete={handleDeletePin}
+                                    token={token}
                                 />
                             )}
 

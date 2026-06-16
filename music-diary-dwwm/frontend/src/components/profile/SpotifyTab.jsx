@@ -54,6 +54,7 @@ function SpotifyTab({
     ];
 
     const TIME_RANGES = [
+        ...(activeSubTab === 'tracks' ? [{ key: 'week', label: 'Cette Semaine' }] : []),
         { key: 'short_term', label: '4 Semaines' },
         { key: 'medium_term', label: '6 Mois' },
         { key: 'long_term', label: 'Plusieurs Années' },
@@ -69,11 +70,16 @@ function SpotifyTab({
                         {SUB_TABS.map(({ key, label }) => (
                             <button
                                 key={key}
-                                onClick={() => setActiveSubTab(key)}
+                                onClick={() => {
+                                    if (key !== 'tracks' && timeRange === 'week') {
+                                        setTimeRange('short_term');
+                                    }
+                                    setActiveSubTab(key);
+                                }}
                                 className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
                                     activeSubTab === key
                                         ? 'bg-white text-black shadow-md'
-                                        : 'bg-[#181818] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                        : 'bg-[#1a1824] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
                                 }`}
                             >
                                 {label}
@@ -82,7 +88,7 @@ function SpotifyTab({
                     </div>
 
                     {/* Time range selector */}
-                    <div className="bg-[#181818] p-1 rounded-full flex gap-1 border border-zinc-800/40 self-start lg:self-auto text-xs font-semibold">
+                    <div className="bg-[#1a1824] p-1 rounded-full flex gap-1 border border-zinc-800/40 self-start lg:self-auto text-xs font-semibold">
                         {TIME_RANGES.map(({ key, label }) => (
                             <button
                                 key={key}
@@ -104,14 +110,14 @@ function SpotifyTab({
                     {/* Artistes */}
                     {activeSubTab === 'artists' && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                            {topArtists.length === 0 ? (
+                            {!Array.isArray(topArtists) || topArtists.length === 0 ? (
                                 <p className="text-zinc-500 text-sm italic col-span-full">Aucun artiste trouvé.</p>
                             ) : (
                                 topArtists.map((artist, idx) => (
                                     <div
                                         key={artist.id}
                                         onClick={() => onArtistClick(artist.id)}
-                                        className="anim-card bg-[#181818] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#222222] transition duration-200"
+                                        className="anim-card bg-[#1a1824] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#262433] transition duration-200"
                                     >
                                         <div className="w-20 h-20 rounded-full overflow-hidden mb-3 bg-zinc-800 border border-zinc-800/60 shadow">
                                             {artist.images?.[0] ? (
@@ -131,14 +137,14 @@ function SpotifyTab({
                     {/* Sons */}
                     {activeSubTab === 'tracks' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {topTracks.length === 0 ? (
+                            {!Array.isArray(topTracks) || topTracks.length === 0 ? (
                                 <p className="text-zinc-500 text-sm italic col-span-full">Aucun titre trouvé.</p>
                             ) : (
                                 topTracks.map((track, idx) => (
                                     <div
                                         key={track.id}
                                         onClick={() => onSelectAlbum(track.album)}
-                                        className="anim-card bg-[#181818] border border-zinc-800/40 p-3.5 rounded-xl flex items-center gap-4 cursor-pointer hover:bg-[#222222] transition duration-150"
+                                        className="anim-card bg-[#1a1824] border border-zinc-800/40 p-3.5 rounded-xl flex items-center gap-4 cursor-pointer hover:bg-[#262433] transition duration-150"
                                     >
                                         <span className="text-xs font-black text-zinc-500 w-5 text-center">{idx + 1}</span>
                                         <div className="w-11 h-11 rounded bg-zinc-800 overflow-hidden shadow">
@@ -163,14 +169,14 @@ function SpotifyTab({
                     {/* Albums */}
                     {activeSubTab === 'albums' && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                            {topAlbums.length === 0 ? (
+                            {!Array.isArray(topAlbums) || topAlbums.length === 0 ? (
                                 <p className="text-zinc-500 text-sm italic col-span-full">Aucun album trouvé.</p>
                             ) : (
                                 topAlbums.map((album, idx) => (
                                     <div
                                         key={album.id}
                                         onClick={() => onSelectAlbum(album)}
-                                        className="anim-card bg-[#181818] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#222222] transition duration-200"
+                                        className="anim-card bg-[#1a1824] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#262433] transition duration-200"
                                     >
                                         <div className="w-20 h-20 rounded bg-zinc-800 overflow-hidden mb-3 shadow border border-zinc-800/60">
                                             {album.images?.[0] ? (
@@ -192,7 +198,7 @@ function SpotifyTab({
                     {/* Genres */}
                     {activeSubTab === 'genres' && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {topGenres.length === 0 ? (
+                            {!Array.isArray(topGenres) || topGenres.length === 0 ? (
                                 <p className="text-zinc-500 text-sm italic col-span-full">Aucun genre trouvé.</p>
                             ) : (
                                 topGenres.slice(0, 12).map(({ genre, count }, idx) => {
@@ -237,14 +243,14 @@ function SpotifyTab({
                     <Headphones className="text-emerald-400" size={24} />
                     <h2 className="text-2xl font-bold tracking-tight">Dernières écoutes</h2>
                 </div>
-                <div className="bg-[#181818]/30 rounded-xl border border-zinc-800/50 overflow-hidden divide-y divide-zinc-800/40">
+                <div className="bg-[#1a1824]/30 rounded-xl border border-zinc-800/50 overflow-hidden divide-y divide-zinc-800/40">
                     {recent.map((item, idx) => {
                         const track = item.track || item;
                         return (
                             <div
                                 key={idx}
                                 onClick={() => onSelectAlbum(track.album)}
-                                className="p-4 flex items-center justify-between gap-4 transition-colors duration-200 group cursor-pointer hover:bg-[#222222]/30"
+                                className="p-4 flex items-center justify-between gap-4 transition-colors duration-200 group cursor-pointer hover:bg-[#262433]/30"
                             >
                                 <div className="flex items-center gap-4 min-w-0 flex-1">
                                     <span className="text-sm font-bold text-zinc-500 w-6 text-center group-hover:text-emerald-400 transition-colors flex justify-center">

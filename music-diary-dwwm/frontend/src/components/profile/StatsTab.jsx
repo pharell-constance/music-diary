@@ -32,14 +32,14 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
             {/* Stats grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Total reviews */}
-                <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
+                <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Critiques totales</span>
                     <div className="text-4xl font-black text-white mt-4">{userStats.totalReviews}</div>
                     <p className="text-[10px] text-zinc-500 mt-2">Disques analysés dans Music Diary.</p>
                 </div>
 
                 {/* Average rating */}
-                <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
+                <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Note moyenne</span>
                     <div className="flex items-baseline gap-1 mt-4">
                         <span className="text-4xl font-black text-white">{userStats.averageRating}</span>
@@ -64,7 +64,7 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
                 </div>
 
                 {/* Favourite genre */}
-                <div className="bg-[#181818] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
+                <div className="bg-[#1a1824] border border-zinc-800/40 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Genre favori</span>
                     <div className="text-2xl font-black text-emerald-400 capitalize mt-4">
                         {userStats.topGenres?.[0]?.genre || "N/A"}
@@ -80,7 +80,7 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
             {/* Distribution Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                 {/* Genres chart */}
-                <div className="bg-[#181818]/60 border border-zinc-800/40 p-5 rounded-2xl space-y-4">
+                <div className="bg-[#1a1824]/60 border border-zinc-800/40 p-5 rounded-2xl space-y-4">
                     <h4 className="text-xs font-black uppercase tracking-widest text-zinc-400">Genres musicaux les plus notés</h4>
                     <div className="space-y-3.5">
                         {userStats.topGenres.length === 0 ? (
@@ -105,7 +105,7 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
                 </div>
 
                 {/* Decades chart */}
-                <div className="bg-[#181818]/60 border border-zinc-800/40 p-5 rounded-2xl space-y-4">
+                <div className="bg-[#1a1824]/60 border border-zinc-800/40 p-5 rounded-2xl space-y-4">
                     <h4 className="text-xs font-black uppercase tracking-widest text-zinc-400">Décennies préférées</h4>
                     <div className="space-y-3.5">
                         {userStats.decadeDistribution.length === 0 ? (
@@ -121,7 +121,7 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
                                             <span className="text-zinc-400 font-semibold">{item.count} {item.count > 1 ? 'albums' : 'album'}</span>
                                         </div>
                                         <div className="w-full bg-zinc-850 h-2 rounded-full overflow-hidden">
-                                            <div className="bg-[#1DB954] h-full rounded-full" style={{ width: `${pct}%` }} />
+                                            <div className="bg-[#8B5CF6] h-full rounded-full" style={{ width: `${pct}%` }} />
                                         </div>
                                     </div>
                                 );
@@ -141,7 +141,7 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
                         {userStats.highestRatedAlbums.map((album) => (
                             <div
                                 key={album.id}
-                                className="bg-[#181818] border border-zinc-800/40 p-3 rounded-xl flex flex-col items-center text-center shadow-sm hover:bg-[#222222] transition"
+                                className="bg-[#1a1824] border border-zinc-800/40 p-3 rounded-xl flex flex-col items-center text-center shadow-sm hover:bg-[#262433] transition"
                             >
                                 <div className="w-16 h-16 rounded overflow-hidden mb-2 shadow border border-zinc-800/60">
                                     <img src={album.albumCover} alt={album.albumName} className="w-full h-full object-cover" />

@@ -11,6 +11,16 @@ function ProfileTabs({ profileTab, setProfileTab, connected }) {
             >
                 Journal de Bord
             </button>
+            <button
+                onClick={() => setProfileTab('mur')}
+                className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
+                    profileTab === 'mur'
+                        ? 'border-emerald-500 text-white'
+                        : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+            >
+                Mur de Lyrics
+            </button>
             {connected && (
                 <button
                     onClick={() => setProfileTab('spotify')}
@@ -38,3 +48,4 @@ function ProfileTabs({ profileTab, setProfileTab, connected }) {
 }
 
 export default ProfileTabs;
+
