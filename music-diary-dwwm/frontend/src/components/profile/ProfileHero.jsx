@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { Music, User, Disc, Settings, Flag } from 'lucide-react';
+import { Music, User, Disc, Settings, Flag, Crown } from 'lucide-react';
 
 function formatCount(n) {
     if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(n % 1_000_000_000 === 0 ? 0 : 1) + 'B';
@@ -39,10 +39,10 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
     return (
         <div
             ref={heroRef}
-            className={`p-8 pt-12 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-b ${connected ? 'from-emerald-950/60' : 'from-zinc-800/40'} to-[#12101b] border-b border-zinc-800/40`}
+            className={`p-8 pt-12 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-b ${connected ? 'from-violet-950/20' : 'from-white/[0.01]'} to-transparent border-b border-white/[0.05]`}
         >
             {/* Grand Avatar circulaire */}
-            <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-black border-4 border-[#12101b] transform hover:scale-105 transition-transform duration-300 flex-shrink-0 overflow-hidden">
+            <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-white border-4 border-zinc-900 transform hover:scale-105 transition-transform duration-300 flex-shrink-0 overflow-hidden">
                 {profileUser.avatar ? (
                     <img src={profileUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -52,18 +52,24 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
 
             {/* Informations du Profil */}
             <div className="hero-meta flex-1 text-center md:text-left space-y-3">
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+                <span className="text-[10px] font-black uppercase tracking-widest text-violet-400 bg-violet-500/10 px-3 py-1.5 rounded-full border border-violet-500/20">
                     {isOwnProfile ? "Mon Profil" : `Profil de ${profileUser.pseudo}`}
                 </span>
-                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
-                    {profileUser.pseudo || "Utilisateur"}
+                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white flex flex-wrap items-center gap-x-3 gap-y-1 justify-center md:justify-start">
+                    <span>{profileUser.pseudo || "Utilisateur"}</span>
+                    {profileUser.role === 'OWNER' && (
+                        <span className="text-[10px] tracking-widest uppercase font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/40 text-yellow-400 shadow-[0_0_15px_rgba(245,158,11,0.15)] flex items-center gap-1 self-center">
+                            <Crown size={10} className="fill-yellow-450/20 text-yellow-400" />
+                            <span>Propriétaire</span>
+                        </span>
+                    )}
                 </h1>
-                <p className="text-[#A7A7A7] text-sm md:text-base font-medium flex items-center justify-center md:justify-start gap-2">
+                <p className="text-zinc-400 text-sm md:text-base font-medium flex items-center justify-center md:justify-start gap-2">
                     <span className="truncate">{profileUser.email}</span>
                     <span className="text-zinc-600">•</span>
                     <span>{connected ? "Compte Spotify associé" : "Spotify non connecté"}</span>
                 </p>
-                <div className="flex items-center justify-center md:justify-start gap-4 text-xs md:text-sm text-[#A7A7A7] font-semibold mt-1">
+                <div className="flex items-center justify-center md:justify-start gap-4 text-xs md:text-sm text-zinc-400 font-semibold mt-1">
                     <button
                         onClick={() => onOpenFollowModal('followers')}
                         className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 outline-none flex items-center gap-1"
@@ -82,8 +88,8 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 </div>
 
                 {livePlaying && livePlaying.isPlaying && (
-                    <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-3 rounded-xl max-w-sm mt-3 mx-auto md:mx-0 shadow-sm animate-pulse">
-                        <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 border border-emerald-500/30">
+                    <div className="flex items-center gap-3 bg-violet-500/10 border border-violet-500/20 text-violet-400 p-3 rounded-xl max-w-sm mt-3 mx-auto md:mx-0 shadow-sm animate-pulse">
+                        <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 border border-violet-500/30">
                             {livePlaying.albumCover ? (
                                 <img src={livePlaying.albumCover} alt={livePlaying.albumName} className="w-full h-full object-cover" />
                             ) : (
@@ -91,8 +97,8 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                             )}
                         </div>
                         <div className="text-left min-w-0">
-                            <div className="text-[9px] font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+                            <div className="text-[9px] font-black uppercase tracking-wider text-violet-400 flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-violet-500 inline-block animate-ping"></span>
                                 Écoute sur Spotify
                             </div>
                             <div className="font-bold text-xs text-white truncate mt-0.5" title={livePlaying.trackName}>
@@ -123,7 +129,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                             className={`px-5 py-2 rounded-full font-black text-xs transition-all duration-200 cursor-pointer shadow-md active:scale-95 border ${
                                 profileUser.isFollowing
                                     ? 'bg-transparent border-zinc-600 text-zinc-300 hover:text-red-400 hover:border-red-500/40'
-                                    : 'bg-emerald-500 text-black border-transparent hover:bg-emerald-400'
+                                    : 'bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white border-transparent'
                             }`}
                         >
                             {profileUser.isFollowing ? "Se désabonner" : "S'abonner"}
@@ -139,8 +145,8 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 )}
 
                 {connected && (
-                    <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/20 font-semibold text-xs">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <div className="flex items-center gap-2 bg-violet-500/10 text-violet-400 px-4 py-2 rounded-full border border-violet-500/20 font-semibold text-xs">
+                        <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
                         Synchronisé
                     </div>
                 )}

@@ -3,8 +3,9 @@ import gsap from 'gsap';
 import { Plus, X, Music, Search, Quote } from 'lucide-react';
 
 const PALETTES = [
-    { label: 'Vert', value: '#8B5CF6' },
-    { label: 'Violet', value: '#7C3AED' },
+    { label: 'Indigo', value: '#6366F1' },
+    { label: 'Violet', value: '#8B5CF6' },
+    { label: 'Fuchsia', value: '#D946EF' },
     { label: 'Rose', value: '#EC4899' },
     { label: 'Bleu', value: '#3B82F6' },
     { label: 'Orange', value: '#F97316' },
@@ -98,7 +99,7 @@ function AddPinForm({ onAdd, onClose, token }) {
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-zinc-800/80 flex-shrink-0">
                     <div className="flex items-center gap-2">
-                        <Quote size={18} className="text-emerald-400" />
+                        <Quote size={18} className="text-violet-400" />
                         <h3 className="text-base font-black text-white">Épingler des paroles</h3>
                     </div>
                     <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors cursor-pointer bg-transparent border-none">
@@ -116,7 +117,7 @@ function AddPinForm({ onAdd, onClose, token }) {
                                 onChange={e => setSearchQuery(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && handleSearch(e)}
                                 placeholder="Nom du morceau ou artiste…"
-                                className="flex-1 bg-zinc-900 border border-zinc-700/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500/50 transition"
+                                className="flex-1 bg-zinc-900 border border-zinc-700/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500/50 transition"
                             />
                             <button
                                 type="button"
@@ -150,7 +151,7 @@ function AddPinForm({ onAdd, onClose, token }) {
 
                     {/* Morceau sélectionné */}
                     {(trackName || artistName) && (
-                        <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+                        <div className="flex items-center gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl p-3">
                             {albumCover && <img src={albumCover} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />}
                             <div className="min-w-0">
                                 <div className="text-xs font-bold text-white truncate">{trackName}</div>
@@ -167,11 +168,11 @@ function AddPinForm({ onAdd, onClose, token }) {
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Titre</label>
-                                <input value={trackName} onChange={e => setTrackName(e.target.value)} placeholder="Titre du morceau" className="w-full bg-zinc-900 border border-zinc-700/50 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500/50 transition" />
+                                <input value={trackName} onChange={e => setTrackName(e.target.value)} placeholder="Titre du morceau" className="w-full bg-zinc-900 border border-zinc-700/50 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500/50 transition" />
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Artiste</label>
-                                <input value={artistName} onChange={e => setArtistName(e.target.value)} placeholder="Artiste" className="w-full bg-zinc-900 border border-zinc-700/50 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500/50 transition" />
+                                <input value={artistName} onChange={e => setArtistName(e.target.value)} placeholder="Artiste" className="w-full bg-zinc-900 border border-zinc-700/50 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500/50 transition" />
                             </div>
                         </div>
                     )}
@@ -184,7 +185,7 @@ function AddPinForm({ onAdd, onClose, token }) {
                             onChange={e => setLyric(e.target.value)}
                             placeholder="Colle ici les paroles qui te touchent…"
                             rows={4}
-                            className="w-full bg-zinc-900 border border-zinc-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none focus:border-emerald-500/50 transition resize-none leading-relaxed"
+                            className="w-full bg-zinc-900 border border-zinc-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500/50 transition resize-none leading-relaxed"
                         />
                     </div>
 
@@ -224,7 +225,7 @@ function AddPinForm({ onAdd, onClose, token }) {
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-black py-3 rounded-xl text-sm transition cursor-pointer active:scale-95"
+                        className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white font-extrabold py-3 rounded-xl text-sm transition cursor-pointer active:scale-95 shadow-[0_4px_15px_rgba(139,92,246,0.25)]"
                     >
                         {submitting ? 'Épinglage…' : 'Épingler sur le mur'}
                     </button>
@@ -302,7 +303,7 @@ function LyricWall({ pins, isOwnProfile, onAdd, onDelete, token }) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <Quote className="text-emerald-400" size={24} />
+                    <Quote className="text-violet-400" size={24} />
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Mur de Lyrics</h2>
                         <p className="text-xs text-zinc-500 mt-0.5">
@@ -313,7 +314,7 @@ function LyricWall({ pins, isOwnProfile, onAdd, onDelete, token }) {
                 {isOwnProfile && (
                     <button
                         onClick={() => setShowForm(true)}
-                        className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-black px-4 py-2 rounded-full text-xs transition cursor-pointer active:scale-95 shadow-lg shadow-emerald-500/20"
+                        className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white font-extrabold px-4 py-2 rounded-full text-xs transition cursor-pointer active:scale-95 shadow-lg shadow-violet-500/20"
                     >
                         <Plus size={14} />
                         Épingler des paroles
@@ -323,7 +324,7 @@ function LyricWall({ pins, isOwnProfile, onAdd, onDelete, token }) {
 
             {/* Mur masonry */}
             {pins.length === 0 ? (
-                <div className="text-center py-20 bg-[#1a1824]/40 rounded-2xl border border-zinc-800/40">
+                <div className="text-center py-20 bg-white/[0.01] backdrop-blur-md rounded-2xl border border-white/[0.05]">
                     <Quote size={40} className="text-zinc-700 mx-auto mb-4" />
                     <p className="text-zinc-500 text-sm font-medium">
                         {isOwnProfile
@@ -333,7 +334,7 @@ function LyricWall({ pins, isOwnProfile, onAdd, onDelete, token }) {
                     {isOwnProfile && (
                         <button
                             onClick={() => setShowForm(true)}
-                            className="mt-5 inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-black px-5 py-2.5 rounded-full text-xs transition cursor-pointer active:scale-95"
+                            className="mt-5 inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white font-extrabold px-5 py-2.5 rounded-full text-xs transition cursor-pointer active:scale-95 shadow-lg shadow-violet-500/25"
                         >
                             <Plus size={14} /> Commencer
                         </button>

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, MessageSquare, Headphones, Trash2, Shield, ShieldAlert, ArrowLeft, Disc, Flag, AlertTriangle, Ban, Unlock } from 'lucide-react';
+import { Users, MessageSquare, Headphones, Trash2, Shield, ShieldAlert, ArrowLeft, Disc, Flag, AlertTriangle, Ban, Unlock, Crown } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import gsap from 'gsap';
 import ConfirmModal from '../components/ConfirmModal';
@@ -18,7 +18,7 @@ function AdminDashboard() {
     const [usersList, setUsersList] = useState([]);
     const [reviewsList, setReviewsList] = useState([]);
     const [reportsList, setReportsList] = useState([]);
-    const [activeTab, setActiveTab] = useState('users'); // 'users', 'reviews', 'reports'
+    const [activeTab, setActiveTab] = useState('reports'); // 'reports', 'users', 'reviews'
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [actionMessage, setActionMessage] = useState('');
@@ -31,6 +31,15 @@ function AdminDashboard() {
     const [reviewSearch, setReviewSearch] = useState('');
     const [reportSearch, setReportSearch] = useState('');
 
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    // Reset pagination on filter or tab change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab, userSearch, reviewSearch, reportSearch]);
+
     // GSAP refs
     const headerRef = useRef(null);
     const statsGridRef = useRef(null);
@@ -39,7 +48,7 @@ function AdminDashboard() {
 
     // Verify admin access and fetch stats/data
     useEffect(() => {
-        if (!token || !user || user.role !== 'ADMIN') {
+        if (!token || !user || (user.role !== 'ADMIN' && user.role !== 'OWNER')) {
             navigate('/', { replace: true });
             return;
         }
@@ -482,6 +491,17 @@ function AdminDashboard() {
         return reasonMatch || reporterMatch || reviewMatch || userMatch;
     });
 
+    // Pagination slicing
+    const currentList = activeTab === 'users' 
+        ? filteredUsers 
+        : activeTab === 'reviews' 
+        ? filteredReviews 
+        : filteredReports;
+
+    const totalItems = currentList.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const paginatedList = currentList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
     return (
         <div className="flex h-screen bg-black text-white overflow-hidden font-sans">
             <Sidebar
@@ -668,7 +688,7 @@ function AdminDashboard() {
                                                     <td colSpan="7" className="py-8 text-center text-zinc-500 text-sm font-semibold">Aucun utilisateur trouvé.</td>
                                                 </tr>
                                             ) : (
-                                                filteredUsers.map((targetUser) => (
+                                                paginatedList.map((targetUser) => (
                                                     <tr key={targetUser.id} className="hover:bg-zinc-800/10 transition duration-150 text-sm font-medium">
                                                         <td className="py-3.5 px-6">
                                                             <div 
@@ -690,12 +710,15 @@ function AdminDashboard() {
                                                         </td>
                                                         <td className="py-3.5 px-6 text-zinc-400">{targetUser.email}</td>
                                                         <td className="py-3.5 px-6">
-                                                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
-                                                                targetUser.role === 'ADMIN'
+                                                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border inline-flex items-center gap-1 ${
+                                                                targetUser.role === 'OWNER'
+                                                                    ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20 shadow-[0_0_12px_rgba(250,204,21,0.1)]'
+                                                                    : targetUser.role === 'ADMIN'
                                                                     ? 'text-red-400 bg-red-500/10 border-red-500/20'
                                                                     : 'text-zinc-400 bg-zinc-500/10 border-zinc-500/20'
                                                             }`}>
-                                                                {targetUser.role}
+                                                                {targetUser.role === 'OWNER' && <Crown size={10} />}
+                                                                <span>{targetUser.role}</span>
                                                             </span>
                                                         </td>
                                                         <td className="py-3.5 px-6 text-center text-zinc-300 font-semibold">{targetUser._count?.reviews || 0}</td>
@@ -706,8 +729,9 @@ function AdminDashboard() {
                                                                         Banni
                                                                     </span>
                                                                 ) : targetUser.warningsCount > 0 ? (
-                                                                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                                                                        ⚠️ {targetUser.warningsCount} {targetUser.warningsCount > 1 ? 'Averts' : 'Avert'}
+                                                                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center gap-1">
+                                                                        <AlertTriangle size={10} className="text-amber-450" />
+                                                                        <span>{targetUser.warningsCount} {targetUser.warningsCount > 1 ? 'Averts' : 'Avert'}</span>
                                                                     </span>
                                                                 ) : (
                                                                     <span className="text-zinc-600 text-xs font-medium">-</span>
@@ -719,9 +743,9 @@ function AdminDashboard() {
                                                                 {/* Warn Button */}
                                                                 <button
                                                                     onClick={() => handleWarnUser(targetUser)}
-                                                                    disabled={targetUser.id === user.id || targetUser.isBanned}
+                                                                    disabled={targetUser.id === user.id || targetUser.isBanned || targetUser.role === 'OWNER'}
                                                                     className="bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-black p-2 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                                    title="Envoyer un avertissement"
+                                                                    title={targetUser.role === 'OWNER' ? "Propriétaire non modifiable" : "Envoyer un avertissement"}
                                                                 >
                                                                     <AlertTriangle size={14} />
                                                                 </button>
@@ -738,9 +762,9 @@ function AdminDashboard() {
                                                                 ) : (
                                                                     <button
                                                                         onClick={() => setBanModalUser(targetUser)}
-                                                                        disabled={targetUser.id === user.id}
+                                                                        disabled={targetUser.id === user.id || targetUser.role === 'OWNER'}
                                                                         className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white p-2 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                                        title="Bannir l'utilisateur"
+                                                                        title={targetUser.role === 'OWNER' ? "Propriétaire non modifiable" : "Bannir l'utilisateur"}
                                                                     >
                                                                         <Ban size={14} />
                                                                     </button>
@@ -748,21 +772,23 @@ function AdminDashboard() {
 
                                                                 <button
                                                                     onClick={() => handleToggleRole(targetUser)}
-                                                                    disabled={targetUser.id === user.id || targetUser.isBanned}
+                                                                    disabled={targetUser.id === user.id || targetUser.isBanned || targetUser.role === 'OWNER'}
                                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
                                                                         targetUser.role === 'ADMIN'
                                                                             ? 'bg-[#292738] hover:bg-zinc-800 text-zinc-300'
+                                                                            : targetUser.role === 'OWNER'
+                                                                            ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
                                                                             : 'bg-white hover:bg-zinc-200 text-black border border-zinc-700/30'
                                                                     }`}
-                                                                    title={targetUser.role === 'ADMIN' ? "Rendre utilisateur standard" : "Promouvoir administrateur"}
+                                                                    title={targetUser.role === 'OWNER' ? "Le rôle du Propriétaire ne peut pas être modifié" : targetUser.role === 'ADMIN' ? "Rendre utilisateur standard" : "Promouvoir administrateur"}
                                                                 >
-                                                                    {targetUser.role === 'ADMIN' ? 'USER' : 'ADMIN'}
+                                                                    {targetUser.role === 'OWNER' ? 'OWNER' : targetUser.role === 'ADMIN' ? 'USER' : 'ADMIN'}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleDeleteUser(targetUser)}
-                                                                    disabled={targetUser.id === user.id}
+                                                                    disabled={targetUser.id === user.id || targetUser.role === 'OWNER'}
                                                                     className="bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white p-2 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                                    title="Supprimer définitivement l'utilisateur"
+                                                                    title={targetUser.role === 'OWNER' ? "Impossible de supprimer le Propriétaire" : "Supprimer définitivement l'utilisateur"}
                                                                 >
                                                                     <Trash2 size={14} />
                                                                 </button>
@@ -796,7 +822,7 @@ function AdminDashboard() {
                                                     <td colSpan="6" className="py-8 text-center text-zinc-500 text-sm font-semibold">Aucune critique trouvée.</td>
                                                 </tr>
                                             ) : (
-                                                filteredReviews.map((rev) => (
+                                                paginatedList.map((rev) => (
                                                     <tr key={rev.id} className="hover:bg-zinc-800/10 transition duration-150 text-sm font-medium">
                                                         <td className="py-3.5 px-6 min-w-[200px]">
                                                             <div className="flex items-center gap-3">
@@ -873,7 +899,7 @@ function AdminDashboard() {
                                                     <td colSpan="5" className="py-8 text-center text-zinc-500 text-sm font-semibold">Aucun signalement en attente.</td>
                                                 </tr>
                                             ) : (
-                                                filteredReports.map((report) => (
+                                                paginatedList.map((report) => (
                                                     <tr key={report.id} className="hover:bg-zinc-800/10 transition duration-150 text-sm font-medium">
                                                         <td className="py-3.5 px-6 min-w-[200px]">
                                                             {report.reportedReview ? (
@@ -901,7 +927,10 @@ function AdminDashboard() {
                                                                                 {report.reportedReview.author.isBanned ? (
                                                                                     <span className="text-[8px] px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 font-bold uppercase">Banni</span>
                                                                                 ) : report.reportedReview.author.warningsCount > 0 ? (
-                                                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold">⚠️ {report.reportedReview.author.warningsCount} {report.reportedReview.author.warningsCount > 1 ? 'Averts' : 'Avert'}</span>
+                                                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold flex items-center gap-1">
+                                                                                        <AlertTriangle size={10} className="text-amber-450" />
+                                                                                        <span>{report.reportedReview.author.warningsCount} {report.reportedReview.author.warningsCount > 1 ? 'Averts' : 'Avert'}</span>
+                                                                                    </span>
                                                                                 ) : null}
                                                                             </div>
                                                                         )}
@@ -933,7 +962,10 @@ function AdminDashboard() {
                                                                                 {report.reportedUser.isBanned ? (
                                                                                     <span className="text-[8px] px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 font-bold uppercase">Banni</span>
                                                                                 ) : report.reportedUser.warningsCount > 0 ? (
-                                                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold">⚠️ {report.reportedUser.warningsCount} {report.reportedUser.warningsCount > 1 ? 'Averts' : 'Avert'}</span>
+                                                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold flex items-center gap-1">
+                                                                                        <AlertTriangle size={10} className="text-amber-450" />
+                                                                                        <span>{report.reportedUser.warningsCount} {report.reportedUser.warningsCount > 1 ? 'Averts' : 'Avert'}</span>
+                                                                                    </span>
                                                                                 ) : null}
                                                                             </div>
                                                                         )}
@@ -974,7 +1006,7 @@ function AdminDashboard() {
                                                                 {/* Quick Sanctions for reported author */}
                                                                 {(() => {
                                                                     const author = report.reportedReview ? report.reportedReview.author : report.reportedUser;
-                                                                    if (!author || author.id === user.id) return null;
+                                                                    if (!author || author.id === user.id || author.role === 'OWNER') return null;
                                                                     return (
                                                                         <div className="flex gap-1 border-r border-zinc-800/80 pr-2 mr-1">
                                                                             <button
@@ -1028,6 +1060,57 @@ function AdminDashboard() {
                                             )}
                                         </tbody>
                                     </table>
+                                </div>
+                            )}
+
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="flex items-center justify-between p-4 border-t border-zinc-850 bg-[#1a1824]/40 select-none">
+                                    <div className="text-xs text-zinc-500 font-semibold">
+                                        Affichage de <span className="text-zinc-300">{(currentPage - 1) * itemsPerPage + 1}</span> à <span className="text-zinc-300">{Math.min(currentPage * itemsPerPage, totalItems)}</span> sur <span className="text-zinc-300">{totalItems}</span> résultats
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                            disabled={currentPage === 1}
+                                            className="px-3 py-1.5 rounded-xl bg-[#292738] hover:bg-zinc-800 text-xs font-bold text-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition duration-150 cursor-pointer border border-zinc-700/20"
+                                        >
+                                            Précédent
+                                        </button>
+                                        
+                                        <div className="flex items-center gap-1.5">
+                                            {Array.from({ length: totalPages }).map((_, idx) => {
+                                                const pageNum = idx + 1;
+                                                if (totalPages > 5 && Math.abs(currentPage - pageNum) > 1 && pageNum !== 1 && pageNum !== totalPages) {
+                                                    if (pageNum === 2 || pageNum === totalPages - 1) {
+                                                        return <span key={pageNum} className="text-zinc-600 text-xs px-0.5">...</span>;
+                                                    }
+                                                    return null;
+                                                }
+                                                return (
+                                                    <button
+                                                        key={pageNum}
+                                                        onClick={() => setCurrentPage(pageNum)}
+                                                        className={`w-7 h-7 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                                                            currentPage === pageNum
+                                                                ? 'bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white shadow-md shadow-violet-500/10'
+                                                                : 'bg-[#292738]/50 hover:bg-zinc-800 text-zinc-400 hover:text-white'
+                                                        }`}
+                                                    >
+                                                        {pageNum}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <button
+                                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                            disabled={currentPage === totalPages}
+                                            className="px-3 py-1.5 rounded-xl bg-[#292738] hover:bg-zinc-800 text-xs font-bold text-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition duration-150 cursor-pointer border border-zinc-700/20"
+                                        >
+                                            Suivant
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 

@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { Music, Headphones, User } from 'lucide-react';
+import { Music, Headphones, User, Trophy } from 'lucide-react';
 
 const GRADIENTS = [
-    "from-emerald-600 to-teal-500",
+    "from-violet-600 to-fuchsia-500",
     "from-blue-600 to-cyan-500",
     "from-purple-600 to-indigo-500",
     "from-fuchsia-600 to-pink-500",
-    "from-violet-600 to-purple-500",
+    "from-violet-700 to-purple-600",
     "from-yellow-600 to-amber-500",
     "from-red-600 to-rose-500",
 ];
@@ -79,7 +79,7 @@ function SpotifyTab({
                                 className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
                                     activeSubTab === key
                                         ? 'bg-white text-black shadow-md'
-                                        : 'bg-[#1a1824] text-[#A7A7A7] hover:text-white hover:bg-zinc-800/40 border border-zinc-800/30'
+                                        : 'bg-white/[0.03] text-zinc-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.08]'
                                 }`}
                             >
                                 {label}
@@ -88,7 +88,7 @@ function SpotifyTab({
                     </div>
 
                     {/* Time range selector */}
-                    <div className="bg-[#1a1824] p-1 rounded-full flex gap-1 border border-zinc-800/40 self-start lg:self-auto text-xs font-semibold">
+                    <div className="bg-white/[0.03] p-1 rounded-full flex gap-1 border border-white/[0.08] self-start lg:self-auto text-xs font-semibold">
                         {TIME_RANGES.map(({ key, label }) => (
                             <button
                                 key={key}
@@ -117,7 +117,7 @@ function SpotifyTab({
                                     <div
                                         key={artist.id}
                                         onClick={() => onArtistClick(artist.id)}
-                                        className="anim-card bg-[#1a1824] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#262433] transition duration-200"
+                                        className="anim-card bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-white/[0.04] hover:border-violet-500/20 transition duration-200"
                                     >
                                         <div className="w-20 h-20 rounded-full overflow-hidden mb-3 bg-zinc-800 border border-zinc-800/60 shadow">
                                             {artist.images?.[0] ? (
@@ -144,7 +144,7 @@ function SpotifyTab({
                                     <div
                                         key={track.id}
                                         onClick={() => onSelectAlbum(track.album)}
-                                        className="anim-card bg-[#1a1824] border border-zinc-800/40 p-3.5 rounded-xl flex items-center gap-4 cursor-pointer hover:bg-[#262433] transition duration-150"
+                                        className="anim-card bg-white/[0.02] border border-white/[0.06] p-3.5 rounded-xl flex items-center gap-4 cursor-pointer hover:bg-white/[0.04] hover:border-violet-500/20 transition duration-150"
                                     >
                                         <span className="text-xs font-black text-zinc-500 w-5 text-center">{idx + 1}</span>
                                         <div className="w-11 h-11 rounded bg-zinc-800 overflow-hidden shadow">
@@ -176,7 +176,7 @@ function SpotifyTab({
                                     <div
                                         key={album.id}
                                         onClick={() => onSelectAlbum(album)}
-                                        className="anim-card bg-[#1a1824] border border-zinc-800/40 p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-[#262433] transition duration-200"
+                                        className="anim-card bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl flex flex-col items-center text-center cursor-pointer hover:bg-white/[0.04] hover:border-violet-500/20 transition duration-200"
                                     >
                                         <div className="w-20 h-20 rounded bg-zinc-800 overflow-hidden mb-3 shadow border border-zinc-800/60">
                                             {album.images?.[0] ? (
@@ -209,7 +209,11 @@ function SpotifyTab({
                                         : idx === 1
                                         ? "bg-zinc-400/25 border-zinc-400/40 text-zinc-300"
                                         : "bg-amber-600/25 border-amber-600/40 text-amber-500";
-                                    const badgeIcon = idx === 0 ? "🥇" : idx === 1 ? "🥈" : "🥉";
+                                    const badgeIcon = idx === 0
+                                        ? <Trophy size={10} className="text-yellow-400" />
+                                        : idx === 1
+                                        ? <Trophy size={10} className="text-zinc-300" />
+                                        : <Trophy size={10} className="text-amber-500" />;
                                     const gradient = GRADIENTS[idx % GRADIENTS.length];
 
                                     return (
@@ -240,20 +244,20 @@ function SpotifyTab({
             {/* Dernières Écoutes */}
             <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                    <Headphones className="text-emerald-400" size={24} />
+                    <Headphones className="text-violet-400" size={24} />
                     <h2 className="text-2xl font-bold tracking-tight">Dernières écoutes</h2>
                 </div>
-                <div className="bg-[#1a1824]/30 rounded-xl border border-zinc-800/50 overflow-hidden divide-y divide-zinc-800/40">
+                <div className="bg-white/[0.01] rounded-xl border border-white/[0.05] overflow-hidden divide-y divide-white/[0.04]">
                     {recent.map((item, idx) => {
                         const track = item.track || item;
                         return (
                             <div
                                 key={idx}
                                 onClick={() => onSelectAlbum(track.album)}
-                                className="p-4 flex items-center justify-between gap-4 transition-colors duration-200 group cursor-pointer hover:bg-[#262433]/30"
+                                className="p-4 flex items-center justify-between gap-4 transition-colors duration-200 group cursor-pointer hover:bg-white/[0.02]"
                             >
                                 <div className="flex items-center gap-4 min-w-0 flex-1">
-                                    <span className="text-sm font-bold text-zinc-500 w-6 text-center group-hover:text-emerald-400 transition-colors flex justify-center">
+                                    <span className="text-sm font-bold text-zinc-500 w-6 text-center group-hover:text-violet-400 transition-colors flex justify-center">
                                         {idx + 1}
                                     </span>
                                     <div className="w-12 h-12 rounded-md bg-zinc-800 overflow-hidden shadow-md flex-shrink-0 relative group-hover:scale-105 transition-transform duration-300">
@@ -264,7 +268,7 @@ function SpotifyTab({
                                         )}
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="font-bold text-sm text-white truncate group-hover:text-emerald-400 transition-colors duration-200">
+                                        <div className="font-bold text-sm text-white truncate group-hover:text-violet-400 transition-colors duration-200">
                                             {track.name}
                                         </div>
                                         <div className="text-xs text-zinc-400 truncate mt-0.5">

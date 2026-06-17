@@ -27,12 +27,38 @@
 }
 
 html, body {
-  background-color: #080710 !important; /* Midnight purple-blue background */
+  background-color: #07050f !important; /* Rich cosmic dark background */
   color: #ffffff;
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
+  position: relative;
+}
+
+/* Ambient Background Glows */
+body::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

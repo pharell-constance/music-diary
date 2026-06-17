@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Search, Music, Flame, Play, Pause, Clock } from 'lucide-react';
+import { Search, Music, Flame, Play, Pause, Clock, Trophy } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import ReviewCard from '../components/ReviewCard';
 import AlbumCard from '../components/AlbumCard';
@@ -265,7 +265,10 @@ function Home() {
     }
 
     return (
-        <div className="flex h-screen bg-black text-white overflow-hidden font-sans">
+        <div className="flex h-screen bg-[#07050f] text-white overflow-hidden font-sans relative">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none"></div>
             
             {/* Barre latérale */}
             <Sidebar 
@@ -276,7 +279,7 @@ function Home() {
             />
 
             {/* Zone centrale */}
-            <div className="flex-1 bg-[#12101b] my-2 mr-2 rounded-lg p-6 overflow-y-auto">
+            <div className="flex-1 bg-white/[0.01] backdrop-blur-xl border border-white/[0.05] my-2 mr-2 rounded-2xl p-6 overflow-y-auto relative z-10">
                 
                 {/* Vue Accueil */}
                 {currentTab === 'home' && (
@@ -292,7 +295,7 @@ function Home() {
                                 onClick={() => setHomeSubTab('my-journal')}
                                 className={`pb-2 text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                                     homeSubTab === 'my-journal'
-                                        ? 'border-emerald-500 text-white'
+                                        ? 'border-violet-500 text-white'
                                         : 'border-transparent text-zinc-400 hover:text-white'
                                 }`}
                             >
@@ -302,7 +305,7 @@ function Home() {
                                 onClick={() => setHomeSubTab('social-feed')}
                                 className={`pb-2 text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                                     homeSubTab === 'social-feed'
-                                        ? 'border-emerald-500 text-white'
+                                        ? 'border-violet-500 text-white'
                                         : 'border-transparent text-zinc-400 hover:text-white'
                                 }`}
                             >
@@ -312,7 +315,7 @@ function Home() {
                                 onClick={() => setHomeSubTab('trending')}
                                 className={`pb-2 text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                                     homeSubTab === 'trending'
-                                        ? 'border-emerald-500 text-white'
+                                        ? 'border-violet-500 text-white'
                                         : 'border-transparent text-zinc-400 hover:text-white'
                                 }`}
                             >
@@ -406,10 +409,16 @@ function Home() {
                                                 className="p-4 flex items-center gap-4 group hover:bg-[#262433]/50 transition-colors duration-150"
                                             >
                                                 {/* Rang */}
-                                                <span className={`text-xs font-black w-6 text-center flex-shrink-0 ${
-                                                    track.rank <= 3 ? 'text-emerald-400' : 'text-zinc-500'
-                                                }`}>
-                                                    {track.rank <= 3 ? ['🥇','🥈','🥉'][track.rank - 1] : track.rank}
+                                                <span className="text-xs font-black w-6 text-center flex-shrink-0 flex items-center justify-center">
+                                                    {track.rank === 1 ? (
+                                                        <Trophy size={16} className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />
+                                                    ) : track.rank === 2 ? (
+                                                        <Trophy size={16} className="text-zinc-300 drop-shadow-[0_0_8px_rgba(212,212,216,0.4)]" />
+                                                    ) : track.rank === 3 ? (
+                                                        <Trophy size={16} className="text-amber-600 drop-shadow-[0_0_8px_rgba(217,119,6,0.4)]" />
+                                                    ) : (
+                                                        <span className="text-zinc-500">{track.rank}</span>
+                                                    )}
                                                 </span>
 
                                                 {/* Cover + bouton play */}
@@ -431,10 +440,10 @@ function Home() {
 
                                                 {/* Infos */}
                                                 <div className="min-w-0 flex-1">
-                                                    <div className="font-bold text-sm text-white truncate group-hover:text-emerald-400 transition-colors">
+                                                    <div className="font-bold text-sm text-white truncate group-hover:text-violet-400 transition-colors">
                                                         {track.name}
                                                         {playingPreview === track.id && (
-                                                            <span className="ml-2 text-emerald-400 text-[10px] font-black animate-pulse">▶ EN COURS</span>
+                                                            <span className="ml-2 text-violet-400 text-[10px] font-black animate-pulse">▶ EN COURS</span>
                                                         )}
                                                     </div>
                                                     <div className="text-xs text-zinc-400 truncate mt-0.5">{track.artists}</div>
@@ -442,7 +451,7 @@ function Home() {
                                                     <div className="flex items-center gap-2 mt-1.5">
                                                         <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden max-w-[120px]">
                                                             <div
-                                                                className="h-full bg-emerald-500 rounded-full"
+                                                                className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"
                                                                 style={{ width: `${track.popularity}%` }}
                                                             />
                                                         </div>
@@ -551,16 +560,16 @@ function Home() {
                                         <div 
                                             key={art.id} 
                                             onClick={() => navigate(`/artist/${art.id}`)}
-                                            className="bg-zinc-900/40 hover:bg-zinc-800/60 border border-zinc-800/40 p-4 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl group cursor-pointer flex flex-col items-center text-center shadow-md"
+                                            className="bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-violet-500/20 p-4 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl group cursor-pointer flex flex-col items-center text-center shadow-md"
                                         >
-                                            <div className="w-24 h-24 rounded-full bg-zinc-800 shadow-lg flex items-center justify-center font-black text-2xl text-white border-2 border-zinc-800 group-hover:border-emerald-500/40 transition-colors duration-300 overflow-hidden mb-3">
+                                            <div className="w-24 h-24 rounded-full bg-zinc-800 shadow-lg flex items-center justify-center font-black text-2xl text-white border-2 border-zinc-800 group-hover:border-violet-500/40 transition-colors duration-300 overflow-hidden mb-3">
                                                 {art.images?.[0]?.url ? (
                                                     <img src={art.images[0].url} alt={art.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <Music size={32} className="text-zinc-500" />
                                                 )}
                                             </div>
-                                            <div className="text-sm font-bold text-white truncate w-full group-hover:text-emerald-400 transition-colors duration-300">
+                                            <div className="text-sm font-bold text-white truncate w-full group-hover:text-violet-400 transition-colors duration-300">
                                                 {art.name}
                                             </div>
                                             <div className="text-xs text-zinc-500 mt-1">
@@ -579,16 +588,16 @@ function Home() {
                                         <div 
                                             key={member.id} 
                                             onClick={() => navigate(`/profile/${member.id}`)}
-                                            className="bg-zinc-900/40 hover:bg-zinc-800/60 border border-zinc-800/40 p-4 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl group cursor-pointer flex flex-col items-center text-center shadow-md"
+                                            className="bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-violet-500/20 p-4 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl group cursor-pointer flex flex-col items-center text-center shadow-md"
                                         >
-                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg flex items-center justify-center font-black text-2xl text-black border-2 border-zinc-800 group-hover:border-emerald-500/40 transition-colors duration-300 overflow-hidden mb-3">
+                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-lg flex items-center justify-center font-black text-2xl text-white border-2 border-zinc-800 group-hover:border-violet-500/40 transition-colors duration-300 overflow-hidden mb-3">
                                                 {member.avatar ? (
                                                     <img src={member.avatar} alt={member.pseudo} className="w-full h-full object-cover" />
                                                 ) : (
                                                     member.pseudo.substring(0, 2).toUpperCase()
                                                 )}
                                             </div>
-                                            <div className="text-sm font-bold text-white truncate w-full group-hover:text-emerald-400 transition-colors duration-300">
+                                            <div className="text-sm font-bold text-white truncate w-full group-hover:text-violet-400 transition-colors duration-300">
                                                 {member.pseudo}
                                             </div>
                                             <div className="text-xs text-zinc-500 mt-1">

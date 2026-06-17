@@ -43,17 +43,17 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
         { key: 'profile', label: 'Mon Profil', icon: User, action: () => window.location.href = '/profile' },
     ];
 
-    if (user?.role === 'ADMIN') {
+    if (user?.role === 'ADMIN' || user?.role === 'OWNER') {
         navItems.push({ key: 'admin', label: 'Dashboard Admin', icon: Shield, action: () => window.location.href = '/admin' });
     }
 
     return (
-        <div className="w-64 bg-zinc-950/95 border-r border-zinc-900/80 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0">
+        <div className="w-64 bg-white/[0.01] backdrop-blur-xl border-r border-white/[0.05] p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40">
             <div className="space-y-8">
                 {/* Logo Section */}
                 <div className="flex items-center gap-3.5 px-2 group cursor-pointer animate-fade-in" onClick={() => window.location.href = '/'}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)] group-hover:scale-105 transition-all duration-300">
-                        <Disc className="text-black stroke-[2.5] animate-spin-slow" size={20} />
+                    <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.25)] group-hover:scale-105 transition-all duration-300">
+                        <Disc className="text-white stroke-[2.5] animate-spin-slow" size={20} />
                     </div>
                     <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">Music Diary</span>
                 </div>
@@ -68,15 +68,15 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                 onClick={action}
                                 className={`w-full group flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 cursor-pointer ${
                                     isActive
-                                        ? 'bg-zinc-900/60 text-white border border-zinc-800/40 shadow-md shadow-black/20'
-                                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/20 border border-transparent'
+                                        ? 'bg-white/[0.04] text-white border border-white/[0.07] shadow-md shadow-black/20'
+                                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] border border-transparent'
                                 }`}
                             >
                                 <Icon
                                     size={18}
                                     className={`transition-all duration-300 group-hover:scale-105 ${
                                         isActive 
-                                            ? 'text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.35)]' 
+                                            ? 'text-violet-400 drop-shadow-[0_0_6px_rgba(139,92,246,0.35)]' 
                                             : 'text-zinc-500 group-hover:text-zinc-300'
                                     }`}
                                 />
@@ -94,9 +94,9 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
 
             {/* Profile footer section */}
             {user && (
-                <div className="bg-gradient-to-b from-zinc-900/50 to-zinc-950/20 border border-zinc-900/80 p-4 rounded-2xl flex flex-col gap-3.5 shadow-lg shadow-black/25 backdrop-blur-md">
+                <div className="bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl flex flex-col gap-3.5 shadow-lg shadow-black/25 backdrop-blur-md">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/15 flex items-center justify-center font-black text-sm text-emerald-400 overflow-hidden shadow-inner flex-shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/10 border border-violet-500/15 flex items-center justify-center font-black text-sm text-violet-400 overflow-hidden shadow-inner flex-shrink-0">
                             {user.avatar ? (
                                 <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                             ) : (
@@ -106,7 +106,13 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                         <div className="min-w-0 flex-1">
                             <div className="font-extrabold text-sm text-zinc-100 truncate leading-snug">{user.pseudo}</div>
                             <div className="text-[9px] text-zinc-500 font-black uppercase tracking-wider mt-0.5">
-                                {user.role === 'ADMIN' ? 'Administrateur' : 'Membre'}
+                                {user.role === 'OWNER' ? (
+                                    <span className="bg-gradient-to-r from-yellow-400 to-amber-550 bg-clip-text text-transparent font-black drop-shadow-[0_0_8px_rgba(250,204,21,0.25)]">Propriétaire</span>
+                                ) : user.role === 'ADMIN' ? (
+                                    'Administrateur'
+                                ) : (
+                                    'Membre'
+                                )}
                             </div>
                         </div>
                     </div>

@@ -916,7 +916,8 @@ async function getUserReviews(req, res) {
                     select: {
                         id: true,
                         pseudo: true,
-                        avatar: true
+                        avatar: true,
+                        role: true
                     }
                 },
                 likes: true,
@@ -926,7 +927,8 @@ async function getUserReviews(req, res) {
                             select: {
                                 id: true,
                                 pseudo: true,
-                                avatar: true
+                                avatar: true,
+                                role: true
                             }
                         }
                     },
@@ -1178,6 +1180,7 @@ app.get('/api/users/:userId/profile', authenticateToken, async (req, res) => {
                 pseudo: true,
                 email: true,
                 avatar: true,
+                role: true,
                 spotifyAccessToken: true,
                 spotifyRefreshToken: true
             }
@@ -1368,7 +1371,8 @@ app.get('/api/users/:userId/reviews', authenticateToken, async (req, res) => {
                     select: {
                         id: true,
                         pseudo: true,
-                        avatar: true
+                        avatar: true,
+                        role: true
                     }
                 },
                 likes: true,
@@ -1378,7 +1382,8 @@ app.get('/api/users/:userId/reviews', authenticateToken, async (req, res) => {
                             select: {
                                 id: true,
                                 pseudo: true,
-                                avatar: true
+                                avatar: true,
+                                role: true
                             }
                         }
                     },
@@ -1584,7 +1589,7 @@ app.get('/api/users/:userId/spotify/top-genres', authenticateToken, async (req, 
 
 // --- MIDDLEWARE POUR LE RÔLE ADMIN ---
 function requireAdmin(req, res, next) {
-    if (!req.user || req.user.role !== 'ADMIN') {
+    if (!req.user || (req.user.role !== 'ADMIN' && req.user.role !== 'OWNER')) {
         return res.status(403).json({ error: "Accès refusé. Réservé aux administrateurs." });
     }
     next();
@@ -1665,6 +1670,10 @@ app.put('/api/admin/users/:id/role', authenticateToken, requireAdmin, async (req
             return res.status(404).json({ error: "Utilisateur introuvable" });
         }
 
+        if (user.role === 'OWNER') {
+            return res.status(403).json({ error: "Action impossible. Vous ne pouvez pas modifier le rôle du Propriétaire (Owner)." });
+        }
+
         const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
 
         const updated = await prisma.user.update({
@@ -1695,6 +1704,10 @@ app.delete('/api/admin/users/:id', authenticateToken, requireAdmin, async (req, 
 
         if (!user) {
             return res.status(404).json({ error: "Utilisateur introuvable" });
+        }
+
+        if (user.role === 'OWNER') {
+            return res.status(403).json({ error: "Action impossible. Vous ne pouvez pas supprimer le compte du Propriétaire (Owner)." });
         }
 
         // Suppression des relations manuellement pour éviter les conflits de clés étrangères
@@ -1901,6 +1914,10 @@ app.put('/api/admin/users/:id/warn', authenticateToken, requireAdmin, async (req
             return res.status(404).json({ error: "Utilisateur introuvable" });
         }
 
+        if (user.role === 'OWNER') {
+            return res.status(403).json({ error: "Action impossible. Vous ne pouvez pas envoyer d'avertissement au Propriétaire (Owner)." });
+        }
+
         const updated = await prisma.user.update({
             where: { id: targetUserId },
             data: { warningsCount: { increment: 1 } }
@@ -1948,6 +1965,10 @@ app.put('/api/admin/users/:id/ban', authenticateToken, requireAdmin, async (req,
         const user = await prisma.user.findUnique({ where: { id: targetUserId } });
         if (!user) {
             return res.status(404).json({ error: "Utilisateur introuvable" });
+        }
+
+        if (user.role === 'OWNER') {
+            return res.status(403).json({ error: "Action impossible. Vous ne pouvez pas bannir le Propriétaire (Owner)." });
         }
 
         const updated = await prisma.user.update({
@@ -2131,7 +2152,8 @@ app.get('/api/social/feed', authenticateToken, async (req, res) => {
                     select: {
                         id: true,
                         pseudo: true,
-                        avatar: true
+                        avatar: true,
+                        role: true
                     }
                 },
                 likes: true,
@@ -2141,7 +2163,8 @@ app.get('/api/social/feed', authenticateToken, async (req, res) => {
                             select: {
                                 id: true,
                                 pseudo: true,
-                                avatar: true
+                                avatar: true,
+                                role: true
                             }
                         }
                     },
@@ -2229,7 +2252,8 @@ app.post('/api/reviews/:reviewId/comments', authenticateToken, async (req, res) 
                     select: {
                         id: true,
                         pseudo: true,
-                        avatar: true
+                        avatar: true,
+                        role: true
                     }
                 }
             }
@@ -2253,7 +2277,8 @@ app.get('/api/reviews/:reviewId/comments', authenticateToken, async (req, res) =
                     select: {
                         id: true,
                         pseudo: true,
-                        avatar: true
+                        avatar: true,
+                        role: true
                     }
                 }
             },
@@ -2275,7 +2300,7 @@ app.delete('/api/comments/:commentId', authenticateToken, async (req, res) => {
         if (!comment) return res.status(404).json({ error: "Commentaire introuvable" });
 
         const currentUser = await prisma.user.findUnique({ where: { id: req.user.userId } });
-        if (comment.userId !== req.user.userId && currentUser.role !== 'ADMIN') {
+        if (comment.userId !== req.user.userId && currentUser.role !== 'ADMIN' && currentUser.role !== 'OWNER') {
             return res.status(403).json({ error: "Accès refusé : vous n'avez pas l'autorisation de supprimer ce commentaire." });
         }
 
@@ -2459,40 +2484,104 @@ app.get('/api/users/:userId/stats', authenticateToken, async (req, res) => {
 app.get('/api/spotify/trending', async (req, res) => {
     try {
         const limit = Math.min(parseInt(req.query.limit) || 20, 50);
-        const token = await getSpotifyToken(); // client credentials
-
-        const currentYear = new Date().getFullYear();
-        const searchRes = await fetch(
-            `https://api.spotify.com/v1/search?q=year:${currentYear-1}-${currentYear}&type=track&limit=${limit}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        if (!searchRes.ok) {
-            const err = await searchRes.text();
-            console.error('Spotify trending search error:', err);
-            return res.status(502).json({ error: 'Impossible de récupérer les tendances Spotify.' });
+        
+        // 1. Fetch public charts from Spotify Charts Service
+        const chartsRes = await fetch('https://charts-spotify-com-service.spotify.com/public/v0/charts');
+        if (!chartsRes.ok) {
+            throw new Error(`Failed to fetch public charts: ${chartsRes.status}`);
         }
-
-        const data = await searchRes.json();
-        const tracks = (data.tracks?.items || [])
-            .map((track, idx) => ({
-                rank: idx + 1,
-                id: track.id,
-                name: track.name,
-                artists: track.artists?.map(a => a.name).join(', '),
-                albumName: track.album?.name,
-                albumCover: track.album?.images?.[0]?.url || null,
-                albumId: track.album?.id,
-                popularity: track.popularity,
-                previewUrl: track.preview_url,
-                durationMs: track.duration_ms,
-            }))
-            .filter(t => t.id);
-
+        
+        const chartsData = await chartsRes.json();
+        const responseList = chartsData.chartEntryViewResponses || [];
+        
+        // Find the Global Top Weekly Songs chart
+        const chartResponse = responseList.find(c => 
+            c.displayChart?.chartMetadata?.alias === 'REGIONAL_GLOBAL_WEEKLY'
+        ) || responseList[0];
+        
+        if (!chartResponse) {
+            throw new Error("No chart found in Spotify charts response");
+        }
+        
+        const entries = chartResponse.entries || [];
+        const tracksToFetch = entries.slice(0, limit);
+        
+        const tracks = tracksToFetch.map((entry, idx) => {
+            const trackMetadata = entry.trackMetadata || {};
+            const uri = trackMetadata.trackUri || '';
+            const id = uri.split(':').pop() || `track-${idx}`;
+            
+            // Pseudo-durations: between 2m30s (150s) and 4m00s (240s) based on rank/index
+            const pseudoDurationMs = (150 + (idx * 7) % 91) * 1000;
+            
+            // Popularity: decaying from 99% to 50% based on rank/index
+            const popularity = Math.max(50, 99 - idx);
+            
+            return {
+                rank: entry.chartEntryData?.currentRank || (idx + 1),
+                id: id,
+                name: trackMetadata.trackName || 'Inconnu',
+                artists: trackMetadata.artists?.map(a => a.name).join(', ') || 'Artiste Inconnu',
+                albumName: 'Top Global',
+                albumCover: trackMetadata.displayImageUri || null,
+                albumId: '',
+                popularity: popularity,
+                previewUrl: null, // Previews are deprecated/restricted by Spotify API anyway
+                durationMs: pseudoDurationMs
+            };
+        });
+        
         res.json(tracks);
     } catch (err) {
         console.error('Erreur trending:', err);
-        res.status(500).json({ error: 'Erreur serveur' });
+        // Fallback to the search method if the charts service is unavailable
+        try {
+            const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+            const token = await getSpotifyToken();
+            const currentYear = new Date().getFullYear();
+            const chunkSize = 10;
+            const numRequests = Math.ceil(limit / chunkSize);
+            
+            const fetchPromises = [];
+            for (let i = 0; i < numRequests; i++) {
+                const offset = i * chunkSize;
+                const size = Math.min(chunkSize, limit - offset);
+                fetchPromises.push(
+                    fetch(
+                        `https://api.spotify.com/v1/search?q=year:${currentYear-1}-${currentYear}&type=track&limit=${size}&offset=${offset}`,
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    ).then(async (searchRes) => {
+                        if (!searchRes.ok) return [];
+                        const data = await searchRes.json();
+                        return data.tracks?.items || [];
+                    })
+                );
+            }
+            
+            const resultsArray = await Promise.all(fetchPromises);
+            const allTracks = resultsArray.flat();
+            
+            const fallbackTracks = allTracks
+                .map((track, idx) => ({
+                    rank: idx + 1,
+                    id: track.id,
+                    name: track.name,
+                    artists: track.artists?.map(a => a.name).join(', '),
+                    albumName: track.album?.name || 'Album',
+                    albumCover: track.album?.images?.[0]?.url || null,
+                    albumId: track.album?.id,
+                    popularity: track.popularity !== undefined ? track.popularity : Math.max(50, 95 - idx),
+                    previewUrl: track.preview_url || null,
+                    durationMs: track.duration_ms || 180000,
+                }))
+                .filter(t => t.id)
+                .slice(0, limit);
+                
+            res.json(fallbackTracks);
+        } catch (fallbackErr) {
+            console.error('Erreur fallback trending:', fallbackErr);
+            res.status(500).json({ error: 'Erreur serveur' });
+        }
     }
 });
 

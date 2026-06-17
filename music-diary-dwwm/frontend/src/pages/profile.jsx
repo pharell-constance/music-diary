@@ -398,7 +398,10 @@ function Profile() {
     // ─────────────────────────────────────────────────────────────────────────
 
     return (
-        <div className="flex h-screen bg-black text-white overflow-hidden font-sans">
+        <div className="flex h-screen bg-[#07050f] text-white overflow-hidden font-sans relative">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
             <Sidebar
                 user={user}
@@ -407,7 +410,7 @@ function Profile() {
                 handleLogout={handleLogout}
             />
 
-            <div className="flex-1 bg-[#12101b] my-2 mr-2 rounded-lg overflow-y-auto flex flex-col">
+            <div className="flex-1 bg-white/[0.01] backdrop-blur-xl border border-white/[0.05] my-2 mr-2 rounded-2xl overflow-y-auto flex flex-col relative z-10">
 
                 {loadingProfile ? (
                     <div className="p-8 text-center text-zinc-400">Chargement du profil...</div>

@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react';
+import { Star, Sparkles } from 'lucide-react';
 
 function StatsTab({ userStats, loadingStats, onShowWrapped }) {
     if (loadingStats) {
@@ -15,7 +15,8 @@ function StatsTab({ userStats, loadingStats, onShowWrapped }) {
             <div className="bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-transparent p-6 rounded-2xl border border-emerald-500/20 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg">
                 <div className="space-y-1">
                     <h3 className="text-lg font-black text-white flex items-center gap-2">
-                        🎬 Music Wrapped 2026
+                        <Sparkles className="text-emerald-400 animate-pulse" size={20} />
+                        <span>Music Wrapped 2026</span>
                     </h3>
                     <p className="text-xs text-zinc-400 leading-relaxed max-w-md">
                         Visualisez votre rétrospective musicale sous la forme d'une Story animée et interactive basée sur vos critiques rédigées.

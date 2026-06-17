@@ -5,7 +5,7 @@ function ProfileTabs({ profileTab, setProfileTab, connected }) {
                 onClick={() => setProfileTab('journal')}
                 className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
                     profileTab === 'journal'
-                        ? 'border-emerald-500 text-white'
+                        ? 'border-violet-500 text-white'
                         : 'border-transparent text-zinc-400 hover:text-white'
                 }`}
             >
@@ -15,7 +15,7 @@ function ProfileTabs({ profileTab, setProfileTab, connected }) {
                 onClick={() => setProfileTab('mur')}
                 className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
                     profileTab === 'mur'
-                        ? 'border-emerald-500 text-white'
+                        ? 'border-violet-500 text-white'
                         : 'border-transparent text-zinc-400 hover:text-white'
                 }`}
             >
@@ -26,7 +26,7 @@ function ProfileTabs({ profileTab, setProfileTab, connected }) {
                     onClick={() => setProfileTab('spotify')}
                     className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
                         profileTab === 'spotify'
-                            ? 'border-emerald-500 text-white'
+                            ? 'border-violet-500 text-white'
                             : 'border-transparent text-zinc-400 hover:text-white'
                     }`}
                 >
@@ -37,7 +37,7 @@ function ProfileTabs({ profileTab, setProfileTab, connected }) {
                 onClick={() => setProfileTab('stats')}
                 className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
                     profileTab === 'stats'
-                        ? 'border-emerald-500 text-white'
+                        ? 'border-violet-500 text-white'
                         : 'border-transparent text-zinc-400 hover:text-white'
                 }`}
             >
