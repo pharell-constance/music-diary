@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import Lenis from 'lenis';
+import gsap from 'gsap';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -37,6 +40,24 @@ const AdminRoute = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => {
+    // Initialisation de Lenis pour un smooth scroll performant
+    const lenis = new Lenis();
+
+    // Synchronisation de Lenis avec le ticker de GSAP
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    // Désactiver l'ajustement du lag de GSAP pour une meilleure fluidité avec Lenis
+    gsap.ticker.lagSmoothing(0);
+
+    // Nettoyage à la destruction du composant
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white font-sans">
       <BrowserRouter>

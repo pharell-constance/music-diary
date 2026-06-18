@@ -135,7 +135,7 @@ function ArtistPage() {
     const popDetails = artist ? getPopDetails(artist.popularity) : null;
 
     return (
-        <div className="flex h-screen bg-black text-white overflow-hidden font-sans">
+        <div className="flex min-h-screen bg-black text-white font-sans">
             <Sidebar
                 user={user}
                 currentTab="profile"
@@ -143,7 +143,7 @@ function ArtistPage() {
                 handleLogout={() => { localStorage.clear(); navigate('/login'); }}
             />
 
-            <div className="flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg overflow-y-auto no-scrollbar flex flex-col pb-24 md:pb-0">
+            <div className="flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg no-scrollbar flex flex-col pb-24 md:pb-0">
 
                 {/* Loading */}
                 {loading && (

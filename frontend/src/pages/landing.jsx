@@ -5,7 +5,7 @@ function LandingPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="h-screen overflow-y-auto bg-[#07050f] text-white font-sans overflow-x-hidden relative flex flex-col justify-between select-none">
+        <div className="min-h-screen bg-[#07050f] text-white font-sans overflow-x-hidden relative flex flex-col justify-between select-none">
             {/* Background glowing blobs */}
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/5 rounded-full blur-[130px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-fuchsia-600/5 rounded-full blur-[130px] pointer-events-none"></div>

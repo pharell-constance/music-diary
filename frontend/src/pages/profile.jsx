@@ -14,7 +14,7 @@ function Profile() {
     const profile = useProfileData();
 
     return (
-        <div className="flex h-screen bg-[#07050f] text-white overflow-hidden font-sans relative">
+        <div className="flex min-h-screen bg-[#07050f] text-white font-sans relative">
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
@@ -25,7 +25,7 @@ function Profile() {
                 handleLogout={profile.handleLogout}
             />
 
-            <div className="flex-1 bg-white/[0.01] backdrop-blur-xl border-x-0 border-y border-white/[0.05] md:border md:border-white/[0.05] md:my-2 md:mr-2 md:rounded-2xl overflow-y-auto flex flex-col relative z-10 pb-24 md:pb-0">
+            <div className="flex-1 bg-white/[0.01] backdrop-blur-xl border-x-0 border-y border-white/[0.05] md:border md:border-white/[0.05] md:my-2 md:mr-2 md:rounded-2xl flex flex-col relative z-10 pb-24 md:pb-0">
                 {profile.loadingProfile ? (
                     <div className="p-8 text-center text-zinc-400">Chargement du profil...</div>
                 ) : !profile.profileUser ? (

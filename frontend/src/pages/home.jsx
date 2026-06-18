@@ -19,7 +19,7 @@ function Home() {
     }
 
     return (
-        <div className="flex h-screen bg-black text-white overflow-hidden font-sans">
+        <div className="flex min-h-screen bg-black text-white font-sans">
             <Sidebar
                 user={home.user}
                 currentTab={home.currentTab}
@@ -27,7 +27,7 @@ function Home() {
                 handleLogout={() => { localStorage.clear(); navigate('/login'); }}
             />
 
-            <div className="flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg overflow-y-auto no-scrollbar flex flex-col p-4 md:p-8 pb-24 md:pb-8">
+            <div className="flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg no-scrollbar flex flex-col p-4 md:p-8 pb-24 md:pb-8">
                 {/* Vue Accueil / Journal */}
                 {home.currentTab === 'home' && (
                     <HomeJournalTab home={home} />
