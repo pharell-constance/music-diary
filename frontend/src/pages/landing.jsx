@@ -1,11 +1,67 @@
 import { useNavigate } from 'react-router-dom';
+import { useRef, useLayoutEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Disc, Sparkles, Quote, Radio, Users, Star, Heart, ArrowRight } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 function LandingPage() {
     const navigate = useNavigate();
+    const containerRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            // Animate hero text and cards on load
+            gsap.fromTo('.hero-anim', 
+                { y: 50, opacity: 0 }, 
+                { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
+            );
+
+            // Animate the floating cards in hero
+            gsap.to('.floating-card-1', {
+                y: -15, rotation: -5, duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut'
+            });
+            gsap.to('.floating-card-2', {
+                y: 15, rotation: 8, duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1
+            });
+
+            // Scroll animations for features
+            gsap.fromTo('.feature-card', 
+                { y: 100, opacity: 0, scale: 0.9 },
+                {
+                    y: 0, opacity: 1, scale: 1,
+                    duration: 0.8,
+                    stagger: 0.2,
+                    ease: 'back.out(1.2)',
+                    scrollTrigger: {
+                        trigger: '.features-section',
+                        start: 'top 75%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+
+            // Scroll animation for the bottom CTA
+            gsap.fromTo('.cta-section',
+                { scale: 0.9, opacity: 0, rotationX: 15 },
+                {
+                    scale: 1, opacity: 1, rotationX: 0,
+                    duration: 1, ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: '.cta-section',
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
 
     return (
-        <div className="min-h-screen bg-[#07050f] text-white font-sans overflow-x-hidden relative flex flex-col justify-between select-none">
+        <div ref={containerRef} className="min-h-screen bg-[#07050f] text-white font-sans overflow-x-hidden relative flex flex-col justify-between select-none">
             {/* Background glowing blobs */}
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/5 rounded-full blur-[130px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-fuchsia-600/5 rounded-full blur-[130px] pointer-events-none"></div>
@@ -44,21 +100,21 @@ function LandingPage() {
                 <section className="max-w-7xl mx-auto px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-20">
                     <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
                         {/* Sticker badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-white rounded-full bg-violet-500/10 text-white text-xs font-mouse-memoirs uppercase tracking-widest rotate-[-3deg] shadow-[3px_3px_0px_rgba(255,255,255,0.15)]">
+                        <div className="hero-anim inline-flex items-center gap-2 px-4 py-2 border-2 border-white rounded-full bg-violet-500/10 text-white text-xs font-mouse-memoirs uppercase tracking-widest rotate-[-3deg] shadow-[3px_3px_0px_rgba(255,255,255,0.15)]">
                             <Sparkles size={12} className="text-violet-400 animate-pulse" /> Votre vie en musique
                         </div>
                         
                         {/* Outlined bubbly title */}
-                        <h1 className="text-5xl sm:text-6xl md:text-8xl font-mouse-memoirs uppercase tracking-wide leading-[0.85] text-white text-stroke-dark">
+                        <h1 className="hero-anim text-5xl sm:text-6xl md:text-8xl font-mouse-memoirs uppercase tracking-wide leading-[0.85] text-white text-stroke-dark">
                             Le journal de bord<br/>
                             de votre <span className="font-modak text-violet-500 text-stroke-dark text-6xl sm:text-7xl md:text-9xl rotate-[2deg] inline-block hover:scale-105 hover:text-fuchsia-500 transition-all duration-300">voyage musical</span>.
                         </h1>
 
-                        <p className="text-zinc-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium pt-2">
+                        <p className="hero-anim text-zinc-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium pt-2">
                             Notez vos albums favoris, créez votre mur de paroles personnalisées, connectez votre compte Spotify pour générer vos statistiques personnelles et suivez l'actualité musicale de vos amis.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5 pt-4">
+                        <div className="hero-anim flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5 pt-4">
                             <button
                                 onClick={() => navigate('/register')}
                                 className="w-full sm:w-auto px-8 py-4 neobrutal-btn rounded-full bg-violet-600 text-white font-modak uppercase tracking-wider flex items-center justify-center gap-2 shadow-[4px_4px_0px_#fff] hover:shadow-[6px_6px_0px_#fff] text-lg hover:bg-violet-500"
@@ -79,7 +135,7 @@ function LandingPage() {
                         <div className="absolute w-72 h-72 bg-violet-500/5 rounded-full blur-[80px] pointer-events-none"></div>
 
                         {/* Card 1: Review Card Mockup */}
-                        <div className="absolute top-6 left-4 md:left-10 w-[280px] sm:w-[320px] neobrutal-card p-5 transform -rotate-3 hover:-rotate-1 duration-300">
+                        <div className="floating-card-1 hero-anim absolute top-6 left-4 md:left-10 w-[280px] sm:w-[320px] neobrutal-card p-5 transform -rotate-3 hover:-rotate-1 duration-300">
                             <div className="flex gap-4">
                                 <div className="w-16 h-16 rounded-lg bg-zinc-800 overflow-hidden shadow-md border border-zinc-800/60 flex-shrink-0 relative">
                                     <img src="https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937" alt="Random Access Memories" className="w-full h-full object-cover" />
@@ -109,7 +165,7 @@ function LandingPage() {
                         </div>
 
                         {/* Card 2: Lyric Pin Mockup */}
-                        <div className="absolute bottom-6 right-4 md:right-10 w-[240px] bg-gradient-to-tr from-violet-600/90 to-fuchsia-500/85 p-5 rounded-2xl transform rotate-6 hover:rotate-3 transition-all duration-300 border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] text-white">
+                        <div className="floating-card-2 hero-anim absolute bottom-6 right-4 md:right-10 w-[240px] bg-gradient-to-tr from-violet-600/90 to-fuchsia-500/85 p-5 rounded-2xl transform rotate-6 hover:rotate-3 transition-all duration-300 border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] text-white">
                             <Quote size={20} className="text-white/40 mb-2.5" />
                             <p className="font-black text-sm leading-snug tracking-tight">
                                 "We've come too far to give up who we are. So let's raise the bar..."
@@ -131,7 +187,7 @@ function LandingPage() {
 
                 {/* Features Section wrapped in a Charcoal dark container */}
                 <div className="bg-[#121214] py-16 md:py-24 relative z-10">
-                    <section className="max-w-7xl mx-auto px-6 space-y-16">
+                    <section className="features-section max-w-7xl mx-auto px-6 space-y-16">
                         <div className="text-center space-y-4">
                             <p className="font-modak text-stroke-dark text-fuchsia-500 text-2xl uppercase tracking-wider rotate-[-2deg] inline-block">FONCTIONNALITÉS</p>
                             <h2 className="text-4xl sm:text-6xl font-mouse-memoirs uppercase text-white tracking-wider text-stroke-dark leading-none">Tout ce dont vous avez besoin.</h2>
@@ -143,7 +199,7 @@ function LandingPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             
                             {/* Feature 1 */}
-                            <div className="neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[-1deg]">
+                            <div className="feature-card neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[-1deg]">
                                 <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-6 border border-violet-500/20 group-hover:scale-105 transition-transform duration-300">
                                     <Disc size={22} className="animate-spin-slow" />
                                 </div>
@@ -154,7 +210,7 @@ function LandingPage() {
                             </div>
 
                             {/* Feature 2 */}
-                            <div className="neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[1deg]">
+                            <div className="feature-card neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[1deg]">
                                 <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-6 border border-violet-500/20 group-hover:scale-105 transition-transform duration-300">
                                     <Radio size={22} />
                                 </div>
@@ -165,7 +221,7 @@ function LandingPage() {
                             </div>
 
                             {/* Feature 3 */}
-                            <div className="neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[-1deg]">
+                            <div className="feature-card neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[-1deg]">
                                 <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-6 border border-violet-500/20 group-hover:scale-105 transition-transform duration-300">
                                     <Quote size={22} />
                                 </div>
@@ -176,7 +232,7 @@ function LandingPage() {
                             </div>
 
                             {/* Feature 4 */}
-                            <div className="neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[1deg]">
+                            <div className="feature-card neobrutal-card p-6 flex flex-col hover:-translate-y-2 hover:rotate-[1deg]">
                                 <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-6 border border-violet-500/20 group-hover:scale-105 transition-transform duration-300">
                                     <Users size={22} />
                                 </div>
@@ -198,7 +254,7 @@ function LandingPage() {
                 </div>
 
                 {/* Call-to-action Section */}
-                <div className="max-w-7xl mx-auto px-6 py-12 relative z-30">
+                <div className="cta-section max-w-7xl mx-auto px-6 py-12 relative z-30 perspective-[1000px]">
                     <section className="neobrutal-card p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden bg-[#0e0e11] border-2 border-white shadow-[6px_6px_0px_#fff]">
                         {/* Glowing effect inside */}
                         <div className="absolute top-[-50%] right-[-20%] w-96 h-96 bg-violet-500/5 rounded-full blur-[100px] pointer-events-none"></div>

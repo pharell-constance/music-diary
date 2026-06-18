@@ -1,4 +1,9 @@
 import { Flame, Trophy, Play, Pause, Clock } from 'lucide-react';
+import { useRef, useLayoutEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 function TrendingTab({
     trending,
@@ -9,8 +14,33 @@ function TrendingTab({
     togglePreview,
     formatDuration
 }) {
+    const containerRef = useRef(null);
+
+    useLayoutEffect(() => {
+        if (loadingTrending || !trending.length) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.trending-row', 
+                { y: 30, opacity: 0 },
+                {
+                    y: 0, opacity: 1,
+                    duration: 0.5,
+                    stagger: 0.05,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: containerRef.current,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, [loadingTrending, trending]);
+
     return (
-        <div className="mt-4 space-y-5">
+        <div ref={containerRef} className="mt-4 space-y-5">
             {/* Filtre de nombre */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-2 text-zinc-400 text-xs">
@@ -42,7 +72,7 @@ function TrendingTab({
                     {trending.map((track) => (
                         <div
                             key={track.id}
-                            className="p-4 flex items-center gap-4 group hover:bg-violet-500/[0.04] transition-colors duration-150"
+                            className="trending-row p-4 flex items-center gap-4 group hover:bg-violet-500/[0.04] transition-colors duration-150"
                         >
                             {/* Rang */}
                             <span className="neo-rank flex-shrink-0 flex items-center justify-center">
