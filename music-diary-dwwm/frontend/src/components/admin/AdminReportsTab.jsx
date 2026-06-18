@@ -87,7 +87,7 @@ function AdminReportsTab({
                                                 >
                                                     {report.reportedUser.pseudo}
                                                 </div>
-                                                <div className="text-[10px] text-zinc-500 truncate">{report.reportedUser.email}</div>
+
                                                 {report.reportedUser && (
                                                     <div className="flex items-center gap-1.5 mt-1">
                                                         {report.reportedUser.isBanned ? (
@@ -121,7 +121,7 @@ function AdminReportsTab({
                                      >
                                          {report.reporter?.pseudo}
                                      </div>
-                                     <div className="text-[10px] text-zinc-500 mt-0.5">{report.reporter?.email}</div>
+
                                  </td>
                                 <td className="py-3.5 px-6 text-xs text-zinc-500 whitespace-nowrap">
                                     {new Date(report.createdAt).toLocaleDateString('fr-FR', {

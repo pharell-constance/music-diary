@@ -4,7 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 function Register() {
     // --- LOGIQUE (Inchappée) ---
     const [pseudo, setPseudo] = useState('');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -22,7 +21,7 @@ function Register() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ pseudo, email, password }),
+                body: JSON.stringify({ pseudo, password }),
             });
 
             const data = await response.json();
@@ -93,20 +92,7 @@ function Register() {
                         <p className="text-[10px] text-zinc-500 font-medium">Il apparaîtra sur votre profil public.</p>
                     </div>
 
-                    {/* Champ Email */}
-                    <div className="space-y-1.5">
-                        <label className="block text-xs font-black uppercase tracking-wider text-zinc-400">
-                            Adresse e-mail
-                        </label>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/20 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 p-3.5 rounded-xl text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition-all duration-200"
-                            placeholder="Adresse e-mail"
-                        />
-                    </div>
+
 
                     {/* Champ Mot de passe */}
                     <div className="space-y-1.5">

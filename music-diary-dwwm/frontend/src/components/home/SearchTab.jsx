@@ -64,7 +64,7 @@ function SearchTab({
                                     ? "Que souhaitez-vous écouter ?" 
                                     : searchType === 'artists'
                                     ? "Rechercher un artiste..."
-                                    : "Rechercher un membre par pseudo ou email..."
+                                    : "Rechercher un membre par pseudo..."
                             } 
                             className="w-full bg-[#292738] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 pl-12 pr-4 py-3 rounded-full text-sm font-medium outline-none text-white transition" 
                         />

@@ -62,7 +62,7 @@ export default function AdminFilters({
                         type="text" 
                         value={userSearch} 
                         onChange={(e) => setUserSearch(e.target.value)} 
-                        placeholder="Filtrer par pseudo, email, rôle..." 
+                        placeholder="Filtrer par pseudo, rôle..." 
                         className="w-full bg-[#292738] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] border border-transparent focus:border-zinc-500 px-4 py-2 rounded-full text-xs font-medium outline-none text-white transition" 
                     />
                 ) : activeTab === 'reviews' ? (

@@ -423,7 +423,6 @@ export default function useAdminDashboard() {
     // Filter lists based on search queries
     const filteredUsers = usersList.filter(u => 
         u.pseudo.toLowerCase().includes(userSearch.toLowerCase()) ||
-        u.email.toLowerCase().includes(userSearch.toLowerCase()) ||
         u.role.toLowerCase().includes(userSearch.toLowerCase())
     );
 
@@ -437,9 +436,9 @@ export default function useAdminDashboard() {
     const filteredReports = reportsList.filter(r => {
         const query = reportSearch.toLowerCase();
         const reasonMatch = r.reason.toLowerCase().includes(query);
-        const reporterMatch = r.reporter?.pseudo.toLowerCase().includes(query) || r.reporter?.email.toLowerCase().includes(query);
+        const reporterMatch = r.reporter?.pseudo.toLowerCase().includes(query);
         const reviewMatch = r.reportedReview ? (r.reportedReview.albumName.toLowerCase().includes(query) || r.reportedReview.artistName.toLowerCase().includes(query)) : false;
-        const userMatch = r.reportedUser ? (r.reportedUser.pseudo.toLowerCase().includes(query) || r.reportedUser.email.toLowerCase().includes(query)) : false;
+        const userMatch = r.reportedUser ? r.reportedUser.pseudo.toLowerCase().includes(query) : false;
         return reasonMatch || reporterMatch || reviewMatch || userMatch;
     });
 

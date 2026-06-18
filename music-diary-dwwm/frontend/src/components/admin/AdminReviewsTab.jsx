@@ -55,7 +55,7 @@ function AdminReviewsTab({ paginatedReviews, onDeleteReview }) {
                                     >
                                         {rev.author?.pseudo}
                                     </div>
-                                    <div className="text-[10px] text-zinc-500 truncate mt-0.5">{rev.author?.email}</div>
+                                    <div></div>
                                 </td>
                                 <td className="py-3.5 px-6 text-xs text-zinc-500 whitespace-nowrap">
                                     {new Date(rev.createdAt).toLocaleDateString('fr-FR', {

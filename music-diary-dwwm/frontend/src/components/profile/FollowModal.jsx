@@ -67,9 +67,7 @@ function FollowModal({ show, type, followList, loadingFollowList, onClose }) {
                                     <div className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors duration-200">
                                         {usr.pseudo}
                                     </div>
-                                    <div className="text-xs text-zinc-500 truncate mt-0.5">
-                                        {usr.email}
-                                    </div>
+                                    <div></div>
                                 </div>
                             </div>
                         ))

@@ -46,7 +46,7 @@ function AdminDashboard() {
                 handleLogout={() => { localStorage.clear(); navigate('/login'); }}
             />
 
-            <div className="flex-1 bg-[#12101b] my-2 mr-2 rounded-lg overflow-y-auto no-scrollbar flex flex-col p-6 md:p-8">
+            <div className="flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg overflow-y-auto no-scrollbar flex flex-col p-4 md:p-8 pb-24 md:pb-8">
                 {admin.error && (
                     <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
                         <ShieldAlert size={48} className="text-red-500" />

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
-    const [email, setEmail] = useState('');
+    const [pseudo, setPseudo] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -20,7 +20,7 @@ function Login() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ pseudo, password }),
             });
 
             const data = await response.json();
@@ -79,18 +79,18 @@ function Login() {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
 
-                    {/* Email */}
+                    {/* Pseudo */}
                     <div className="space-y-1.5">
                         <label className="block text-xs font-black uppercase tracking-wider text-zinc-400">
-                            Adresse e-mail
+                            Pseudo
                         </label>
                         <input
-                            type="email"
+                            type="text"
                             required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={pseudo}
+                            onChange={(e) => setPseudo(e.target.value)}
                             className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/20 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 p-3.5 rounded-xl text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition-all duration-200"
-                            placeholder="Adresse e-mail"
+                            placeholder="Votre pseudo"
                         />
                     </div>
 

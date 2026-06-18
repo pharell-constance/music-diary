@@ -3,7 +3,36 @@ import { X, User } from 'lucide-react';
 
 function ProfileEditModal({ user, onSave, onClose }) {
     const [pseudo, setPseudo] = useState(user?.pseudo || '');
-    const [email, setEmail] = useState(user?.email || '');
+    const [bio, setBio] = useState(user?.bio || '');
+    const [statusEmoji, setStatusEmoji] = useState(user?.statusEmoji || '');
+    const [statusText, setStatusText] = useState(user?.statusText || '');
+    const [favArtistId, setFavArtistId] = useState(user?.favArtistId || null);
+    const [favArtistName, setFavArtistName] = useState(user?.favArtistName || '');
+    const [favArtistImage, setFavArtistImage] = useState(user?.favArtistImage || '');
+    const [artistQuery, setArtistQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searching, setSearching] = useState(false);
+
+    const handleSearchArtist = async () => {
+        if (!artistQuery.trim()) return;
+        setSearching(true);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(artistQuery)}&type=artist`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.artists && data.artists.items) {
+                setSearchResults(data.artists.items);
+            } else {
+                setSearchResults([]);
+            }
+        } catch (err) {
+            console.error("Erreur recherche artiste:", err);
+        } finally {
+            setSearching(false);
+        }
+    };
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [avatar, setAvatar] = useState(user?.avatar || null);
@@ -44,8 +73,8 @@ function ProfileEditModal({ user, onSave, onClose }) {
         setError('');
         setSuccess('');
 
-        if (!pseudo.trim() || !email.trim()) {
-            setError("Le pseudo et l'email sont obligatoires.");
+        if (!pseudo.trim()) {
+            setError("Le pseudo est obligatoire.");
             return;
         }
 
@@ -72,7 +101,12 @@ function ProfileEditModal({ user, onSave, onClose }) {
                 },
                 body: JSON.stringify({
                     pseudo: pseudo.trim(),
-                    email: email.trim(),
+                    bio: bio.trim(),
+                    statusEmoji: statusEmoji.trim(),
+                    statusText: statusText.trim(),
+                    favArtistId: favArtistId,
+                    favArtistName: favArtistName,
+                    favArtistImage: favArtistImage,
                     password: password || undefined,
                     avatar: avatar // Base64 DataURL or null
                 })
@@ -164,16 +198,170 @@ function ProfileEditModal({ user, onSave, onClose }) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold text-zinc-300 mb-2">Adresse Email</label>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Votre adresse email"
-                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
+                        <label className="block text-sm font-bold text-zinc-300 mb-2">Bio</label>
+                        <textarea
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            placeholder="Décrivez-vous en quelques mots..."
+                            rows={3}
+                            className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none resize-none custom-scrollbar"
+                            maxLength={160}
                         />
+                        <p className="text-[10px] text-zinc-500 font-medium text-right mt-1">{bio.length}/160</p>
                     </div>
+
+                    <div className="bg-[#292738]/20 p-4 rounded-xl border border-zinc-800/80 space-y-3">
+                        <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Statut (Style GitHub)</label>
+                        <div className="flex gap-2.5">
+                            {/* Emoji Picker / Select */}
+                            <div className="w-16">
+                                <input
+                                    type="text"
+                                    maxLength={2}
+                                    value={statusEmoji}
+                                    onChange={(e) => setStatusEmoji(e.target.value)}
+                                    placeholder="💬"
+                                    className="w-full text-center bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-lg outline-none text-white"
+                                    title="Emoji de statut"
+                                />
+                            </div>
+                            {/* Text Input */}
+                            <div className="flex-1">
+                                <input
+                                    type="text"
+                                    maxLength={30}
+                                    value={statusText}
+                                    onChange={(e) => setStatusText(e.target.value)}
+                                    placeholder="Qu'avez-vous en tête ?"
+                                    className="w-full bg-[#292738] border border-transparent focus:border-zinc-500 p-3 rounded text-sm text-white outline-none"
+                                />
+                            </div>
+                        </div>
+                        {/* Quick select suggestions for premium UX */}
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                            {['🎧 Écoute', '🚀 Dispo', '💻 Dev', '📚 Étudie', '😴 Fatigué', '🔥 En forme'].map((suggest) => {
+                                const [em, ...txtParts] = suggest.split(' ');
+                                const txt = txtParts.join(' ');
+                                return (
+                                    <button
+                                        key={suggest}
+                                        type="button"
+                                        onClick={() => {
+                                            setStatusEmoji(em);
+                                            setStatusText(txt);
+                                        }}
+                                        className="bg-[#292738] hover:bg-zinc-700 text-zinc-300 hover:text-white px-2 py-1 rounded text-[10px] font-bold transition cursor-pointer"
+                                    >
+                                        {suggest}
+                                    </button>
+                                );
+                            })}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setStatusEmoji('');
+                                    setStatusText('');
+                                }}
+                                className="bg-red-950/20 hover:bg-red-900/40 text-red-400 border border-red-900/30 px-2 py-1 rounded text-[10px] font-bold transition cursor-pointer"
+                            >
+                                Effacer
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Artiste Préféré Section */}
+                    <div className="bg-[#292738]/20 p-4 rounded-xl border border-zinc-800/80 space-y-4">
+                        <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Artiste Préféré</label>
+                        
+                        {/* Display currently selected artist */}
+                        {favArtistId ? (
+                            <div className="flex items-center justify-between bg-[#292738]/40 p-3 rounded-lg border border-zinc-800">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden border border-zinc-700 flex-shrink-0">
+                                        {favArtistImage ? (
+                                            <img src={favArtistImage} alt={favArtistName} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full bg-zinc-800 flex items-center justify-center font-bold text-[10px] text-zinc-400">?</div>
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="text-sm font-bold text-white truncate">{favArtistName}</div>
+                                        <div className="text-[10px] text-zinc-500 font-medium">Artiste sélectionné</div>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setFavArtistId(null);
+                                        setFavArtistName('');
+                                        setFavArtistImage('');
+                                    }}
+                                    className="bg-red-950/20 hover:bg-red-950/40 text-red-400 border border-red-900/40 font-bold py-1 px-3.5 rounded-full text-[10px] cursor-pointer transition"
+                                >
+                                    Retirer
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={artistQuery}
+                                        onChange={(e) => setArtistQuery(e.target.value)}
+                                        placeholder="Rechercher un artiste sur Spotify..."
+                                        className="flex-1 bg-[#292738] border border-transparent focus:border-zinc-500 p-2.5 rounded text-xs text-white outline-none"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                handleSearchArtist();
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleSearchArtist}
+                                        disabled={searching}
+                                        className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-4 rounded text-xs transition cursor-pointer"
+                                    >
+                                        {searching ? "Recherche..." : "Chercher"}
+                                    </button>
+                                </div>
+
+                                {/* Search results display */}
+                                {searchResults.length > 0 && (
+                                    <div className="max-h-48 overflow-y-auto custom-scrollbar bg-[#12101b] border border-zinc-850 rounded-lg p-2 divide-y divide-zinc-800/40">
+                                        {searchResults.map((art) => {
+                                            const artImg = art.images?.[art.images.length - 1]?.url || art.images?.[0]?.url || '';
+                                            return (
+                                                <div
+                                                    key={art.id}
+                                                    onClick={() => {
+                                                        setFavArtistId(art.id);
+                                                        setFavArtistName(art.name);
+                                                        setFavArtistImage(artImg);
+                                                        setSearchResults([]);
+                                                        setArtistQuery('');
+                                                    }}
+                                                    className="flex items-center gap-3 p-2 hover:bg-[#292738]/50 rounded-md cursor-pointer transition"
+                                                >
+                                                    <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-800 border border-zinc-700 flex-shrink-0">
+                                                        {artImg ? (
+                                                            <img src={artImg} alt={art.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full bg-zinc-850 flex items-center justify-center font-bold text-[8px] text-zinc-500">?</div>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs font-bold text-zinc-200 hover:text-white truncate">{art.name}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+
 
                     <div className="border-t border-zinc-800 pt-4 mt-4">
                         <h4 className="text-sm font-bold text-zinc-400 mb-3">Changer le mot de passe (optionnel)</h4>

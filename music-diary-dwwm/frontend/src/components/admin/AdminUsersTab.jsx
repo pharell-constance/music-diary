@@ -19,7 +19,7 @@ function AdminUsersTab({
                     <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60">
                         <th className="py-4 px-6">Avatar</th>
                         <th className="py-4 px-6">Pseudo</th>
-                        <th className="py-4 px-6">Email</th>
+
                         <th className="py-4 px-6">Rôle</th>
                         <th className="py-4 px-6 text-center">Critiques</th>
                         <th className="py-4 px-6 text-center">Sanctions</th>
@@ -29,7 +29,7 @@ function AdminUsersTab({
                 <tbody className="divide-y divide-zinc-800/40">
                     {paginatedUsers.length === 0 ? (
                         <tr>
-                            <td colSpan="7" className="py-8 text-center text-zinc-500 text-sm font-semibold">Aucun utilisateur trouvé.</td>
+                            <td colSpan="6" className="py-8 text-center text-zinc-500 text-sm font-semibold">Aucun utilisateur trouvé.</td>
                         </tr>
                     ) : (
                         paginatedUsers.map((targetUser) => (
@@ -52,7 +52,7 @@ function AdminUsersTab({
                                 >
                                     {targetUser.pseudo}
                                 </td>
-                                <td className="py-3.5 px-6 text-zinc-400">{targetUser.email}</td>
+
                                 <td className="py-3.5 px-6">
                                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border inline-flex items-center gap-1 ${
                                         targetUser.role === 'OWNER'

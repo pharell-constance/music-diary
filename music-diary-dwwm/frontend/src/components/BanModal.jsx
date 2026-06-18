@@ -105,7 +105,7 @@ function BanModal({ userToBan, onConfirm, onClose }) {
                     <div>
                         <h3 className="font-extrabold text-lg text-white">Bannir un membre</h3>
                         <p className="text-xs text-zinc-500 mt-0.5">
-                            Membre ciblé : <span className="text-zinc-300 font-bold">{userToBan?.pseudo}</span> ({userToBan?.email})
+                            Membre ciblé : <span className="text-zinc-300 font-bold">{userToBan?.pseudo}</span>
                         </p>
                     </div>
                 </div>

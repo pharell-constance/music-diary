@@ -723,20 +723,25 @@ app.get('/api/test', (req, res) => {
 // Route d'inscription (Register)
 app.post('/api/auth/register', async (req, res) => {
     try {
-        const { email, password, pseudo } = req.body;
+        const { password, pseudo } = req.body;
 
         // 1. Vérification basique des champs
-        if (!email || !password || !pseudo) {
+        if (!password || !pseudo) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
+        }
+
+        const trimmedPseudo = pseudo.trim();
+        if (trimmedPseudo.length < 3) {
+            return res.status(400).json({ error: "Le pseudo doit comporter au moins 3 caractères" });
         }
 
         // 2. Vérifier si l'utilisateur existe déjà
         const userExists = await prisma.user.findUnique({
-            where: { email: email }
+            where: { pseudo: trimmedPseudo }
         });
 
         if (userExists) {
-            return res.status(400).json({ error: "Cet email est déjà utilisé" });
+            return res.status(400).json({ error: "Ce pseudo est déjà utilisé" });
         }
 
         // 3. Hacher le mot de passe (sécurité obligatoire DWWM)
@@ -745,9 +750,8 @@ app.post('/api/auth/register', async (req, res) => {
         // 4. Créer l'utilisateur dans MySQL via Prisma
         const newUser = await prisma.user.create({
             data: {
-                email: email,
                 password: hashedPassword,
-                pseudo: pseudo
+                pseudo: trimmedPseudo
             }
         });
 
@@ -756,7 +760,6 @@ app.post('/api/auth/register', async (req, res) => {
             message: "Utilisateur créé avec succès !",
             user: {
                 id: newUser.id,
-                email: newUser.email,
                 pseudo: newUser.pseudo
             }
         });
@@ -770,16 +773,16 @@ app.post('/api/auth/register', async (req, res) => {
 // Route de Connexion (Login)
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { pseudo, password } = req.body;
 
         // 1. Vérifier que les champs sont remplis
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email et mot de passe obligatoires" });
+        if (!pseudo || !password) {
+            return res.status(400).json({ error: "Pseudo et mot de passe obligatoires" });
         }
 
         // 2. Chercher l'utilisateur dans MySQL
         const user = await prisma.user.findUnique({
-            where: { email: email }
+            where: { pseudo: pseudo.trim() }
         });
 
         if (!user) {
@@ -811,7 +814,6 @@ app.post('/api/auth/login', async (req, res) => {
             token: token,
             user: {
                 id: user.id,
-                email: user.email,
                 pseudo: user.pseudo,
                 role: user.role,
                 avatar: user.avatar
@@ -1079,34 +1081,64 @@ app.put('/api/reviews/:id', authenticateToken, async (req, res) => {
 app.put('/api/users/profile', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
-        const { email, pseudo, password, avatar } = req.body;
+        const { pseudo, password, avatar, bio, statusEmoji, statusText, favArtistId, favArtistName, favArtistImage } = req.body;
 
         // 1. Validation basique
-        if (!email || !pseudo) {
-            return res.status(400).json({ error: "L'email et le pseudo sont obligatoires." });
+        if (!pseudo) {
+            return res.status(400).json({ error: "Le pseudo est obligatoire." });
         }
 
-        // 2. Vérifier si l'email est déjà utilisé par un autre utilisateur
+        const trimmedPseudo = pseudo.trim();
+        if (trimmedPseudo.length < 3) {
+            return res.status(400).json({ error: "Le pseudo doit comporter au moins 3 caractères" });
+        }
+
+        // 2. Vérifier si le pseudo est déjà utilisé par un autre utilisateur
         const existingUser = await prisma.user.findFirst({
             where: {
-                email: email,
+                pseudo: trimmedPseudo,
                 NOT: { id: userId }
             }
         });
 
         if (existingUser) {
-            return res.status(400).json({ error: "Cet email est déjà associé à un autre compte." });
+            return res.status(400).json({ error: "Ce pseudo est déjà associé à un autre compte." });
         }
 
         // 3. Préparer les données à mettre à jour
         const updateData = {
-            email: email,
-            pseudo: pseudo
+            pseudo: trimmedPseudo
         };
 
         // Si l'avatar est transmis (y compris s'il est null)
         if (avatar !== undefined) {
             updateData.avatar = avatar;
+        }
+
+        // Si la bio est transmise (y compris si elle est null/vide)
+        if (bio !== undefined) {
+            updateData.bio = bio;
+        }
+
+        // Si le statusEmoji est transmis
+        if (statusEmoji !== undefined) {
+            updateData.statusEmoji = statusEmoji;
+        }
+
+        // Si le statusText est transmis
+        if (statusText !== undefined) {
+            updateData.statusText = statusText;
+        }
+
+        // Si les données de l'artiste préféré sont transmises
+        if (favArtistId !== undefined) {
+            updateData.favArtistId = favArtistId;
+        }
+        if (favArtistName !== undefined) {
+            updateData.favArtistName = favArtistName;
+        }
+        if (favArtistImage !== undefined) {
+            updateData.favArtistImage = favArtistImage;
         }
 
         // 4. Si un mot de passe est fourni, le hacher
@@ -1125,10 +1157,15 @@ app.put('/api/users/profile', authenticateToken, async (req, res) => {
             message: "Profil mis à jour avec succès !",
             user: {
                 id: updatedUser.id,
-                email: updatedUser.email,
                 pseudo: updatedUser.pseudo,
                 role: updatedUser.role,
-                avatar: updatedUser.avatar
+                avatar: updatedUser.avatar,
+                bio: updatedUser.bio,
+                statusEmoji: updatedUser.statusEmoji,
+                statusText: updatedUser.statusText,
+                favArtistId: updatedUser.favArtistId,
+                favArtistName: updatedUser.favArtistName,
+                favArtistImage: updatedUser.favArtistImage
             }
         });
 
@@ -1149,15 +1186,11 @@ app.get('/api/users/search', authenticateToken, async (req, res) => {
         }
         const users = await prisma.user.findMany({
             where: {
-                OR: [
-                    { pseudo: { contains: query } },
-                    { email: { contains: query } }
-                ]
+                pseudo: { contains: query }
             },
             select: {
                 id: true,
                 pseudo: true,
-                email: true,
                 avatar: true
             },
             take: 20
@@ -1178,8 +1211,13 @@ app.get('/api/users/:userId/profile', authenticateToken, async (req, res) => {
             select: {
                 id: true,
                 pseudo: true,
-                email: true,
                 avatar: true,
+                bio: true,
+                statusEmoji: true,
+                statusText: true,
+                favArtistId: true,
+                favArtistName: true,
+                favArtistImage: true,
                 role: true,
                 spotifyAccessToken: true,
                 spotifyRefreshToken: true
@@ -1214,8 +1252,13 @@ app.get('/api/users/:userId/profile', authenticateToken, async (req, res) => {
         res.json({
             id: targetUser.id,
             pseudo: targetUser.pseudo,
-            email: targetUser.email,
             avatar: targetUser.avatar,
+            bio: targetUser.bio,
+            statusEmoji: targetUser.statusEmoji,
+            statusText: targetUser.statusText,
+            favArtistId: targetUser.favArtistId,
+            favArtistName: targetUser.favArtistName,
+            favArtistImage: targetUser.favArtistImage,
             connected: !!(targetUser.spotifyAccessToken && targetUser.spotifyRefreshToken),
             followersCount,
             followingCount,
@@ -1316,7 +1359,6 @@ app.get('/api/users/:userId/followers', authenticateToken, async (req, res) => {
                     select: {
                         id: true,
                         pseudo: true,
-                        email: true,
                         avatar: true
                     }
                 }
@@ -1344,7 +1386,6 @@ app.get('/api/users/:userId/following', authenticateToken, async (req, res) => {
                     select: {
                         id: true,
                         pseudo: true,
-                        email: true,
                         avatar: true
                     }
                 }
@@ -1632,7 +1673,6 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
         const users = await prisma.user.findMany({
             select: {
                 id: true,
-                email: true,
                 pseudo: true,
                 role: true,
                 avatar: true,
@@ -1743,8 +1783,7 @@ app.get('/api/admin/reviews', authenticateToken, requireAdmin, async (req, res) 
                 author: {
                     select: {
                         id: true,
-                        pseudo: true,
-                        email: true
+                        pseudo: true
                     }
                 }
             },
@@ -1835,7 +1874,7 @@ app.get('/api/admin/reports', authenticateToken, requireAdmin, async (req, res) 
             where: { resolved: false },
             include: {
                 reporter: {
-                    select: { id: true, pseudo: true, email: true }
+                    select: { id: true, pseudo: true }
                 },
                 reportedReview: {
                     include: {
@@ -1843,7 +1882,6 @@ app.get('/api/admin/reports', authenticateToken, requireAdmin, async (req, res) 
                             select: { 
                                 id: true, 
                                 pseudo: true, 
-                                email: true, 
                                 warningsCount: true, 
                                 isBanned: true, 
                                 banReason: true 
@@ -1855,7 +1893,6 @@ app.get('/api/admin/reports', authenticateToken, requireAdmin, async (req, res) 
                     select: { 
                         id: true, 
                         pseudo: true, 
-                        email: true, 
                         warningsCount: true, 
                         isBanned: true, 
                         banReason: true 
@@ -2481,20 +2518,115 @@ app.get('/api/users/:userId/stats', authenticateToken, async (req, res) => {
 // ─── TRENDING ──────────────────────────────────────────────────────────────────
 
 // Recherche des titres populaires récents (alternative aux playlists officielles restreintes)
+// Caching for Global Top 50 (valid for 1 hour)
+let trendingCache = {
+    tracks: null,
+    fetchedAt: 0
+};
+const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 heure
+
+// Recherche des titres populaires récents (alternative aux playlists officielles restreintes)
 app.get('/api/spotify/trending', async (req, res) => {
     try {
         const limit = Math.min(parseInt(req.query.limit) || 20, 50);
-        
-        // 1. Fetch public charts from Spotify Charts Service
+
+        // 1. Check if we have valid cached tracks
+        if (trendingCache.tracks && (Date.now() - trendingCache.fetchedAt < CACHE_DURATION_MS)) {
+            console.log("Serving trending tracks from memory cache");
+            return res.json(trendingCache.tracks.slice(0, limit));
+        }
+
+        // 2. If not cached or expired, try the embed playlist strategy
+        try {
+            console.log("Fetching live Global Top 50 from Spotify embed player...");
+            const embedRes = await fetch('https://open.spotify.com/embed/playlist/37i9dQZEVXbMDoHDwVN2tF', {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
+                }
+            });
+            if (!embedRes.ok) {
+                throw new Error(`Failed to fetch Spotify embed: ${embedRes.status}`);
+            }
+            
+            const html = await embedRes.text();
+            const nextDataRegex = /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/gi;
+            const match = nextDataRegex.exec(html);
+            if (!match) {
+                throw new Error("Could not find __NEXT_DATA__ script tag in embed HTML");
+            }
+            
+            const data = JSON.parse(match[1]);
+            const trackList = data.props?.pageProps?.state?.data?.entity?.trackList || [];
+            
+            if (trackList.length === 0) {
+                throw new Error("No tracks found in the embed state data");
+            }
+            
+            // Fetch metadata in parallel for parsed track IDs using client credentials token
+            const token = await getSpotifyToken();
+            
+            const fetchedTracks = await Promise.all(trackList.map(async (item, idx) => {
+                const trackId = item.uri?.split(':').pop() || `track-${idx}`;
+                try {
+                    const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (trackRes.ok) {
+                        const trackData = await trackRes.json();
+                        return {
+                            rank: idx + 1,
+                            id: trackId,
+                            name: trackData.name || item.title || 'Inconnu',
+                            artists: trackData.artists?.map(a => a.name).join(', ') || item.subtitle || 'Artiste Inconnu',
+                            albumName: trackData.album?.name || 'Top Global',
+                            albumCover: trackData.album?.images?.[0]?.url || null,
+                            albumId: trackData.album?.id || '',
+                            popularity: trackData.popularity !== undefined ? trackData.popularity : Math.max(50, 99 - idx),
+                            previewUrl: trackData.preview_url || null,
+                            durationMs: trackData.duration_ms || item.duration || 180000
+                        };
+                    }
+                } catch (fetchErr) {
+                    console.error(`Error fetching track metadata for ${trackId}:`, fetchErr);
+                }
+                
+                // Fallback track info if the API call fails for this specific track
+                return {
+                    rank: idx + 1,
+                    id: trackId,
+                    name: item.title || 'Inconnu',
+                    artists: item.subtitle || 'Artiste Inconnu',
+                    albumName: 'Top Global',
+                    albumCover: null,
+                    albumId: '',
+                    popularity: Math.max(50, 99 - idx),
+                    previewUrl: item.audioPreview?.url || null,
+                    durationMs: item.duration || 180000
+                };
+            }));
+
+            // Save to memory cache
+            trendingCache = {
+                tracks: fetchedTracks,
+                fetchedAt: Date.now()
+            };
+
+            return res.json(fetchedTracks.slice(0, limit));
+        } catch (embedError) {
+            console.error("Error in Spotify embed strategy, falling back to weekly charts service:", embedError);
+        }
+
+        // 3. Fallback to weekly charts service
         const chartsRes = await fetch('https://charts-spotify-com-service.spotify.com/public/v0/charts');
         if (!chartsRes.ok) {
-            throw new Error(`Failed to fetch public charts: ${chartsRes.status}`);
+            throw new Error(`Failed to fetch public weekly charts: ${chartsRes.status}`);
         }
         
         const chartsData = await chartsRes.json();
         const responseList = chartsData.chartEntryViewResponses || [];
         
-        // Find the Global Top Weekly Songs chart
         const chartResponse = responseList.find(c => 
             c.displayChart?.chartMetadata?.alias === 'REGIONAL_GLOBAL_WEEKLY'
         ) || responseList[0];
@@ -2511,10 +2643,7 @@ app.get('/api/spotify/trending', async (req, res) => {
             const uri = trackMetadata.trackUri || '';
             const id = uri.split(':').pop() || `track-${idx}`;
             
-            // Pseudo-durations: between 2m30s (150s) and 4m00s (240s) based on rank/index
             const pseudoDurationMs = (150 + (idx * 7) % 91) * 1000;
-            
-            // Popularity: decaying from 99% to 50% based on rank/index
             const popularity = Math.max(50, 99 - idx);
             
             return {
@@ -2526,15 +2655,15 @@ app.get('/api/spotify/trending', async (req, res) => {
                 albumCover: trackMetadata.displayImageUri || null,
                 albumId: '',
                 popularity: popularity,
-                previewUrl: null, // Previews are deprecated/restricted by Spotify API anyway
+                previewUrl: null,
                 durationMs: pseudoDurationMs
             };
         });
         
         res.json(tracks);
     } catch (err) {
-        console.error('Erreur trending:', err);
-        // Fallback to the search method if the charts service is unavailable
+        console.error('Erreur trending (fallback final):', err);
+        // 4. Fallback to the search method if everything else is unavailable
         try {
             const limit = Math.min(parseInt(req.query.limit) || 20, 50);
             const token = await getSpotifyToken();

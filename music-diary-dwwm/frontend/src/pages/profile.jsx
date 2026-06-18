@@ -25,7 +25,7 @@ function Profile() {
                 handleLogout={profile.handleLogout}
             />
 
-            <div className="flex-1 bg-white/[0.01] backdrop-blur-xl border border-white/[0.05] my-2 mr-2 rounded-2xl overflow-y-auto flex flex-col relative z-10">
+            <div className="flex-1 bg-white/[0.01] backdrop-blur-xl border-x-0 border-y border-white/[0.05] md:border md:border-white/[0.05] md:my-2 md:mr-2 md:rounded-2xl overflow-y-auto flex flex-col relative z-10 pb-24 md:pb-0">
                 {profile.loadingProfile ? (
                     <div className="p-8 text-center text-zinc-400">Chargement du profil...</div>
                 ) : !profile.profileUser ? (
@@ -41,6 +41,7 @@ function Profile() {
                             onFollowToggle={profile.handleFollowToggle}
                             onReportUser={profile.handleReportUser}
                             onOpenFollowModal={profile.handleOpenFollowModal}
+                            onLogoutClick={profile.handleLogout}
                         />
 
                         <div className="p-8 space-y-8">

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { Music, User, Disc, Settings, Flag, Crown } from 'lucide-react';
 
@@ -10,8 +11,9 @@ function formatCount(n) {
 }
 
 
-function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEditClick, onFollowToggle, onReportUser, onOpenFollowModal }) {
+function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEditClick, onFollowToggle, onReportUser, onOpenFollowModal, onLogoutClick }) {
     const heroRef = useRef(null);
+    const navigate = useNavigate();
 
     useLayoutEffect(() => {
         if (!heroRef.current || !profileUser) return;
@@ -41,12 +43,28 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
             ref={heroRef}
             className={`p-8 pt-12 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-b ${connected ? 'from-violet-950/20' : 'from-white/[0.01]'} to-transparent border-b border-white/[0.05]`}
         >
-            {/* Grand Avatar circulaire */}
-            <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-white border-4 border-zinc-900 transform hover:scale-105 transition-transform duration-300 flex-shrink-0 overflow-hidden">
-                {profileUser.avatar ? (
-                    <img src={profileUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                    profileUser.pseudo ? profileUser.pseudo.substring(0, 2).toUpperCase() : <User size={48} />
+            {/* Grand Avatar circulaire avec Statut */}
+            <div className="relative flex-shrink-0 group">
+                <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-white border-4 border-zinc-900 transform hover:scale-105 transition-transform duration-300 overflow-hidden">
+                    {profileUser.avatar ? (
+                        <img src={profileUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                        profileUser.pseudo ? profileUser.pseudo.substring(0, 2).toUpperCase() : <User size={48} />
+                    )}
+                </div>
+                {/* Status Badge overlay (GitHub-style) */}
+                {(profileUser.statusEmoji || profileUser.statusText) && (
+                    <div 
+                        className="absolute bottom-1 right-1 bg-[#1a1824]/90 hover:bg-[#292738]/95 border border-zinc-800/80 text-white px-2.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 shadow-2xl transition-all duration-200 cursor-pointer pointer-events-auto select-none"
+                        title={profileUser.statusText || ""}
+                    >
+                        <span className="text-sm leading-none">{profileUser.statusEmoji || "💬"}</span>
+                        {profileUser.statusText && (
+                            <span className="max-w-[80px] md:max-w-[120px] truncate text-[9px] font-black uppercase tracking-wider text-zinc-300">
+                                {profileUser.statusText}
+                            </span>
+                        )}
+                    </div>
                 )}
             </div>
 
@@ -65,8 +83,6 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                     )}
                 </h1>
                 <p className="text-zinc-400 text-sm md:text-base font-medium flex items-center justify-center md:justify-start gap-2">
-                    <span className="truncate">{profileUser.email}</span>
-                    <span className="text-zinc-600">•</span>
                     <span>{connected ? "Compte Spotify associé" : "Spotify non connecté"}</span>
                 </p>
                 <div className="flex items-center justify-center md:justify-start gap-4 text-xs md:text-sm text-zinc-400 font-semibold mt-1">
@@ -86,6 +102,12 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                         <span>{(profileUser.followingCount ?? 0) > 1 ? 'abonnements' : 'abonnement'}</span>
                     </button>
                 </div>
+
+                {profileUser.bio && (
+                    <p className="text-zinc-300 text-xs md:text-sm italic mt-2.5 md:text-left text-center max-w-md bg-white/[0.02] border border-white/[0.05] p-3 rounded-xl leading-relaxed">
+                        {profileUser.bio}
+                    </p>
+                )}
 
                 {livePlaying && livePlaying.isPlaying && (
                     <div className="flex items-center gap-3 bg-violet-500/10 border border-violet-500/20 text-violet-400 p-3 rounded-xl max-w-sm mt-3 mx-auto md:mx-0 shadow-sm animate-pulse">
@@ -112,16 +134,48 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 )}
             </div>
 
+            {/* Artiste Préféré */}
+            {profileUser.favArtistId && (
+                <div 
+                    onClick={() => navigate(`/artist/${profileUser.favArtistId}`)}
+                    className="bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-violet-500/30 p-3.5 rounded-2xl flex items-center gap-3.5 cursor-pointer transition-all duration-300 shadow-xl group w-full md:w-60 flex-shrink-0 self-center md:self-auto"
+                >
+                    <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 group-hover:border-violet-500/40 shadow-inner transition-colors duration-300 flex-shrink-0">
+                        {profileUser.favArtistImage ? (
+                            <img src={profileUser.favArtistImage} alt={profileUser.favArtistName} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        ) : (
+                            <div className="w-full h-full bg-zinc-800 flex items-center justify-center font-bold text-xs text-zinc-500">?</div>
+                        )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <span className="text-[8px] font-black uppercase tracking-widest text-violet-400">Artiste Préféré</span>
+                        <h4 className="font-extrabold text-xs text-white truncate group-hover:text-violet-400 transition-colors duration-300 mt-0.5">
+                            {profileUser.favArtistName}
+                        </h4>
+                    </div>
+                </div>
+            )}
+
             {/* Actions rapides */}
             <div className="hero-action flex flex-col sm:flex-row items-center gap-3 flex-shrink-0">
                 {isOwnProfile ? (
-                    <button
-                        onClick={onEditClick}
-                        className="flex items-center gap-2 bg-[#292738] hover:bg-[#2e2e2e] active:scale-95 text-white px-4 py-2 rounded-full border border-zinc-700/50 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
-                    >
-                        <Settings size={14} />
-                        Modifier le profil
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={onEditClick}
+                            className="flex items-center gap-2 bg-[#292738] hover:bg-[#2e2e2e] active:scale-95 text-white px-4 py-2 rounded-full border border-zinc-700/50 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
+                        >
+                            <Settings size={14} />
+                            Modifier le profil
+                        </button>
+                        {onLogoutClick && (
+                            <button
+                                onClick={onLogoutClick}
+                                className="md:hidden flex items-center gap-2 bg-red-950/20 hover:bg-red-900/40 text-red-400 active:scale-95 px-4 py-2 rounded-full border border-red-500/20 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
+                              >
+                                Se déconnecter
+                            </button>
+                        )}
+                    </div>
                 ) : (
                     <div className="flex items-center gap-2">
                         <button
