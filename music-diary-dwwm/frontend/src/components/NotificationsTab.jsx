@@ -49,7 +49,6 @@ function NotificationsTab() {
             });
             if (res.ok) {
                 setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-                // Dispatch event to update unread badge in other components
                 window.dispatchEvent(new Event('unread-notifications-changed'));
             }
         } catch (err) {
@@ -64,7 +63,6 @@ function NotificationsTab() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
-                // GSAP exit animation on target item could go here, for simplicity we update state
                 setNotifications(prev => prev.filter(n => n.id !== id));
                 window.dispatchEvent(new Event('unread-notifications-changed'));
             }
@@ -106,27 +104,23 @@ function NotificationsTab() {
         }
     };
 
-    // Helper to get notification design system parameters
     const getNotificationStyles = (type) => {
         switch (type) {
             case 'FOLLOW':
                 return {
                     icon: <UserPlus size={18} />,
-                    iconBg: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
-                    borderClass: 'border-purple-500/10'
+                    iconBg: 'bg-violet-500/10 border-violet-500/30 text-violet-400',
                 };
             case 'WARNING':
                 return {
                     icon: <AlertTriangle size={18} />,
-                    iconBg: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
-                    borderClass: 'border-amber-500/10'
+                    iconBg: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
                 };
             case 'SYSTEM':
             default:
                 return {
                     icon: <Info size={18} />,
-                    iconBg: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-                    borderClass: 'border-blue-500/10'
+                    iconBg: 'bg-fuchsia-500/10 border-fuchsia-500/30 text-fuchsia-400',
                 };
         }
     };
@@ -134,33 +128,35 @@ function NotificationsTab() {
     return (
         <div className="flex-1 space-y-6">
             {/* Header */}
-            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/40 pb-6">
+            <div className="page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight mb-2">Centre de Notifications</h1>
-                    <p className="text-[#A7A7A7] text-sm">Restez informé de l'activité sur votre compte Music Diary.</p>
+                    <h1 className="text-4xl md:text-5xl font-mouse-memoirs uppercase tracking-wide text-white text-stroke-dark">
+                        Notifications
+                    </h1>
+                    <p className="text-zinc-400 text-sm mt-1 font-medium">Restez informé de l'activité sur votre compte Music Diary.</p>
                 </div>
 
                 {notifications.length > 0 && (
-                    <div className="flex gap-2.5">
+                    <div className="flex gap-2.5 flex-shrink-0">
                         <button
                             onClick={handleMarkAllAsRead}
-                            className="bg-[#292738] hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                            className="neobrutal-btn bg-[#1a1824] text-zinc-300 px-4 py-2 rounded-full text-xs font-mouse-memoirs uppercase tracking-widest flex items-center gap-1.5 border-2 border-white/20 hover:border-violet-400"
                         >
-                            <CheckCheck size={14} /> Tout lu
+                            <CheckCheck size={13} /> Tout lu
                         </button>
                         <button
                             onClick={handleClearAll}
-                            className="bg-red-500/10 hover:bg-red-500 hover:text-black border border-red-500/20 text-red-400 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                            className="neobrutal-btn bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-4 py-2 rounded-full text-xs font-mouse-memoirs uppercase tracking-widest flex items-center gap-1.5 border-2 border-red-500/40"
                         >
-                            <Trash2 size={14} /> Tout effacer
+                            <Trash2 size={13} /> Tout effacer
                         </button>
                     </div>
                 )}
-            </header>
+            </div>
 
             {/* Error view */}
             {error && (
-                <div className="bg-red-950/20 border border-red-500/10 text-red-400 p-4 rounded-xl text-center text-sm font-semibold">
+                <div className="neo-empty bg-red-950/20 border-2 border-red-500/20 text-red-400 p-4 rounded-2xl text-center text-sm font-semibold">
                     {error}
                 </div>
             )}
@@ -168,19 +164,19 @@ function NotificationsTab() {
             {/* Loading view */}
             {loading && (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <Disc size={44} className="text-[#8B5CF6] animate-spin" style={{ animationDuration: '2s' }} />
-                    <p className="text-zinc-500 font-semibold text-xs tracking-wider">Chargement des notifications...</p>
+                    <Disc size={44} className="text-violet-500 animate-spin" style={{ animationDuration: '2s' }} />
+                    <p className="font-mouse-memoirs uppercase tracking-widest text-zinc-500 text-sm">Chargement des notifications...</p>
                 </div>
             )}
 
             {/* Empty view */}
             {!loading && notifications.length === 0 && (
-                <div className="text-center py-20 bg-[#1a1824]/60 border border-zinc-800/30 rounded-2xl flex flex-col items-center justify-center p-6 shadow-sm">
-                    <div className="w-14 h-14 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-600 mb-4 shadow-inner">
-                        <Bell size={24} />
+                <div className="neo-empty text-center py-20 flex flex-col items-center justify-center p-6 gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border-2 border-violet-500/30 flex items-center justify-center text-violet-400">
+                        <Bell size={28} />
                     </div>
-                    <h3 className="font-bold text-base text-zinc-300">Aucune notification</h3>
-                    <p className="text-zinc-500 text-xs mt-1.5 max-w-xs leading-relaxed">
+                    <h3 className="font-mouse-memoirs uppercase tracking-widest text-xl text-zinc-300">Aucune notification</h3>
+                    <p className="text-zinc-500 text-xs max-w-xs leading-relaxed">
                         Vous recevrez des alertes ici lorsque d'autres membres s'abonneront à votre compte ou lors des décisions de modération.
                     </p>
                 </div>
@@ -194,19 +190,19 @@ function NotificationsTab() {
                         return (
                             <div
                                 key={notif.id}
-                                className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 group ${
-                                    notif.read 
-                                        ? 'bg-[#1a1824]/20 border-zinc-800/30 opacity-70' 
-                                        : `bg-[#1a1824] border-zinc-800/80 hover:border-zinc-700/80 shadow-md`
+                                className={`neo-list-item flex items-center gap-4 p-4 transition-all duration-300 group ${
+                                    notif.read
+                                        ? 'bg-transparent opacity-60'
+                                        : 'bg-[#1a1824]'
                                 }`}
                             >
                                 {/* Unread dot indicator */}
                                 {!notif.read && (
-                                    <span className="w-2.5 h-2.5 rounded-full bg-[#8B5CF6] flex-shrink-0 animate-pulse" title="Non lu" />
+                                    <span className="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0 animate-pulse" title="Non lu" />
                                 )}
 
                                 {/* Icon Category */}
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border ${styles.iconBg}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border-2 ${styles.iconBg}`}>
                                     {styles.icon}
                                 </div>
 
@@ -231,18 +227,18 @@ function NotificationsTab() {
                                     {!notif.read && (
                                         <button
                                             onClick={() => handleMarkAsRead(notif.id)}
-                                            className="p-2 bg-[#292738] hover:bg-[#8B5CF6] text-zinc-400 hover:text-black rounded-lg transition cursor-pointer"
+                                            className="p-2 bg-violet-500/10 hover:bg-violet-500 text-violet-400 hover:text-white rounded-xl transition cursor-pointer border-2 border-violet-500/30"
                                             title="Marquer comme lu"
                                         >
-                                            <Check size={14} />
+                                            <Check size={13} />
                                         </button>
                                     )}
                                     <button
                                         onClick={() => handleDelete(notif.id)}
-                                        className="p-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg transition cursor-pointer"
+                                        className="p-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-xl transition cursor-pointer border-2 border-red-500/30"
                                         title="Supprimer la notification"
                                     >
-                                        <Trash2 size={14} />
+                                        <Trash2 size={13} />
                                     </button>
                                 </div>
                             </div>

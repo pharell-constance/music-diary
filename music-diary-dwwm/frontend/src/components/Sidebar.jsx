@@ -48,35 +48,34 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     }
 
     return (
-        <>
-            {/* Desktop Sidebar */}
-            <div className="w-64 bg-white/[0.01] backdrop-blur-xl border-r border-white/[0.05] p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40">
+        <>            {/* Desktop Sidebar */}
+            <div className="w-64 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40">
                 <div className="space-y-8">
                     {/* Logo Section */}
-                    <div className="flex items-center gap-3.5 px-2 group cursor-pointer animate-fade-in" onClick={() => window.location.href = '/'}>
-                        <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.25)] group-hover:scale-105 transition-all duration-300">
-                            <Disc className="text-white stroke-[2.5] animate-spin-slow" size={20} />
+                    <div className="flex items-center gap-3 px-2 group cursor-pointer animate-fade-in" onClick={() => window.location.href = '/'}>
+                        <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center border-2 border-white shadow-[2px_2px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
+                            <Disc className="text-white stroke-[2.5] animate-spin-slow" size={16} />
                         </div>
-                        <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">Music Diary</span>
+                        <span className="font-modak text-lg tracking-wider text-violet-500 text-stroke-dark uppercase group-hover:text-fuchsia-500 transition-colors">Music Diary</span>
                     </div>
 
                     {/* Nav items */}
-                    <nav className="space-y-2">
+                    <nav className="space-y-3">
                         {navItems.map(({ key, label, icon: Icon, action, badge }) => {
                             const isActive = currentTab === key;
                             return (
                                 <button
                                     key={key}
                                     onClick={action}
-                                    className={`w-full group flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 cursor-pointer ${
+                                    className={`w-full group flex items-center gap-3 px-4 py-2.5 rounded-xl font-mouse-memoirs uppercase tracking-widest text-sm transition-all duration-200 cursor-pointer border-2 ${
                                         isActive
-                                            ? 'bg-white/[0.04] text-white border border-white/[0.07] shadow-md shadow-black/20'
-                                            : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] border border-transparent'
+                                            ? 'bg-white/5 text-white border-white shadow-[3px_3px_0px_rgba(255,255,255,0.15)]'
+                                            : 'text-zinc-400 hover:text-white border-transparent hover:border-white/50 hover:bg-white/5 hover:shadow-[3px_3px_0px_rgba(255,255,255,0.1)]'
                                     }`}
                                 >
                                     <Icon
-                                        size={18}
-                                        className={`transition-all duration-300 group-hover:scale-105 ${
+                                        size={16}
+                                        className={`transition-all duration-200 group-hover:scale-110 ${
                                             isActive 
                                                 ? 'text-violet-400 drop-shadow-[0_0_6px_rgba(139,92,246,0.35)]' 
                                                 : 'text-zinc-500 group-hover:text-zinc-300'
@@ -84,7 +83,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                     />
                                     <span className="flex-1 text-left">{label}</span>
                                     {badge > 0 && (
-                                        <span className="min-w-5 h-5 px-1.5 rounded-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-black text-[10px] flex items-center justify-center shadow-[0_0_10px_rgba(239,68,68,0.4)] animate-pulse">
+                                        <span className="min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white font-black text-[10px] flex items-center justify-center border border-white shadow-[2px_2px_0px_rgba(0,0,0,0.15)]">
                                             {badge}
                                         </span>
                                     )}
@@ -96,9 +95,9 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
 
                 {/* Profile footer section */}
                 {user && (
-                    <div className="bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl flex flex-col gap-3.5 shadow-lg shadow-black/25 backdrop-blur-md">
+                    <div className="neobrutal-card p-4 flex flex-col gap-3.5 shadow-[3px_3px_0px_rgba(255,255,255,0.1)] border-2 border-white bg-white/2">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/10 border border-violet-500/15 flex items-center justify-center font-black text-sm text-violet-400 overflow-hidden shadow-inner flex-shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-zinc-800 border-2 border-white flex items-center justify-center font-black text-sm text-violet-400 overflow-hidden shadow-inner flex-shrink-0">
                                 {user.avatar ? (
                                     <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
@@ -121,9 +120,9 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                         
                         <button
                             onClick={handleLogout}
-                            className="w-full py-2.5 rounded-xl border border-zinc-800/80 hover:border-red-950/40 hover:bg-red-950/10 text-xs text-zinc-400 hover:text-red-400 font-bold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm shadow-black/5"
+                            className="w-full py-2 neobrutal-btn bg-transparent border-2 border-red-500 hover:bg-red-500 text-red-400 hover:text-white font-mouse-memoirs uppercase tracking-widest text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                         >
-                            <LogOut size={13} className="text-zinc-500 group-hover:text-red-400 transition-colors" /> Se déconnecter
+                            <LogOut size={13} /> Se déconnecter
                         </button>
                     </div>
                 )}

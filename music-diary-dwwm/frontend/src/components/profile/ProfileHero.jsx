@@ -45,7 +45,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
         >
             {/* Grand Avatar circulaire avec Statut */}
             <div className="relative flex-shrink-0 group">
-                <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-2xl flex items-center justify-center font-black text-4xl md:text-5xl text-white border-4 border-zinc-900 transform hover:scale-105 transition-transform duration-300 overflow-hidden">
+                <div className="hero-avatar w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center font-black text-4xl md:text-5xl text-white border-4 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] transform hover:scale-105 transition-all duration-300 overflow-hidden">
                     {profileUser.avatar ? (
                         <img src={profileUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
@@ -55,7 +55,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 {/* Status Badge overlay (GitHub-style) */}
                 {(profileUser.statusEmoji || profileUser.statusText) && (
                     <div 
-                        className="absolute bottom-1 right-1 bg-[#1a1824]/90 hover:bg-[#292738]/95 border border-zinc-800/80 text-white px-2.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 shadow-2xl transition-all duration-200 cursor-pointer pointer-events-auto select-none"
+                        className="absolute bottom-1 right-1 bg-[#121214] hover:bg-zinc-800 border-2 border-white text-white px-2.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 shadow-[2px_2px_0px_rgba(255,255,255,0.15)] transition-all duration-200 cursor-pointer pointer-events-auto select-none"
                         title={profileUser.statusText || ""}
                     >
                         <span className="text-sm leading-none">{profileUser.statusEmoji || "💬"}</span>
@@ -73,7 +73,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 <span className="text-[10px] font-black uppercase tracking-widest text-violet-400 bg-violet-500/10 px-3 py-1.5 rounded-full border border-violet-500/20">
                     {isOwnProfile ? "Mon Profil" : `Profil de ${profileUser.pseudo}`}
                 </span>
-                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white flex flex-wrap items-center gap-x-3 gap-y-1 justify-center md:justify-start">
+                <h1 className="text-4xl md:text-6xl font-mouse-memoirs uppercase tracking-widest text-white text-stroke-dark flex flex-wrap items-center gap-x-3 gap-y-1 justify-center md:justify-start">
                     <span>{profileUser.pseudo || "Utilisateur"}</span>
                     {profileUser.role === 'OWNER' && (
                         <span className="text-[10px] tracking-widest uppercase font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/40 text-yellow-400 shadow-[0_0_15px_rgba(245,158,11,0.15)] flex items-center gap-1 self-center">
@@ -104,7 +104,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                 </div>
 
                 {profileUser.bio && (
-                    <p className="text-zinc-300 text-xs md:text-sm italic mt-2.5 md:text-left text-center max-w-md bg-white/[0.02] border border-white/[0.05] p-3 rounded-xl leading-relaxed">
+                    <p className="text-zinc-300 text-xs md:text-sm mt-2.5 md:text-left text-center max-w-md neobrutal-card p-3.5 leading-relaxed bg-white/[0.01]">
                         {profileUser.bio}
                     </p>
                 )}
@@ -138,9 +138,9 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
             {profileUser.favArtistId && (
                 <div 
                     onClick={() => navigate(`/artist/${profileUser.favArtistId}`)}
-                    className="bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-violet-500/30 p-3.5 rounded-2xl flex items-center gap-3.5 cursor-pointer transition-all duration-300 shadow-xl group w-full md:w-60 flex-shrink-0 self-center md:self-auto"
+                    className="neobrutal-card p-3.5 flex items-center gap-3.5 cursor-pointer transition-all duration-300 w-full md:w-60 flex-shrink-0 self-center md:self-auto rotate-[2deg] hover:rotate-0"
                 >
-                    <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 group-hover:border-violet-500/40 shadow-inner transition-colors duration-300 flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white group-hover:border-violet-500 shadow-inner transition-colors duration-300 flex-shrink-0">
                         {profileUser.favArtistImage ? (
                             <img src={profileUser.favArtistImage} alt={profileUser.favArtistName} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         ) : (
@@ -148,8 +148,8 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                         )}
                     </div>
                     <div className="min-w-0 flex-1">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-violet-400">Artiste Préféré</span>
-                        <h4 className="font-extrabold text-xs text-white truncate group-hover:text-violet-400 transition-colors duration-300 mt-0.5">
+                        <span className="text-[9px] font-mouse-memoirs uppercase tracking-[0.2em] text-violet-400">Artiste Préféré</span>
+                        <h4 className="font-mouse-memoirs text-xl uppercase tracking-wider text-white truncate group-hover:text-violet-400 transition-colors duration-300 mt-0.5">
                             {profileUser.favArtistName}
                         </h4>
                     </div>
@@ -162,7 +162,7 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                     <div className="flex gap-2">
                         <button
                             onClick={onEditClick}
-                            className="flex items-center gap-2 bg-[#292738] hover:bg-[#2e2e2e] active:scale-95 text-white px-4 py-2 rounded-full border border-zinc-700/50 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
+                            className="flex items-center gap-2 neobrutal-btn bg-[#1e1e22] hover:bg-zinc-850 text-white px-4 py-2.5 rounded-full font-mouse-memoirs uppercase tracking-widest text-sm"
                         >
                             <Settings size={14} />
                             Modifier le profil
@@ -170,8 +170,8 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                         {onLogoutClick && (
                             <button
                                 onClick={onLogoutClick}
-                                className="md:hidden flex items-center gap-2 bg-red-950/20 hover:bg-red-900/40 text-red-400 active:scale-95 px-4 py-2 rounded-full border border-red-500/20 font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md"
-                              >
+                                className="md:hidden flex items-center gap-2 neobrutal-btn bg-transparent border-2 border-red-500 hover:bg-red-500 text-red-400 px-4 py-2.5 rounded-full font-mouse-memoirs uppercase tracking-widest text-sm"
+                            >
                                 Se déconnecter
                             </button>
                         )}
@@ -180,17 +180,17 @@ function ProfileHero({ profileUser, isOwnProfile, connected, livePlaying, onEdit
                     <div className="flex items-center gap-2">
                         <button
                             onClick={onFollowToggle}
-                            className={`px-5 py-2 rounded-full font-black text-xs transition-all duration-200 cursor-pointer shadow-md active:scale-95 border ${
+                            className={`px-5 py-2 neobrutal-btn rounded-full font-mouse-memoirs uppercase tracking-widest text-sm ${
                                 profileUser.isFollowing
-                                    ? 'bg-transparent border-zinc-600 text-zinc-300 hover:text-red-400 hover:border-red-500/40'
-                                    : 'bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white border-transparent'
+                                    ? 'bg-transparent border-2 border-zinc-650 text-zinc-300 hover:border-red-500 hover:text-red-400'
+                                    : 'bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white border-transparent shadow-[3px_3px_0px_#fff] hover:shadow-[4px_4px_0px_#fff]'
                             }`}
                         >
                             {profileUser.isFollowing ? "Se désabonner" : "S'abonner"}
                         </button>
                         <button
                             onClick={onReportUser}
-                            className="px-4 py-2 rounded-full bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-transparent font-semibold text-xs transition-all duration-200 cursor-pointer shadow-md active:scale-95 flex items-center gap-1.5"
+                            className="px-4 py-2 neobrutal-btn bg-transparent border-2 border-red-500/50 hover:bg-red-500 hover:text-white text-red-400 rounded-full font-mouse-memoirs uppercase tracking-widest text-sm flex items-center gap-1.5"
                             title="Signaler ce membre"
                         >
                             <Flag size={14} /> Signaler

@@ -8,17 +8,22 @@ export default function AdminPagination({
     if (totalPages <= 1) return null;
 
     return (
-        <div className="flex items-center justify-between p-4 border-t border-zinc-850 bg-[#1a1824]/40 select-none">
-            <div className="text-xs text-zinc-500 font-semibold">
-                Affichage de <span className="text-zinc-300">{(currentPage - 1) * itemsPerPage + 1}</span> à <span className="text-zinc-300">{Math.min(currentPage * itemsPerPage, totalItems)}</span> sur <span className="text-zinc-300">{totalItems}</span> résultats
+        <div className="flex items-center justify-between p-4 border-t-2 border-white/[0.05] bg-[#1a1824]/30 select-none flex-wrap gap-3">
+            <div className="text-xs font-mouse-memoirs uppercase tracking-wider text-zinc-500">
+                <span className="text-zinc-300">{(currentPage - 1) * itemsPerPage + 1}</span>
+                {' – '}
+                <span className="text-zinc-300">{Math.min(currentPage * itemsPerPage, totalItems)}</span>
+                {' sur '}
+                <span className="text-zinc-300">{totalItems}</span>
+                {' résultats'}
             </div>
             <div className="flex items-center gap-2">
                 <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="px-3 py-1.5 rounded-xl bg-[#292738] hover:bg-zinc-800 text-xs font-bold text-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition duration-150 cursor-pointer border border-zinc-700/20"
+                    className="pill-btn inactive px-4 py-1.5 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                    Précédent
+                    ← Précédent
                 </button>
                 
                 <div className="flex items-center gap-1.5">
@@ -26,7 +31,7 @@ export default function AdminPagination({
                         const pageNum = idx + 1;
                         if (totalPages > 5 && Math.abs(currentPage - pageNum) > 1 && pageNum !== 1 && pageNum !== totalPages) {
                             if (pageNum === 2 || pageNum === totalPages - 1) {
-                                return <span key={pageNum} className="text-zinc-600 text-xs px-0.5">...</span>;
+                                return <span key={pageNum} className="text-zinc-600 text-xs px-0.5">…</span>;
                             }
                             return null;
                         }
@@ -34,10 +39,10 @@ export default function AdminPagination({
                             <button
                                 key={pageNum}
                                 onClick={() => setCurrentPage(pageNum)}
-                                className={`w-7 h-7 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                                className={`w-8 h-8 rounded-xl text-xs font-mouse-memoirs uppercase transition flex items-center justify-center cursor-pointer border-2 ${
                                     currentPage === pageNum
-                                        ? 'bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white shadow-md shadow-violet-500/10'
-                                        : 'bg-[#292738]/50 hover:bg-zinc-800 text-zinc-400 hover:text-white'
+                                        ? 'bg-violet-600 text-white border-white shadow-[3px_3px_0px_rgba(255,255,255,0.15)]'
+                                        : 'bg-transparent text-zinc-400 hover:text-white border-zinc-700 hover:border-white'
                                 }`}
                             >
                                 {pageNum}
@@ -49,9 +54,9 @@ export default function AdminPagination({
                 <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1.5 rounded-xl bg-[#292738] hover:bg-zinc-800 text-xs font-bold text-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition duration-150 cursor-pointer border border-zinc-700/20"
+                    className="pill-btn inactive px-4 py-1.5 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                    Suivant
+                    Suivant →
                 </button>
             </div>
         </div>

@@ -85,7 +85,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
     };
 
     return (
-        <div className="bg-white/[0.02] backdrop-blur-md border border-white/[0.06] p-5 rounded-2xl flex flex-col gap-4 relative group hover:bg-white/[0.04] hover:border-violet-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/5">
+        <div className="neobrutal-card bg-[#121214] p-5 flex flex-col gap-4 relative group transition-all duration-300">
             <div className="flex gap-4">
                 {/* ZONE ACTIONS (Modifier / Supprimer / Signaler) */}
                 {onEdit && onDelete ? (

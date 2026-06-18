@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Disc } from 'lucide-react';
 
 function Login() {
     const [pseudo, setPseudo] = useState('');
@@ -29,15 +30,13 @@ function Login() {
                 throw new Error(data.error || "Identifiants incorrects");
             }
 
-            // --- LE POINT CRUCIAL POUR LE JURY ---
-            // On sauvegarde le token JWT et les infos de l'utilisateur dans le LocalStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
 
             setSuccess("Connexion réussie ! Redirection...");
 
             setTimeout(() => {
-                navigate('/'); // Redirection vers la page d'accueil
+                navigate('/');
             }, 1500);
 
         } catch (err) {
@@ -48,40 +47,42 @@ function Login() {
     return (
         <div className="min-h-screen w-full bg-[#07050f] text-white font-sans overflow-y-auto flex flex-col items-center justify-center py-12 px-4 relative">
             {/* Ambient Background Glows */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
             {/* Logo / Header */}
-            <div className="mb-8 text-center flex items-center gap-3 relative z-10">
-                <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.4)]"></div>
-                <h1 className="text-2xl font-black tracking-tight text-white">
+            <div className="mb-10 text-center flex items-center gap-3.5 relative z-10 group cursor-pointer" onClick={() => navigate('/')}>
+                <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
+                    <Disc className="text-white stroke-[2.5] animate-spin-slow" size={24} />
+                </div>
+                <span className="font-modak text-3xl md:text-4xl text-violet-500 text-stroke-dark tracking-wide uppercase hover:scale-105 transition duration-300">
                     Music Diary
-                </h1>
+                </span>
             </div>
 
-            {/* Conteneur Formulaire style Premium Glassmorphism */}
-            <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.07] p-8 md:p-12 rounded-3xl w-full max-w-[500px] shadow-2xl relative z-10">
+            {/* Neobrutalist Form Card with strong borders and offset shadow */}
+            <div className="neobrutal-card bg-[#1a1824] border-4 border-white p-8 md:p-12 rounded-3xl w-full max-w-[480px] shadow-[8px_8px_0px_0px_var(--color-violet-500)] relative z-10">
 
-                <h2 className="text-3xl font-black tracking-tight text-white mb-8 text-center">
+                <h2 className="font-modak text-4xl sm:text-5xl text-violet-500 text-stroke-dark mb-8 text-center rotate-[-2deg] hover:rotate-0 hover:scale-105 transition duration-200">
                     Connexion
                 </h2>
 
                 {error && (
-                    <div className="bg-red-500/20 border border-red-500/30 text-red-200 p-3.5 mb-6 rounded-xl text-sm font-semibold text-center">
+                    <div className="bg-red-500/10 border-2 border-red-500 text-red-200 p-3.5 mb-6 rounded-2xl text-sm font-semibold text-center shadow-[3px_3px_0px_rgba(239,68,68,0.15)]">
                         {error}
                     </div>
                 )}
                 {success && (
-                    <div className="bg-violet-500/20 border border-violet-500/30 text-violet-200 p-3.5 mb-6 rounded-xl text-sm font-semibold text-center">
+                    <div className="bg-violet-500/10 border-2 border-violet-500 text-violet-200 p-3.5 mb-6 rounded-2xl text-sm font-semibold text-center shadow-[3px_3px_0px_rgba(139,92,246,0.15)]">
                         {success}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-6">
 
                     {/* Pseudo */}
-                    <div className="space-y-1.5">
-                        <label className="block text-xs font-black uppercase tracking-wider text-zinc-400">
+                    <div className="space-y-2">
+                        <label className="block text-lg font-mouse-memoirs uppercase tracking-widest text-fuchsia-400">
                             Pseudo
                         </label>
                         <input
@@ -89,14 +90,14 @@ function Login() {
                             required
                             value={pseudo}
                             onChange={(e) => setPseudo(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/20 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 p-3.5 rounded-xl text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition-all duration-200"
+                            className="w-full bg-[#292738] border-2 border-white focus:border-violet-500 focus:ring-0 p-3.5 rounded-2xl text-sm text-white placeholder:text-zinc-500 outline-none transition-all duration-200 shadow-[3px_3px_0px_rgba(255,255,255,0.05)]"
                             placeholder="Votre pseudo"
                         />
                     </div>
 
                     {/* Mot de passe */}
-                    <div className="space-y-1.5">
-                        <label className="block text-xs font-black uppercase tracking-wider text-zinc-400">
+                    <div className="space-y-2">
+                        <label className="block text-lg font-mouse-memoirs uppercase tracking-widest text-fuchsia-400">
                             Mot de passe
                         </label>
                         <input
@@ -104,7 +105,7 @@ function Login() {
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/20 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 p-3.5 rounded-xl text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition-all duration-200"
+                            className="w-full bg-[#292738] border-2 border-white focus:border-violet-500 focus:ring-0 p-3.5 rounded-2xl text-sm text-white placeholder:text-zinc-500 outline-none transition-all duration-200 shadow-[3px_3px_0px_rgba(255,255,255,0.05)]"
                             placeholder="Mot de passe"
                         />
                     </div>
@@ -113,18 +114,18 @@ function Login() {
                     <div className="flex justify-center pt-4">
                         <button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white font-extrabold py-3.5 rounded-xl text-sm transition-all duration-300 shadow-[0_4px_20px_rgba(139,92,246,0.25)] hover:shadow-[0_4px_25px_rgba(139,92,246,0.4)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                            className="w-full neobrutal-btn bg-violet-600 hover:bg-violet-500 text-white font-modak uppercase tracking-wider py-4 rounded-full text-xl shadow-[4px_4px_0px_#fff] hover:shadow-[5px_5px_0px_#fff] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-200"
                         >
                             Se connecter
                         </button>
                     </div>
                 </form>
 
-                <hr className="border-white/[0.06] my-8" />
+                <hr className="border-white/10 my-8" />
 
-                <p className="text-center text-zinc-400 text-xs font-medium">
+                <p className="text-center text-zinc-400 text-xs font-semibold">
                     Vous n'avez pas de compte ?{' '}
-                    <Link to="/register" className="text-white hover:text-violet-400 underline font-semibold transition-colors">
+                    <Link to="/register" className="text-white hover:text-violet-400 underline font-bold transition-colors">
                         Inscrivez-vous ici
                     </Link>.
                 </p>

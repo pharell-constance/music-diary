@@ -1,51 +1,24 @@
 function ProfileTabs({ profileTab, setProfileTab, connected }) {
+    const tabs = [
+        { key: 'journal', label: 'Journal de Bord' },
+        { key: 'mur', label: 'Mur de Lyrics' },
+        ...(connected ? [{ key: 'spotify', label: 'Stats Spotify' }] : []),
+        { key: 'stats', label: 'Analyses & Wrapped' },
+    ];
+
     return (
-        <div className="flex gap-6 border-b border-zinc-800/40 pb-2 mb-2 text-sm">
-            <button
-                onClick={() => setProfileTab('journal')}
-                className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
-                    profileTab === 'journal'
-                        ? 'border-violet-500 text-white'
-                        : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-            >
-                Journal de Bord
-            </button>
-            <button
-                onClick={() => setProfileTab('mur')}
-                className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
-                    profileTab === 'mur'
-                        ? 'border-violet-500 text-white'
-                        : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-            >
-                Mur de Lyrics
-            </button>
-            {connected && (
+        <div className="flex gap-2 flex-wrap select-none mb-2">
+            {tabs.map(({ key, label }) => (
                 <button
-                    onClick={() => setProfileTab('spotify')}
-                    className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
-                        profileTab === 'spotify'
-                            ? 'border-violet-500 text-white'
-                            : 'border-transparent text-zinc-400 hover:text-white'
-                    }`}
+                    key={key}
+                    onClick={() => setProfileTab(key)}
+                    className={`pill-btn px-5 py-2 ${profileTab === key ? 'active' : 'inactive'}`}
                 >
-                    Statistiques Spotify
+                    {label}
                 </button>
-            )}
-            <button
-                onClick={() => setProfileTab('stats')}
-                className={`pb-2 font-bold border-b-2 transition-all cursor-pointer ${
-                    profileTab === 'stats'
-                        ? 'border-violet-500 text-white'
-                        : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-            >
-                Analyses & Wrapped
-            </button>
+            ))}
         </div>
     );
 }
 
 export default ProfileTabs;
-

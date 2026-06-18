@@ -154,6 +154,57 @@ export default function useHomeData() {
         });
     };
 
+    const handleSubmitReview = async (e) => {
+        e.preventDefault();
+        setReviewError('');
+        setReviewSuccess('');
+        const token = localStorage.getItem('token');
+
+        const isEditing = editingReviewId !== null;
+        const url = isEditing
+            ? `http://127.0.0.1:5001/api/reviews/${editingReviewId}`
+            : 'http://127.0.0.1:5001/api/reviews';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    content: reviewContent,
+                    rating: rating,
+                    spotifyAlbumId: selectedAlbum.id,
+                    albumName: selectedAlbum.name,
+                    artistName: selectedAlbum.artists.map(a => a.name).join(', '),
+                    albumCover: selectedAlbum.images?.[0]?.url || ''
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Erreur lors de l'enregistrement");
+            }
+
+            setReviewSuccess(isEditing ? "Chronique modifiée !" : "Chronique enregistrée !");
+
+            // Refresh reviews
+            await fetchMyReviews();
+
+            setTimeout(() => {
+                setSelectedAlbum(null);
+                setReviewContent('');
+                setRating(5);
+                setEditingReviewId(null);
+                setReviewSuccess('');
+            }, 1500);
+        } catch (err) {
+            setReviewError(err.message);
+        }
+    };
+
     const triggerSearch = async (query, type) => {
         if (!query.trim()) return;
         setLoading(true);
@@ -241,6 +292,7 @@ export default function useHomeData() {
         togglePreview,
         handleEditClick,
         handleDeleteReview,
+        handleSubmitReview,
         handleSearch,
         handleSwitchSearchType,
         fetchMyReviews

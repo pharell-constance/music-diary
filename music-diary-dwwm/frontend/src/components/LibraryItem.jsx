@@ -4,7 +4,7 @@ function LibraryItem({ album, review, onClick }) {
     return (
         <div 
             onClick={onClick} 
-            className="bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-violet-500/20 p-4 rounded-2xl transition-all duration-300 cursor-pointer group shadow-md hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/5"
+            className="neobrutal-card p-4 cursor-pointer group transition-all duration-300"
         >
             <div className="w-full aspect-square bg-zinc-800 rounded-xl mb-4 shadow-lg overflow-hidden">
                 {album.images?.[0] ? (
