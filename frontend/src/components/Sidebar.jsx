@@ -289,11 +289,11 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                     )}
                 </div>
 
-                {/* Profile footer section */}
+                {/* Profile footer — compact with inline logout */}
                 {user && (
-                    <div className="neobrutal-card p-4 flex flex-col gap-3.5 shadow-[3px_3px_0px_rgba(255,255,255,0.1)] border-2 border-white bg-white/2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-zinc-800 border-2 border-white flex items-center justify-center font-black text-sm text-violet-400 overflow-hidden shadow-inner flex-shrink-0">
+                    <div className="neobrutal-card p-2.5 shadow-[3px_3px_0px_rgba(255,255,255,0.1)] border-2 border-white bg-white/2">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 rounded-xl bg-zinc-800 border-2 border-white flex items-center justify-center font-black text-xs text-violet-400 overflow-hidden shadow-inner flex-shrink-0">
                                 {user.avatar ? (
                                     <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
@@ -302,9 +302,9 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="font-extrabold text-sm text-zinc-100 truncate leading-snug">{user.pseudo}</div>
-                                <div className="text-[9px] text-zinc-500 font-black uppercase tracking-wider mt-0.5">
+                                <div className="text-[8px] text-zinc-500 font-black uppercase tracking-wider">
                                     {user.role === 'OWNER' ? (
-                                        <span className="bg-gradient-to-r from-yellow-400 to-amber-550 bg-clip-text text-transparent font-black drop-shadow-[0_0_8px_rgba(250,204,21,0.25)]">Propriétaire</span>
+                                        <span className="bg-gradient-to-r from-yellow-400 to-amber-550 bg-clip-text text-transparent font-black">Propriétaire</span>
                                     ) : user.role === 'ADMIN' ? (
                                         'Administrateur'
                                     ) : (
@@ -312,14 +312,14 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                     )}
                                 </div>
                             </div>
+                            <button
+                                onClick={handleLogout}
+                                className="flex-shrink-0 w-8 h-8 rounded-lg border-2 border-red-500/60 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition-all duration-200 flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_rgba(239,68,68,0.2)] hover:shadow-[2px_2px_0px_rgba(239,68,68,0.4)] hover:-translate-y-px active:translate-y-0 active:shadow-none"
+                                title="Se déconnecter"
+                            >
+                                <LogOut size={14} />
+                            </button>
                         </div>
-                        
-                        <button
-                            onClick={handleLogout}
-                            className="w-full py-2 neobrutal-btn bg-transparent border-2 border-red-500 hover:bg-red-500 text-red-400 hover:text-white font-mouse-memoirs uppercase tracking-widest text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
-                        >
-                            <LogOut size={13} /> Se déconnecter
-                        </button>
                     </div>
                 )}
             </div>

@@ -86,11 +86,12 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
     };
 
     return (
-        <div className="neobrutal-card bg-[#121214] p-5 flex flex-col gap-4 relative group transition-all duration-300">
-            <div className="flex gap-4">
+        <div className="neobrutal-card bg-[#121214] flex flex-col relative group transition-all duration-300 overflow-hidden">
+            <div className="p-5 md:p-6 flex flex-col gap-4">
+            <div className="flex gap-5">
                 {/* ZONE ACTIONS (Modifier / Supprimer / Signaler) */}
                 {onEdit && onDelete ? (
-                    <div className="absolute top-4 right-4 flex items-center gap-3 md:opacity-0 md:group-hover:opacity-100 transition focus-within:opacity-100">
+                    <div className="absolute top-5 right-5 md:top-6 md:right-6 flex items-center gap-3 md:opacity-0 md:group-hover:opacity-100 transition focus-within:opacity-100 z-10">
                         <button
                             onClick={() => onEdit(review)}
                             className="text-zinc-500 hover:text-violet-400 transition cursor-pointer"
@@ -107,7 +108,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                         </button>
                     </div>
                 ) : onReport ? (
-                    <div className="absolute top-4 right-4 flex items-center gap-3 md:opacity-0 md:group-hover:opacity-100 transition focus-within:opacity-100">
+                    <div className="absolute top-5 right-5 md:top-6 md:right-6 flex items-center gap-3 md:opacity-0 md:group-hover:opacity-100 transition focus-within:opacity-100 z-10">
                         <button
                             onClick={() => onReport(review.id)}
                             className="text-zinc-500 hover:text-red-400 transition cursor-pointer"
@@ -121,7 +122,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                 {/* Pochette de l'album */}
                 <div 
                     onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
-                    className="w-24 h-24 md:w-28 md:h-28 bg-white/[0.03] border border-white/[0.08] rounded-xl shadow-md overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                    className="w-24 h-24 md:w-28 md:h-28 bg-white/[0.03] border-2 border-white/15 rounded-xl shadow-[3px_3px_0px_rgba(255,255,255,0.08)] overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-90 hover:border-violet-400/40 transition-all"
                 >
                     {review.albumCover ? (
                         <img src={review.albumCover} alt={review.albumName} className="w-full h-full object-cover" />
@@ -133,30 +134,37 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                 </div>
 
                 {/* Infos */}
-                <div className="flex flex-col justify-between overflow-hidden pr-14 flex-1">
-                    <div>
-                        <h3 
-                            onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
-                            className="font-bold text-sm md:text-base text-white truncate leading-snug cursor-pointer hover:text-violet-400 transition-colors"
-                        >
-                            {review.albumName}
-                        </h3>
-                        <p className="text-xs text-zinc-400 truncate mb-2">{review.artistName}</p>
+                <div className="flex flex-col justify-between overflow-hidden pr-12 md:pr-14 flex-1 min-w-0">
+                    <div className="space-y-2">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-violet-400/80 mb-0.5">Album</p>
+                            <h3 
+                                onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
+                                className="font-mouse-memoirs uppercase tracking-wide text-base md:text-lg text-white truncate leading-tight cursor-pointer hover:text-violet-400 transition-colors"
+                            >
+                                {review.albumName}
+                            </h3>
+                            <p className="text-sm text-zinc-400 truncate mt-0.5 font-medium">{review.artistName}</p>
+                        </div>
 
-                        <div className="flex items-center gap-1 mb-2">
+                        <div className="flex items-center gap-1.5">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <Star 
                                     key={star} 
-                                    size={14} 
+                                    size={15} 
                                     fill={star <= review.rating ? "#ec4899" : "none"} 
-                                    className={star <= review.rating ? "text-pink-500" : "text-zinc-700"} 
+                                    className={star <= review.rating ? "text-pink-500 drop-shadow-[0_0_4px_rgba(236,72,153,0.4)]" : "text-zinc-700"} 
                                 />
                             ))}
+                            <span className="text-[10px] font-black text-zinc-500 ml-1">{review.rating}/5</span>
                         </div>
-                        <p className="text-zinc-300 text-xs md:text-sm italic line-clamp-2">"{review.content}"</p>
+
+                        <blockquote className="border-l-2 border-violet-500/50 pl-3 py-0.5">
+                            <p className="text-zinc-300 text-sm leading-relaxed line-clamp-3 font-medium italic">"{review.content}"</p>
+                        </blockquote>
                     </div>
                     
-                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] text-zinc-400">
+                    <div className="mt-3 pt-2 border-t border-white/[0.05] flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] text-zinc-500">
                         <div className="flex items-center gap-1">
                             <Calendar size={10} />
                             <span>Le {new Date(review.createdAt).toLocaleDateString('fr-fr')}</span>
@@ -191,9 +199,10 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                     </div>
                 </div>
             </div>
+            </div>
 
             {/* Social Interactions Bar */}
-            <div className="flex items-center gap-6 pt-3 border-t border-white/[0.05] text-xs text-zinc-400 select-none">
+            <div className="flex items-center gap-6 px-5 md:px-6 py-3 border-t-2 border-white/[0.06] bg-black/20 text-xs text-zinc-400 select-none">
                 <button 
                     onClick={handleLikeToggle}
                     className={`flex items-center gap-1.5 cursor-pointer transition-colors ${liked ? 'text-red-500' : 'hover:text-red-400'}`}
@@ -212,7 +221,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
 
             {/* Comments Drawer */}
             {showComments && (
-                <div className="pt-3 border-t border-white/[0.05] flex flex-col gap-3">
+                <div className="px-5 md:px-6 pb-5 md:pb-6 pt-3 border-t border-white/[0.05] flex flex-col gap-3">
                     <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Commentaires ({commentsList.length})</h4>
                     
                     <div className="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
