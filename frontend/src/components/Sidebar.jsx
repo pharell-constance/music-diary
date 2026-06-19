@@ -167,10 +167,17 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                 <div className="space-y-6 relative z-10">
                     {/* Logo Section */}
                     <div className="flex items-center gap-3 px-2 group cursor-pointer animate-fade-in" onClick={() => window.location.href = '/'}>
-                        <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center border-2 border-white shadow-[2px_2px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
-                            <Disc className="text-white stroke-[2.5] animate-spin-slow" size={16} />
+                        <div className="w-10 h-10 bg-violet-600 border-2.5 border-black rounded-xl flex items-center justify-center shadow-[3px_3px_0px_#000000] dark:shadow-[3px_3px_0px_#ffffff] group-hover:-translate-y-0.5 group-hover:shadow-[4px_4px_0px_#000000] dark:group-hover:shadow-[4px_4px_0px_#ffffff] transition-all duration-300">
+                            <Disc className="text-white stroke-[2.5] animate-spin-slow" style={{ animationDuration: '8s' }} size={18} />
                         </div>
-                        <span className="font-modak text-lg tracking-wider text-violet-500 text-stroke-dark uppercase group-hover:text-fuchsia-500 transition-colors">Music Diary</span>
+                        <div className="flex flex-col">
+                            <span className="font-mouse-memoirs text-[26px] tracking-wider leading-none text-stroke-dark text-white group-hover:text-violet-400 transition-colors uppercase">
+                                Music
+                            </span>
+                            <span className="font-mouse-memoirs text-[26px] tracking-wider leading-none text-stroke-dark text-violet-500 group-hover:text-fuchsia-500 transition-colors uppercase -mt-1">
+                                Diary
+                            </span>
+                        </div>
                     </div>
  
                     {/* Nav items */}

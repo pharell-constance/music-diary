@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Headphones, Users, Play, Pause, Disc, Music, ExternalLink } from 'lucide-react';
 import gsap from 'gsap';
 import Sidebar from '../components/Sidebar';
+import NeobrutalLoader from '../components/NeobrutalLoader';
 
 function ArtistPage() {
     const { artistId } = useParams();
@@ -160,6 +161,7 @@ function ArtistPage() {
 
     return (
         <div className="flex min-h-screen bg-black text-white font-sans">
+            <NeobrutalLoader isLoading={loading} />
             <Sidebar
                 user={user}
                 currentTab="profile"

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Music, Search, Sparkles, Users } from 'lucide-react';
+import { Music, Search, Sparkles, Users, BookOpen } from 'lucide-react';
 import ReviewCard from '../ReviewCard';
 import HomeTrendingSidebar from './HomeTrendingSidebar';
 

@@ -69,10 +69,10 @@ function LandingPage() {
             {/* Header */}
             <header className="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between z-50 relative">
                 <div className="flex items-center gap-3.5 group cursor-pointer" onClick={() => navigate('/')}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center border-2 border-white shadow-[3px_3px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
-                        <Disc className="text-white stroke-[2.5] animate-spin-slow" size={20} />
+                    <div className="w-10 h-10 bg-violet-600 border-2.5 border-white rounded-xl flex items-center justify-center shadow-[3px_3px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
+                        <Disc className="text-white stroke-[2.5] animate-spin-slow" style={{ animationDuration: '8s' }} size={18} />
                     </div>
-                    <span className="font-modak text-2xl md:text-3xl text-violet-500 text-stroke-dark tracking-wide uppercase hover:scale-105 transition duration-300">
+                    <span className="font-mouse-memoirs text-3xl tracking-widest text-violet-500 text-stroke-dark uppercase group-hover:text-fuchsia-500 transition-colors">
                         Music Diary
                     </span>
                 </div>
@@ -291,10 +291,10 @@ function LandingPage() {
             <footer className="w-full border-t border-white/[0.04] py-8 text-center text-xs text-zinc-600 z-10 mt-12 bg-black/40">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/')}>
-                        <div className="w-6 h-6 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-md flex items-center justify-center shadow-md">
-                            <Disc className="text-white" size={12} />
+                        <div className="w-7 h-7 bg-violet-600 border border-white/20 rounded-lg flex items-center justify-center shadow">
+                            <Disc className="text-white animate-spin-slow" style={{ animationDuration: '10s' }} size={12} />
                         </div>
-                        <span className="font-modak text-zinc-400 tracking-wider uppercase text-sm group-hover:text-violet-400 transition-colors">Music Diary &copy; {new Date().getFullYear()}</span>
+                        <span className="font-mouse-memoirs text-zinc-400 tracking-wider uppercase text-lg group-hover:text-violet-400 transition-colors">Music Diary &copy; {new Date().getFullYear()}</span>
                     </div>
                     <p className="text-zinc-500 font-medium">
                         Développé avec amour pour les passionnés de musique. Tous droits réservés.

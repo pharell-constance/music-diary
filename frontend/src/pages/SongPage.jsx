@@ -5,6 +5,7 @@ import { ArrowLeft, Play, Pause, Disc, Music, Star, Calendar, ExternalLink } fro
 import gsap from 'gsap';
 import Sidebar from '../components/Sidebar';
 import ReviewCard from '../components/ReviewCard';
+import NeobrutalLoader from '../components/NeobrutalLoader';
 
 function SongPage() {
     const { songId } = useParams();
@@ -241,6 +242,7 @@ function SongPage() {
 
     return (
         <div className="flex min-h-screen bg-black text-white font-sans">
+            <NeobrutalLoader isLoading={loading} />
             <Sidebar
                 user={user}
                 currentTab="search"

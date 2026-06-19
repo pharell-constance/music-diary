@@ -77,11 +77,13 @@ app.use(cors({
 
         const cleanOrigin = origin.trim().replace(/\/$/, "");
         const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(cleanOrigin);
+        const isNetlify = cleanOrigin.endsWith('.netlify.app');
 
-        if (allowedOrigins.includes(cleanOrigin) || isLocalhost) {
+        if (allowedOrigins.includes(cleanOrigin) || isLocalhost || isNetlify) {
             callback(null, true);
         } else {
-            callback(new Error(`CORS bloqué pour l'origine: ${origin}`));
+            console.warn(`[CORS] Rejet de l'origine : ${origin}`);
+            callback(null, false);
         }
     },
     credentials: true,
