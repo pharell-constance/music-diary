@@ -16,6 +16,7 @@ export default function useHomeData() {
     const [loading, setLoading] = useState(false);
     const [searchType, setSearchType] = useState('albums');
     const [members, setMembers] = useState([]);
+    const [tracks, setTracks] = useState([]);
 
     const [myReviews, setMyReviews] = useState([]);
     const [socialFeed, setSocialFeed] = useState([]);
@@ -45,6 +46,13 @@ export default function useHomeData() {
 
     useEffect(() => {
         fetchMyReviews();
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+            }
+            window.spotifyIsPlaying = false;
+            window.dispatchEvent(new CustomEvent('spotify-pause'));
+        };
     }, []);
 
     useEffect(() => {
@@ -55,6 +63,12 @@ export default function useHomeData() {
     useEffect(() => {
         if (homeSubTab === 'trending') fetchTrending(trendingLimit);
     }, [trendingLimit]);
+
+    useEffect(() => {
+        if (playingPreview === null) {
+            window.dispatchEvent(new CustomEvent('spotify-pause'));
+        }
+    }, [playingPreview]);
 
     async function fetchSocialFeed() {
         const token = localStorage.getItem('token');
@@ -103,6 +117,14 @@ export default function useHomeData() {
                 audioRef.current.play();
             }
             setPlayingPreview(track.id);
+            window.dispatchEvent(new CustomEvent('spotify-play', {
+                detail: {
+                    id: track.id,
+                    name: track.name,
+                    artist: track.artistName || (typeof track.artists === 'string' ? track.artists : (Array.isArray(track.artists) ? track.artists.map(a => a.name).join(', ') : '')),
+                    cover: track.albumCover || track.album?.images?.[0]?.url || ''
+                }
+            }));
         }
     }
 
@@ -208,6 +230,7 @@ export default function useHomeData() {
     const triggerSearch = async (query, type) => {
         if (!query.trim()) return;
         setLoading(true);
+        console.log(`[Search] query: "${query}", type: "${type}"`);
         const token = localStorage.getItem('token');
         try {
             if (type === 'albums') {
@@ -218,6 +241,11 @@ export default function useHomeData() {
                 const response = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(query)}&type=artist`);
                 const data = await response.json();
                 if (data.artists?.items) setArtists(data.artists.items);
+            } else if (type === 'tracks') {
+                const response = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(query)}&type=track`);
+                const data = await response.json();
+                console.log("[Search] tracks returned:", data.tracks?.items?.length || 0);
+                if (data.tracks?.items) setTracks(data.tracks.items);
             } else {
                 const response = await fetch(`http://127.0.0.1:5001/api/users/search?q=${encodeURIComponent(query)}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -226,7 +254,7 @@ export default function useHomeData() {
                 if (response.ok) setMembers(data || []);
             }
         } catch (error) {
-            console.error(error);
+            console.error("[Search] error:", error);
         } finally {
             setLoading(false);
         }
@@ -241,8 +269,12 @@ export default function useHomeData() {
         setSearchType(type);
         setAlbums([]);
         setArtists([]);
+        setTracks([]);
         setMembers([]);
-        setSearchQuery('');
+        // Si une recherche est déjà en cours, on la relance pour le nouveau type choisi
+        if (searchQuery.trim()) {
+            triggerSearch(searchQuery, type);
+        }
     };
 
     return {
@@ -260,6 +292,8 @@ export default function useHomeData() {
         setSearchType,
         members,
         setMembers,
+        tracks,
+        setTracks,
         myReviews,
         setMyReviews,
         socialFeed,

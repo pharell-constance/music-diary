@@ -45,6 +45,7 @@ function Home() {
                         albums={home.albums}
                         artists={home.artists}
                         members={home.members}
+                        tracks={home.tracks}
                         onSelectAlbum={(album) => { home.setEditingReviewId(null); home.setSelectedAlbum(album); }}
                     />
                 )}

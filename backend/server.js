@@ -528,7 +528,8 @@ app.get('/api/search', async (req, res) => {
     try {
         const searchQuery = req.query.q;
         const type = req.query.type || 'album';
-        const limit = type === 'artist' ? 10 : 5; // limit 10 for artists, 5 for albums
+        console.log(`[Backend Search] query="${searchQuery}" type="${type}"`);
+        const limit = type === 'artist' ? 10 : type === 'track' ? 10 : 5; // limit 10 for artists/tracks, 5 for albums
 
         if (!searchQuery) {
             return res.status(400).json({ error: "Veuillez fournir une recherche avec ?q=" });
@@ -714,6 +715,188 @@ app.get('/api/artists/:artistId/details', authenticateToken, async (req, res) =>
     }
 });
 
+
+// Routes pour les chansons / morceaux (détails, paroles, critiques)
+app.get('/api/songs/:trackId/details', authenticateToken, async (req, res) => {
+    try {
+        const { trackId } = req.params;
+        const clientToken = await getSpotifyToken();
+
+        const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+            headers: { 'Authorization': `Bearer ${clientToken}` }
+        });
+
+        if (!response.ok) {
+            // Tenter de récupérer en tant qu'album si ce n'est pas un morceau
+            const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${trackId}`, {
+                headers: { 'Authorization': `Bearer ${clientToken}` }
+            });
+            if (albumResponse.ok) {
+                const albumData = await albumResponse.json();
+                return res.json({
+                    id: albumData.id,
+                    name: albumData.name,
+                    isAlbum: true,
+                    album: {
+                        id: albumData.id,
+                        name: albumData.name,
+                        cover: albumData.images?.[0]?.url || "",
+                        releaseDate: albumData.release_date
+                    },
+                    artists: albumData.artists?.map(art => ({
+                        id: art.id,
+                        name: art.name
+                    })) || [],
+                    tracks: albumData.tracks?.items?.map(t => ({
+                        id: t.id,
+                        name: t.name,
+                        durationMs: t.duration_ms,
+                        previewUrl: t.preview_url
+                    })) || []
+                });
+            }
+            return res.status(response.status).json({ error: "Impossible de récupérer les détails depuis Spotify" });
+        }
+
+        const data = await response.json();
+        
+        res.json({
+            id: data.id,
+            name: data.name,
+            durationMs: data.duration_ms,
+            previewUrl: data.preview_url,
+            isAlbum: false,
+            album: {
+                id: data.album?.id,
+                name: data.album?.name,
+                cover: data.album?.images?.[0]?.url || "",
+                releaseDate: data.album?.release_date
+            },
+            artists: data.artists?.map(art => ({
+                id: art.id,
+                name: art.name
+            })) || []
+        });
+    } catch (error) {
+        console.error("Erreur détails chanson/album:", error);
+        res.status(500).json({ error: "Erreur serveur lors de la récupération des détails" });
+    }
+});
+
+app.get('/api/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
+    try {
+        const { trackId } = req.params;
+        const clientToken = await getSpotifyToken();
+
+        // 1. Récupérer les infos sur Spotify pour avoir le titre et l'artiste précis
+        const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+            headers: { 'Authorization': `Bearer ${clientToken}` }
+        });
+
+        if (!trackRes.ok) {
+            return res.status(trackRes.status).json({ error: "Impossible de récupérer le morceau sur Spotify" });
+        }
+
+        const trackData = await trackRes.json();
+        const artistName = trackData.artists?.[0]?.name;
+        const trackName = trackData.name;
+
+        if (!artistName || !trackName) {
+            return res.status(400).json({ error: "Informations de morceau incomplètes" });
+        }
+
+        // Nettoyage du titre de la chanson pour éliminer les suffixes qui gênent la recherche stricte
+        const cleanName = (name) => {
+            return name
+                .replace(/\s*-\s*.*$/, '') // Supprime tout après un tiret (ex: " - Remastered 2021")
+                .replace(/\s*\(feat\..*?\)/i, '') // Supprime (feat. ...)
+                .replace(/\s*\(with.*?\)/i, '') // Supprime (with ...)
+                .replace(/\s*\(Radio Edit\)/i, '')
+                .replace(/\s*\(Remastered\)/i, '')
+                .trim();
+        };
+
+        const cleanedTrackName = cleanName(trackName);
+
+        // 2. Tenter une recherche stricte sur LRCLIB
+        const lyricsUrl = `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artistName)}&track_name=${encodeURIComponent(cleanedTrackName)}`;
+        const lyricsRes = await fetch(lyricsUrl);
+        let lyricsData = null;
+
+        if (lyricsRes.ok) {
+            lyricsData = await lyricsRes.json();
+        } else {
+            // 3. Fallback : si la recherche stricte échoue, on fait une recherche globale (fuzzy) sur LRCLIB
+            const searchUrl = `https://lrclib.net/api/search?q=${encodeURIComponent(`${artistName} ${cleanedTrackName}`)}`;
+            const searchRes = await fetch(searchUrl);
+            if (searchRes.ok) {
+                const searchResults = await searchRes.json();
+                
+                // Filtrer les résultats qui possèdent des paroles
+                const matches = searchResults.filter(item => item.plainLyrics || item.syncedLyrics);
+                
+                if (matches.length > 0) {
+                    // Trouver le résultat dont la durée (en secondes) est la plus proche du morceau Spotify
+                    const spotifyDurationSec = trackData.duration_ms / 1000;
+                    lyricsData = matches.reduce((prev, curr) => {
+                        return Math.abs(curr.duration - spotifyDurationSec) < Math.abs(prev.duration - spotifyDurationSec) ? curr : prev;
+                    });
+                }
+            }
+        }
+
+        if (!lyricsData) {
+            return res.json({ lyrics: null, syncedLyrics: null, instrumental: false });
+        }
+
+        res.json({
+            lyrics: lyricsData.plainLyrics || null,
+            syncedLyrics: lyricsData.syncedLyrics || null,
+            instrumental: lyricsData.instrumental || false
+        });
+    } catch (error) {
+        console.error("Erreur paroles chanson:", error);
+        res.status(500).json({ error: "Erreur serveur lors de la récupération des paroles" });
+    }
+});
+
+app.get('/api/songs/:trackId/reviews', authenticateToken, async (req, res) => {
+    try {
+        const { trackId } = req.params;
+        const reviews = await prisma.review.findMany({
+            where: { spotifyAlbumId: trackId },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        pseudo: true,
+                        avatar: true,
+                        role: true
+                    }
+                },
+                likes: true,
+                comments: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                pseudo: true,
+                                avatar: true,
+                                role: true
+                            }
+                        }
+                    },
+                    orderBy: { createdAt: 'asc' }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(reviews);
+    } catch (error) {
+        console.error("Erreur récupération critiques chanson:", error);
+        res.status(500).json({ error: "Erreur lors de la récupération des avis" });
+    }
+});
 
 // 3. Route de test basique
 app.get('/api/test', (req, res) => {

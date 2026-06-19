@@ -118,7 +118,10 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                 ) : null}
 
                 {/* Pochette de l'album */}
-                <div className="w-24 h-24 md:w-28 md:h-28 bg-white/[0.03] border border-white/[0.08] rounded-xl shadow-md overflow-hidden flex-shrink-0">
+                <div 
+                    onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
+                    className="w-24 h-24 md:w-28 md:h-28 bg-white/[0.03] border border-white/[0.08] rounded-xl shadow-md overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                >
                     {review.albumCover ? (
                         <img src={review.albumCover} alt={review.albumName} className="w-full h-full object-cover" />
                     ) : (
@@ -131,7 +134,12 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                 {/* Infos */}
                 <div className="flex flex-col justify-between overflow-hidden pr-14 flex-1">
                     <div>
-                        <h3 className="font-bold text-sm md:text-base text-white truncate leading-snug">{review.albumName}</h3>
+                        <h3 
+                            onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
+                            className="font-bold text-sm md:text-base text-white truncate leading-snug cursor-pointer hover:text-violet-400 transition-colors"
+                        >
+                            {review.albumName}
+                        </h3>
                         <p className="text-xs text-zinc-400 truncate mb-2">{review.artistName}</p>
 
                         <div className="flex items-center gap-1 mb-2">

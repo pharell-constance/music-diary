@@ -12,6 +12,7 @@ function SearchTab({
     albums,
     artists,
     members,
+    tracks = [],
     onSelectAlbum
 }) {
     const navigate = useNavigate();
@@ -36,6 +37,12 @@ function SearchTab({
                     Artistes
                 </button>
                 <button
+                    onClick={() => handleSwitchSearchType('tracks')}
+                    className={`pill-btn px-5 py-2 ${searchType === 'tracks' ? 'active' : 'inactive'}`}
+                >
+                    Musiques
+                </button>
+                <button
                     onClick={() => handleSwitchSearchType('members')}
                     className={`pill-btn px-5 py-2 ${searchType === 'members' ? 'active' : 'inactive'}`}
                 >
@@ -55,6 +62,8 @@ function SearchTab({
                                 ? "Que souhaitez-vous écouter ?"
                                 : searchType === 'artists'
                                 ? "Rechercher un artiste..."
+                                : searchType === 'tracks'
+                                ? "Rechercher une musique..."
                                 : "Rechercher un membre par pseudo..."
                         }
                         className="w-full pl-12 pr-4 py-3 text-sm font-medium"
@@ -104,6 +113,42 @@ function SearchTab({
                                 </div>
                                 <div className="text-[10px] text-zinc-500 mt-0.5 font-semibold uppercase tracking-widest">
                                     Artiste Spotify
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            ) : searchType === 'tracks' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {tracks.length === 0 ? (
+                        <div className="col-span-full neo-empty text-center py-16 flex flex-col items-center gap-3">
+                            <Music size={30} className="text-zinc-600" />
+                            <p className="font-mouse-memoirs uppercase tracking-wider text-zinc-500">Aucune musique trouvée.</p>
+                        </div>
+                    ) : (
+                        tracks.map((track) => (
+                            <div
+                                key={track.id}
+                                onClick={() => navigate(`/song/${track.id}`)}
+                                className="neobrutal-card p-4 flex items-center gap-4 cursor-pointer hover:rotate-[0.5deg] transition-all duration-200"
+                            >
+                                <div className="w-16 h-16 bg-zinc-800 border-2 border-white rounded-xl shadow-[3px_3px_0px_rgba(255,255,255,0.1)] overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                    {track.album?.images?.[0]?.url ? (
+                                        <img src={track.album.images[0].url} alt={track.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <Music size={24} className="text-zinc-500" />
+                                    )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="font-mouse-memoirs uppercase tracking-wide text-lg text-white truncate leading-tight hover:text-pink-500 transition-colors">
+                                        {track.name}
+                                    </div>
+                                    <div className="text-xs text-zinc-400 truncate mt-0.5 font-semibold">
+                                        {track.artists?.map(a => a.name).join(', ')}
+                                    </div>
+                                    <div className="text-[10px] text-zinc-500 mt-1 truncate">
+                                        {track.album?.name}
+                                    </div>
                                 </div>
                             </div>
                         ))

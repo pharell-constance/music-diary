@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Profile from './pages/profile';
 import ArtistPage from './pages/ArtistPage';
 import AdminDashboard from './pages/AdminDashboard';
+import SongPage from './pages/SongPage';
 
 // --- LE GARDIEN DE ROUTE (Protected Route) ---
 const ProtectedRoute = ({ children }) => {
@@ -92,6 +93,12 @@ function App() {
           <Route path="/artist/:artistId" element={
             <ProtectedRoute>
               <ArtistPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/song/:songId" element={
+            <ProtectedRoute>
+              <SongPage />
             </ProtectedRoute>
           } />
 

@@ -27,7 +27,13 @@ function ArtistPage() {
 
     // Cleanup audio on unmount
     useEffect(() => {
-        return () => { if (audio) audio.pause(); };
+        return () => { 
+            if (audio) {
+                audio.pause();
+            }
+            window.spotifyIsPlaying = false;
+            window.dispatchEvent(new CustomEvent('spotify-pause'));
+        };
     }, [audio]);
 
     // Fetch artist details
@@ -121,14 +127,31 @@ function ArtistPage() {
         if (playingId === trackId) {
             audio.pause();
             setPlayingId(null);
+            window.dispatchEvent(new CustomEvent('spotify-pause'));
         } else {
             if (audio) audio.pause();
             const newAudio = new Audio(previewUrl);
             newAudio.volume = 0.4;
             newAudio.play().catch(e => console.error(e));
-            newAudio.addEventListener('ended', () => setPlayingId(null));
+            newAudio.addEventListener('ended', () => {
+                setPlayingId(null);
+                window.dispatchEvent(new CustomEvent('spotify-pause'));
+            });
             setPlayingId(trackId);
             setAudio(newAudio);
+
+            // Déclencher l'événement global play
+            const track = artist.topTracks.find(t => t.id === trackId);
+            if (track) {
+                window.dispatchEvent(new CustomEvent('spotify-play', {
+                    detail: {
+                        id: trackId,
+                        name: track.name,
+                        artist: artist.name,
+                        cover: track.albumCover
+                    }
+                }));
+            }
         }
     };
 
@@ -285,7 +308,11 @@ function ArtistPage() {
                                         {artist.topTracks.map((track, idx) => (
                                             <div
                                                 key={track.id}
-                                                className="track-row flex items-center gap-4 px-5 py-3.5 hover:bg-zinc-800/30 transition-colors duration-200 group"
+                                                onClick={(e) => {
+                                                    if (e.target.closest('button')) return;
+                                                    navigate(`/song/${track.id}`);
+                                                }}
+                                                className="track-row flex items-center gap-4 px-5 py-3.5 hover:bg-zinc-800/30 transition-colors duration-200 group cursor-pointer"
                                             >
                                                 {/* Index / Play */}
                                                 <div className="w-8 flex items-center justify-center flex-shrink-0 relative">
