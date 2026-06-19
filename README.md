@@ -74,8 +74,8 @@ Pour garantir une maintenance optimale et un code propre, la base de code fronte
    JWT_SECRET="votre_secret_jwt"
    SPOTIFY_CLIENT_ID="votre_spotify_client_id"
    SPOTIFY_CLIENT_SECRET="votre_spotify_client_secret"
-   SPOTIFY_REDIRECT_URI="http://localhost:5001/api/spotify/callback"
-   FRONTEND_URL="http://localhost:5173"
+   SPOTIFY_REDIRECT_URI=http://127.0.0.1:5001/api/spotify/callback
+   FRONTEND_URL=http://localhost:5173
    ```
 4. Exécutez les migrations de base de données :
    ```bash

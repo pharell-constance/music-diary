@@ -1,10 +1,60 @@
 require('dotenv').config();
+
+function cleanEnv(value) {
+    if (value == null || value === '') return value;
+    return value.trim().replace(/^["']|["']$/g, '');
+}
+
+['SPOTIFY_CLIENT_ID', 'SPOTIFY_CLIENT_SECRET', 'SPOTIFY_REDIRECT_URI', 'FRONTEND_URL', 'JWT_SECRET'].forEach((key) => {
+    if (process.env[key]) process.env[key] = cleanEnv(process.env[key]);
+});
+
+const DEFAULT_SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:5001/api/spotify/callback';
+
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+async function ensureSpotifySchema() {
+    const columns = await prisma.$queryRaw`
+        SELECT COLUMN_NAME
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'User'
+          AND COLUMN_NAME IN ('spotifyId', 'spotifyAccessToken', 'spotifyRefreshToken', 'spotifyTokenExpiresAt')
+    `;
+    const existing = new Set(columns.map((c) => c.COLUMN_NAME));
+
+    if (!existing.has('spotifyId')) {
+        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyId` VARCHAR(191) NULL');
+    }
+    if (!existing.has('spotifyAccessToken')) {
+        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyAccessToken` TEXT NULL');
+    } else {
+        await prisma.$executeRawUnsafe('ALTER TABLE `User` MODIFY COLUMN `spotifyAccessToken` TEXT NULL');
+    }
+    if (!existing.has('spotifyRefreshToken')) {
+        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyRefreshToken` TEXT NULL');
+    } else {
+        await prisma.$executeRawUnsafe('ALTER TABLE `User` MODIFY COLUMN `spotifyRefreshToken` TEXT NULL');
+    }
+    if (!existing.has('spotifyTokenExpiresAt')) {
+        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyTokenExpiresAt` DATETIME(3) NULL');
+    }
+    console.log('Spotify DB columns OK');
+}
+
+function parseSpotifyApiError(body) {
+    try {
+        const parsed = JSON.parse(body);
+        return parsed.error_description || parsed.error || body;
+    } catch {
+        return body;
+    }
+}
 
 
 const app = express();
@@ -78,11 +128,40 @@ async function refreshUserSpotifyToken(user) {
     }
 }
 
+// Diagnostic Spotify (public, ne expose pas les secrets)
+app.get('/api/spotify/setup-check', async (req, res) => {
+    try {
+        const columns = await prisma.$queryRaw`
+            SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+            FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'User'
+              AND COLUMN_NAME LIKE 'spotify%'
+        `;
+        res.json({
+            env: {
+                clientId: Boolean(process.env.SPOTIFY_CLIENT_ID),
+                clientSecret: Boolean(process.env.SPOTIFY_CLIENT_SECRET),
+                redirectUri: process.env.SPOTIFY_REDIRECT_URI || DEFAULT_SPOTIFY_REDIRECT_URI,
+                frontendUrl: process.env.FRONTEND_URL || null,
+                jwtSecret: Boolean(process.env.JWT_SECRET),
+            },
+            columns,
+        });
+    } catch (err) {
+        console.error('setup-check error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Endpoint qui renvoie l'URL d'autorisation Spotify (appelé depuis le front)
 app.get('/api/spotify/authorize-url', authenticateToken, (req, res) => {
     try {
-        const redirectUri = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:5001/api/spotify/callback';
-        console.log('Spotify authorize redirect_uri:', redirectUri);
+        const redirectUri = process.env.SPOTIFY_REDIRECT_URI || DEFAULT_SPOTIFY_REDIRECT_URI;
+        if (!process.env.SPOTIFY_CLIENT_ID) {
+            return res.status(500).json({ error: 'SPOTIFY_CLIENT_ID manquant sur le serveur' });
+        }
+        console.log('Spotify authorize redirect_uri:', redirectUri, 'client_id:', process.env.SPOTIFY_CLIENT_ID.slice(0, 8) + '...');
         const state = jwt.sign({ userId: req.user.userId }, process.env.JWT_SECRET, { expiresIn: '10m' });
         const scope = 'user-read-recently-played user-top-read user-read-private user-read-currently-playing';
         const params = new URLSearchParams({
@@ -103,21 +182,40 @@ app.get('/api/spotify/authorize-url', authenticateToken, (req, res) => {
 // Callback que Spotify appellera après autorisation
 app.get('/api/spotify/callback', async (req, res) => {
     try {
-        const { code, state } = req.query;
+        const { code, state, error: spotifyError } = req.query;
+        if (spotifyError) {
+            console.error('Spotify OAuth error:', spotifyError, req.query.error_description || '');
+            return res.status(400).send(`Spotify a refusé l'autorisation: ${spotifyError}`);
+        }
         if (!code || !state) return res.status(400).send('Missing code or state');
+
+        if (!process.env.JWT_SECRET) {
+            console.error('JWT_SECRET manquant');
+            return res.status(500).send('Configuration serveur incomplète (JWT_SECRET)');
+        }
 
         // Vérifier le state
         let payload;
         try {
             payload = jwt.verify(state, process.env.JWT_SECRET);
         } catch (err) {
-            return res.status(400).send('State invalide');
+            console.error('State JWT invalide:', err.message);
+            return res.status(400).send('State invalide ou expiré — reconnectez Spotify depuis votre profil');
         }
 
         const userId = payload.userId;
+        if (!userId) {
+            return res.status(400).send('State invalide (userId manquant)');
+        }
 
-        const redirectUri = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:5001/api/spotify/callback';
-        console.log('Spotify callback redirect_uri:', redirectUri);
+        const redirectUri = process.env.SPOTIFY_REDIRECT_URI || DEFAULT_SPOTIFY_REDIRECT_URI;
+        console.log('Spotify callback redirect_uri:', redirectUri, 'userId:', userId);
+
+        if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
+            console.error('Spotify credentials manquantes sur le serveur');
+            return res.status(500).send('SPOTIFY_CLIENT_ID ou SPOTIFY_CLIENT_SECRET manquant sur Render');
+        }
+
         const params = new URLSearchParams({
             grant_type: 'authorization_code',
             code: code,
@@ -134,30 +232,51 @@ app.get('/api/spotify/callback', async (req, res) => {
 
         if (!tokenRes.ok) {
             const txt = await tokenRes.text();
+            const spotifyErr = parseSpotifyApiError(txt);
             console.error('Erreur échange code:', txt);
-            return res.status(500).send('Erreur échange token');
+            return res.status(500).send(`Erreur échange token Spotify: ${spotifyErr}`);
         }
 
         const data = await tokenRes.json();
+        if (!data.access_token) {
+            console.error('Réponse Spotify sans access_token:', data);
+            return res.status(500).send('Réponse Spotify invalide (pas de access_token)');
+        }
+
         const expiresAt = new Date(Date.now() + (data.expires_in || 3600) * 1000);
 
-        // Mettre à jour l'utilisateur avec tokens
+        const existingUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { id: true },
+        });
+        if (!existingUser) {
+            console.error('Utilisateur introuvable pour Spotify callback:', userId);
+            return res.status(404).send('Utilisateur introuvable');
+        }
+
+        const updateData = {
+            spotifyAccessToken: data.access_token,
+            spotifyTokenExpiresAt: expiresAt
+        };
+        // Spotify ne renvoie pas toujours un nouveau refresh_token si l'app est déjà autorisée
+        if (data.refresh_token) {
+            updateData.spotifyRefreshToken = data.refresh_token;
+        }
+
         await prisma.user.update({
             where: { id: userId },
-            data: {
-                spotifyAccessToken: data.access_token,
-                spotifyRefreshToken: data.refresh_token,
-                spotifyTokenExpiresAt: expiresAt
-            }
+            data: updateData
         });
 
+        console.log('Spotify connecté pour user', userId);
+
         // Rediriger vers l'interface front-end
-        const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const frontend = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
         return res.redirect(`${frontend}/?spotify_connected=1`);
 
     } catch (err) {
         console.error('Callback spotify error:', err);
-        res.status(500).send('Erreur callback Spotify');
+        res.status(500).send(`Erreur callback Spotify: ${err.message || 'erreur inconnue'}`);
     }
 });
 
@@ -2994,6 +3113,30 @@ app.delete('/api/lyric-pins/:id', authenticateToken, async (req, res) => {
 
 // 4. Lancement du serveur (TOUJOURS À LA FIN)
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-    console.log(`Le serveur tourne sur http://localhost:${PORT}`);
-});
+
+async function startServer() {
+    try {
+        await ensureSpotifySchema();
+    } catch (err) {
+        console.error('ensureSpotifySchema failed:', err.message);
+    }
+
+    app.listen(PORT, () => {
+        console.log(`Le serveur tourne sur http://localhost:${PORT}`);
+        const redirectUri = process.env.SPOTIFY_REDIRECT_URI || DEFAULT_SPOTIFY_REDIRECT_URI;
+        console.log('Spotify redirect_uri:', redirectUri);
+        if (process.env.SPOTIFY_CLIENT_ID) {
+            console.log('Spotify client_id:', process.env.SPOTIFY_CLIENT_ID.slice(0, 8) + '...');
+        } else {
+            console.warn('SPOTIFY_CLIENT_ID non défini');
+        }
+        if (!process.env.SPOTIFY_CLIENT_SECRET) {
+            console.warn('SPOTIFY_CLIENT_SECRET non défini');
+        }
+        if (redirectUri.includes('localhost')) {
+            console.warn('Spotify n\'accepte plus localhost — utilisez http://127.0.0.1:PORT dans le dashboard et SPOTIFY_REDIRECT_URI');
+        }
+    });
+}
+
+startServer();

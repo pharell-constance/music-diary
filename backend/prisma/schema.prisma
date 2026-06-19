@@ -17,9 +17,9 @@ model User {
   password  String   
   pseudo    String   @unique
   role      String   @default("USER") 
-  spotifyId String?  
-  spotifyAccessToken String? 
-  spotifyRefreshToken String? 
+  spotifyId String?
+  spotifyAccessToken String? @db.Text
+  spotifyRefreshToken String? @db.Text
   spotifyTokenExpiresAt DateTime?
   avatar    String?  
   bio       String?  
