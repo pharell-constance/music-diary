@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Music, Search, Sparkles, Users } from 'lucide-react';
+import { Music, Search, Sparkles, Users, BookOpen } from 'lucide-react';
 import ReviewCard from '../ReviewCard';
 import HomeTrendingSidebar from './HomeTrendingSidebar';
 
@@ -78,21 +78,24 @@ export default function HomeJournalTab({ home }) {
             <div className="flex gap-2 select-none overflow-x-auto no-scrollbar pb-1">
                 <button
                     onClick={() => home.setHomeSubTab('my-journal')}
-                    className={`pill-btn px-5 py-2 ${home.homeSubTab === 'my-journal' ? 'active' : 'inactive'}`}
+                    className={`pill-btn px-5 py-2 flex items-center gap-2 ${home.homeSubTab === 'my-journal' ? 'active' : 'inactive'}`}
                 >
-                    Mon Journal
+                    <BookOpen size={13} />
+                    <span>Mon Journal</span>
                 </button>
                 <button
                     onClick={() => home.setHomeSubTab('social-feed')}
-                    className={`pill-btn px-5 py-2 ${home.homeSubTab === 'social-feed' ? 'active' : 'inactive'}`}
+                    className={`pill-btn px-5 py-2 flex items-center gap-2 ${home.homeSubTab === 'social-feed' ? 'active' : 'inactive'}`}
                 >
-                    Fil d'activité
+                    <Users size={13} />
+                    <span>Fil d'activité</span>
                 </button>
                 <button
                     onClick={() => home.setHomeSubTab('explore')}
-                    className={`pill-btn px-5 py-2 ${home.homeSubTab === 'explore' ? 'active' : 'inactive'}`}
+                    className={`pill-btn px-5 py-2 flex items-center gap-2 ${home.homeSubTab === 'explore' ? 'active' : 'inactive'}`}
                 >
-                    Découvrir
+                    <Sparkles size={13} />
+                    <span>Découvrir</span>
                 </button>
             </div>
 
