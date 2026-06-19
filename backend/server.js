@@ -76,8 +76,9 @@ app.use(cors({
         }
 
         const cleanOrigin = origin.trim().replace(/\/$/, "");
+        const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(cleanOrigin);
 
-        if (allowedOrigins.includes(cleanOrigin)) {
+        if (allowedOrigins.includes(cleanOrigin) || isLocalhost) {
             callback(null, true);
         } else {
             callback(new Error(`CORS bloqué pour l'origine: ${origin}`));
@@ -138,6 +139,15 @@ app.get('/api/spotify/setup-check', async (req, res) => {
               AND TABLE_NAME = 'User'
               AND COLUMN_NAME LIKE 'spotify%'
         `;
+        const serializedColumns = columns.map(col => {
+            const newCol = { ...col };
+            for (const key in newCol) {
+                if (typeof newCol[key] === 'bigint') {
+                    newCol[key] = newCol[key].toString();
+                }
+            }
+            return newCol;
+        });
         res.json({
             env: {
                 clientId: Boolean(process.env.SPOTIFY_CLIENT_ID),
@@ -146,7 +156,7 @@ app.get('/api/spotify/setup-check', async (req, res) => {
                 frontendUrl: process.env.FRONTEND_URL || null,
                 jwtSecret: Boolean(process.env.JWT_SECRET),
             },
-            columns,
+            columns: serializedColumns,
         });
     } catch (err) {
         console.error('setup-check error:', err);
@@ -2543,6 +2553,73 @@ app.get('/api/social/feed', authenticateToken, async (req, res) => {
         res.status(500).json({ error: "Erreur lors de la récupération du fil d'activité." });
     }
 });
+
+// 1b. Explorer les critiques publiques (toutes récentes)
+app.get('/api/reviews/explore', authenticateToken, async (req, res) => {
+    try {
+        const reviews = await prisma.review.findMany({
+            take: 10,
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        pseudo: true,
+                        avatar: true,
+                        role: true
+                    }
+                },
+                likes: true,
+                comments: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                pseudo: true,
+                                avatar: true,
+                                role: true
+                            }
+                        }
+                    },
+                    orderBy: { createdAt: 'asc' }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(reviews);
+    } catch (err) {
+        console.error("Erreur get explore reviews:", err);
+        res.status(500).json({ error: "Erreur lors de la récupération des critiques d'exploration." });
+    }
+});
+
+// 1c. Suggérer des membres à suivre
+app.get('/api/users/explore', authenticateToken, async (req, res) => {
+    try {
+        const currentUserId = req.user.userId;
+        // Trouver 5 utilisateurs qui ne sont pas l'utilisateur connecté
+        const users = await prisma.user.findMany({
+            where: {
+                id: { not: currentUserId },
+                isBanned: false
+            },
+            select: {
+                id: true,
+                pseudo: true,
+                avatar: true,
+                role: true,
+                _count: {
+                    select: { reviews: true, followers: true }
+                }
+            },
+            take: 5
+        });
+        res.json(users);
+    } catch (err) {
+        console.error("Erreur get explore users:", err);
+        res.status(500).json({ error: "Erreur lors de la récupération des suggestions d'utilisateurs." });
+    }
+});
+
 
 // 2. Aimer une critique
 app.post('/api/reviews/:reviewId/like', authenticateToken, async (req, res) => {

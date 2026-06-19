@@ -76,10 +76,8 @@ function SpotifyTab({
                                     }
                                     setActiveSubTab(key);
                                 }}
-                                className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
-                                    activeSubTab === key
-                                        ? 'bg-white text-black shadow-md'
-                                        : 'bg-white/[0.03] text-zinc-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.08]'
+                                className={`px-5 py-2 rounded-full text-xs font-black transition-all cursor-pointer spotify-subtab-btn ${
+                                    activeSubTab === key ? 'active' : ''
                                 }`}
                             >
                                 {label}
@@ -88,16 +86,12 @@ function SpotifyTab({
                     </div>
 
                     {/* Time range selector */}
-                    <div className="bg-white/[0.03] p-1 rounded-full flex gap-1 border border-white/[0.08] self-start lg:self-auto text-xs font-semibold">
+                    <div className="spotify-time-range-container self-start lg:self-auto">
                         {TIME_RANGES.map(({ key, label }) => (
                             <button
                                 key={key}
                                 onClick={() => setTimeRange(key)}
-                                className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
-                                    timeRange === key
-                                        ? 'bg-zinc-700 text-white'
-                                        : 'text-zinc-400 hover:text-zinc-200'
-                                }`}
+                                className={`spotify-time-range-btn ${timeRange === key ? 'active' : ''}`}
                             >
                                 {label}
                             </button>

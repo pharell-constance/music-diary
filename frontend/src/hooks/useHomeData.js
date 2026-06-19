@@ -21,8 +21,12 @@ export default function useHomeData() {
 
     const [myReviews, setMyReviews] = useState([]);
     const [socialFeed, setSocialFeed] = useState([]);
+    const [exploreReviews, setExploreReviews] = useState([]);
+    const [exploreUsers, setExploreUsers] = useState([]);
     const [homeSubTab, setHomeSubTab] = useState('my-journal');
     const [loadingSocialFeed, setLoadingSocialFeed] = useState(false);
+    const [loadingExploreReviews, setLoadingExploreReviews] = useState(false);
+    const [loadingExploreUsers, setLoadingExploreUsers] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
     const [reviewContent, setReviewContent] = useState('');
     const [rating, setRating] = useState(5);
@@ -47,6 +51,7 @@ export default function useHomeData() {
 
     useEffect(() => {
         fetchMyReviews();
+        fetchExploreUsers();
         return () => {
             if (audioRef.current) {
                 audioRef.current.pause();
@@ -58,11 +63,18 @@ export default function useHomeData() {
 
     useEffect(() => {
         if (homeSubTab === 'social-feed') fetchSocialFeed();
+        if (homeSubTab === 'explore') fetchExploreReviews();
     }, [homeSubTab]);
 
     useEffect(() => {
         if (currentTab === 'home') fetchTrending(20);
     }, [currentTab]);
+
+    useEffect(() => {
+        if (currentTab === 'search' && searchQuery.trim()) {
+            triggerSearch(searchQuery, searchType);
+        }
+    }, [currentTab, searchType]);
 
     useEffect(() => {
         if (playingPreview === null) {
@@ -83,6 +95,38 @@ export default function useHomeData() {
             console.error(error);
         } finally {
             setLoadingSocialFeed(false);
+        }
+    }
+
+    async function fetchExploreReviews() {
+        const token = localStorage.getItem('token');
+        setLoadingExploreReviews(true);
+        try {
+            const response = await fetch(`${API_URL}/api/reviews/explore`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (response.ok) setExploreReviews(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoadingExploreReviews(false);
+        }
+    }
+
+    async function fetchExploreUsers() {
+        const token = localStorage.getItem('token');
+        setLoadingExploreUsers(true);
+        try {
+            const response = await fetch(`${API_URL}/api/users/explore`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (response.ok) setExploreUsers(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoadingExploreUsers(false);
         }
     }
 
@@ -298,9 +342,15 @@ export default function useHomeData() {
         setMyReviews,
         socialFeed,
         setSocialFeed,
+        exploreReviews,
+        setExploreReviews,
+        exploreUsers,
+        setExploreUsers,
         homeSubTab,
         setHomeSubTab,
         loadingSocialFeed,
+        loadingExploreReviews,
+        loadingExploreUsers,
         selectedAlbum,
         setSelectedAlbum,
         reviewContent,
@@ -329,6 +379,7 @@ export default function useHomeData() {
         handleSubmitReview,
         handleSearch,
         handleSwitchSearchType,
-        fetchMyReviews
+        fetchMyReviews,
+        fetchExploreUsers
     };
 }
