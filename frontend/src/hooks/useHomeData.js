@@ -58,12 +58,11 @@ export default function useHomeData() {
 
     useEffect(() => {
         if (homeSubTab === 'social-feed') fetchSocialFeed();
-        if (homeSubTab === 'trending') fetchTrending(trendingLimit);
     }, [homeSubTab]);
 
     useEffect(() => {
-        if (homeSubTab === 'trending') fetchTrending(trendingLimit);
-    }, [trendingLimit]);
+        if (currentTab === 'home') fetchTrending(20);
+    }, [currentTab]);
 
     useEffect(() => {
         if (playingPreview === null) {
