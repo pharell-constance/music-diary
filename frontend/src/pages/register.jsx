@@ -48,11 +48,11 @@ function Register() {
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
             {/* Logo / Header */}
-            <div className="mb-10 text-center flex items-center gap-3.5 relative z-10 group cursor-pointer" onClick={() => navigate('/')}>
-                <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
-                    <Disc className="text-white stroke-[2.5] animate-spin-slow" size={24} />
+            <div className="mb-10 text-center flex items-center justify-center gap-3.5 relative z-10 group cursor-pointer animate-fade-in" onClick={() => navigate('/')}>
+                <div className="w-11 h-11 bg-violet-600 border-2.5 border-white rounded-xl flex items-center justify-center shadow-[3px_3px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
+                    <Disc className="text-white stroke-[2.5] animate-spin-slow" style={{ animationDuration: '8s' }} size={20} />
                 </div>
-                <span className="font-modak text-3xl md:text-4xl text-violet-500 text-stroke-dark tracking-wide uppercase hover:scale-105 transition duration-300">
+                <span className="font-mouse-memoirs text-4xl tracking-widest uppercase leading-none text-stroke-dark text-violet-500 group-hover:text-fuchsia-500 transition-colors">
                     Music Diary
                 </span>
             </div>
