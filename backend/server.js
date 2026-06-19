@@ -10,23 +10,29 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-].filter(Boolean);
+    process.env.FRONTEND_URL,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
+    .filter(Boolean)
+    .map(url => url.trim().replace(/\/$/, "")); // Enlève le slash final s'il existe
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Autoriser les requêtes sans origin (ex: Postman, mobile)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS bloqué pour l'origine: ${origin}`));
-    }
-  },
-  credentials: true,
+    origin: (origin, callback) => {
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        const cleanOrigin = origin.trim().replace(/\/$/, "");
+
+        if (allowedOrigins.includes(cleanOrigin)) {
+            callback(null, true);
+        } else {
+            callback(new Error(`CORS bloqué pour l'origine: ${origin}`));
+        }
+    },
+    credentials: true,
 }));
-app.use(express.json());
 
 // Utilitaire pour rafraîchir le token d'un utilisateur
 async function refreshUserSpotifyToken(user) {
@@ -199,7 +205,7 @@ async function getWeeklyTopTracks(accessToken) {
     const spotifyRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=50', {
         headers: { Authorization: `Bearer ${accessToken}` }
     });
-    
+
     if (!spotifyRes.ok) {
         const err = await spotifyRes.text();
         console.error('Spotify weekly top fetch error:', err);
@@ -467,7 +473,7 @@ function getArtistGenres(artist) {
     if (name.startsWith("the ")) {
         return ["rock", "indie rock"];
     }
-    
+
     // Hashing fallback
     const genresList = ['pop', 'indie', 'hip-hop', 'electronic', 'rock', 'r&b', 'alt-pop', 'rap'];
     let hash = 0;
@@ -628,7 +634,7 @@ function getArtistStats(artistName) {
     if (POPULAR_ARTISTS_STATS[nameLower]) {
         return POPULAR_ARTISTS_STATS[nameLower];
     }
-    
+
     // Générateur déterministe basé sur le hash du nom
     let hash = 0;
     for (let i = 0; i < nameLower.length; i++) {
@@ -637,14 +643,14 @@ function getArtistStats(artistName) {
     const absHash = Math.abs(hash);
     const popularity = 30 + (absHash % 56); // 30 à 85
     const followers = 5000 + (absHash % 1995001); // 5 000 à 2 000 000
-    
+
     const mult = 0.3 + (popularity / 100) * 1.2;
     let monthlyListeners = Math.round(followers * mult);
     const minML = Math.round(Math.pow(popularity / 10, 4.5));
     if (monthlyListeners < minML) {
         monthlyListeners = minML;
     }
-    
+
     return { popularity, followers, monthlyListeners };
 }
 
@@ -775,7 +781,7 @@ app.get('/api/songs/:trackId/details', authenticateToken, async (req, res) => {
         }
 
         const data = await response.json();
-        
+
         res.json({
             id: data.id,
             name: data.name,
@@ -847,10 +853,10 @@ app.get('/api/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
             const searchRes = await fetch(searchUrl);
             if (searchRes.ok) {
                 const searchResults = await searchRes.json();
-                
+
                 // Filtrer les résultats qui possèdent des paroles
                 const matches = searchResults.filter(item => item.plainLyrics || item.syncedLyrics);
-                
+
                 if (matches.length > 0) {
                     // Trouver le résultat dont la durée (en secondes) est la plus proche du morceau Spotify
                     const spotifyDurationSec = trackData.duration_ms / 1000;
@@ -1048,9 +1054,9 @@ function authenticateToken(req, res, next) {
                 select: { isBanned: true, banReason: true }
             });
             if (dbUser && dbUser.isBanned) {
-                return res.status(403).json({ 
-                    error: `Compte suspendu`, 
-                    banReason: dbUser.banReason || "Non spécifié" 
+                return res.status(403).json({
+                    error: `Compte suspendu`,
+                    banReason: dbUser.banReason || "Non spécifié"
                 });
             }
         } catch (dbErr) {
@@ -1423,7 +1429,7 @@ app.get('/api/users/:userId/profile', authenticateToken, async (req, res) => {
             }
         });
         if (!targetUser) return res.status(404).json({ error: "Utilisateur non trouvé" });
-        
+
         // Compter les abonnés (ceux qui suivent targetUserId)
         const followersCount = await prisma.follows.count({
             where: { followingId: targetUserId }
@@ -1632,7 +1638,7 @@ app.get('/api/users/:userId/reviews', authenticateToken, async (req, res) => {
             },
             orderBy: { createdAt: 'desc' }
         });
-        
+
         // Migration à la volée pour les anciennes critiques du profil visité
         const reviewsToFetch = reviews.filter(r => !r.albumName || !r.albumCover);
         if (reviewsToFetch.length > 0) {
@@ -1842,7 +1848,7 @@ app.get('/api/admin/stats', authenticateToken, requireAdmin, async (req, res) =>
     try {
         const totalUsers = await prisma.user.count();
         const totalReviews = await prisma.review.count();
-        
+
         // Count users with a Spotify ID
         const spotifyConnectedUsers = await prisma.user.count({
             where: {
@@ -1895,7 +1901,7 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
 app.put('/api/admin/users/:id/role', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const userIdToUpdate = parseInt(req.params.id);
-        
+
         // Sécurité : Un admin ne peut pas changer son propre rôle
         if (userIdToUpdate === req.user.userId) {
             return res.status(400).json({ error: "Action impossible. Vous ne pouvez pas révoquer vos propres droits d'administrateur." });
@@ -2078,23 +2084,23 @@ app.get('/api/admin/reports', authenticateToken, requireAdmin, async (req, res) 
                 reportedReview: {
                     include: {
                         author: {
-                            select: { 
-                                id: true, 
-                                pseudo: true, 
-                                warningsCount: true, 
-                                isBanned: true, 
-                                banReason: true 
+                            select: {
+                                id: true,
+                                pseudo: true,
+                                warningsCount: true,
+                                isBanned: true,
+                                banReason: true
                             }
                         }
                     }
                 },
                 reportedUser: {
-                    select: { 
-                        id: true, 
-                        pseudo: true, 
-                        warningsCount: true, 
-                        isBanned: true, 
-                        banReason: true 
+                    select: {
+                        id: true,
+                        pseudo: true,
+                        warningsCount: true,
+                        isBanned: true,
+                        banReason: true
                     }
                 }
             },
@@ -2140,7 +2146,7 @@ app.delete('/api/admin/reports/:id', authenticateToken, requireAdmin, async (req
 app.put('/api/admin/users/:id/warn', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const targetUserId = parseInt(req.params.id);
-        
+
         if (targetUserId === req.user.userId) {
             return res.status(400).json({ error: "Vous ne pouvez pas vous envoyer d'avertissement." });
         }
@@ -2172,8 +2178,8 @@ app.put('/api/admin/users/:id/warn', authenticateToken, requireAdmin, async (req
             console.error("Erreur creation notification avertissement:", notifErr);
         }
 
-        res.json({ 
-            message: `Avertissement envoyé à ${updated.pseudo}. Total d'avertissements : ${updated.warningsCount}.`, 
+        res.json({
+            message: `Avertissement envoyé à ${updated.pseudo}. Total d'avertissements : ${updated.warningsCount}.`,
             user: {
                 id: updated.id,
                 pseudo: updated.pseudo,
@@ -2209,14 +2215,14 @@ app.put('/api/admin/users/:id/ban', authenticateToken, requireAdmin, async (req,
 
         const updated = await prisma.user.update({
             where: { id: targetUserId },
-            data: { 
+            data: {
                 isBanned: true,
                 banReason: reason || "Non respect des conditions d'utilisation."
             }
         });
 
-        res.json({ 
-            message: `L'utilisateur ${updated.pseudo} a été banni avec succès.`, 
+        res.json({
+            message: `L'utilisateur ${updated.pseudo} a été banni avec succès.`,
             user: {
                 id: updated.id,
                 pseudo: updated.pseudo,
@@ -2243,14 +2249,14 @@ app.put('/api/admin/users/:id/unban', authenticateToken, requireAdmin, async (re
 
         const updated = await prisma.user.update({
             where: { id: targetUserId },
-            data: { 
+            data: {
                 isBanned: false,
                 banReason: null
             }
         });
 
-        res.json({ 
-            message: `L'utilisateur ${updated.pseudo} a été débanni.`, 
+        res.json({
+            message: `L'utilisateur ${updated.pseudo} a été débanni.`,
             user: {
                 id: updated.id,
                 pseudo: updated.pseudo,
@@ -2287,7 +2293,7 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
 app.get('/api/notifications/unread-count', authenticateToken, async (req, res) => {
     try {
         const count = await prisma.notification.count({
-            where: { 
+            where: {
                 userId: req.user.userId,
                 read: false
             }
@@ -2318,7 +2324,7 @@ app.put('/api/notifications/:id/read', authenticateToken, async (req, res) => {
     try {
         const notifId = parseInt(req.params.id);
         const updated = await prisma.notification.update({
-            where: { 
+            where: {
                 id: notifId,
                 userId: req.user.userId
             },
@@ -2336,7 +2342,7 @@ app.delete('/api/notifications/:id', authenticateToken, async (req, res) => {
     try {
         const notifId = parseInt(req.params.id);
         await prisma.notification.delete({
-            where: { 
+            where: {
                 id: notifId,
                 userId: req.user.userId
             }
@@ -2596,7 +2602,7 @@ app.get('/api/users/:userId/live', authenticateToken, async (req, res) => {
 app.get('/api/users/:userId/stats', authenticateToken, async (req, res) => {
     try {
         const userId = parseInt(req.params.userId);
-        
+
         // Check if user exists
         const userExists = await prisma.user.findUnique({ where: { id: userId } });
         if (!userExists) return res.status(404).json({ error: "Utilisateur introuvable" });
@@ -2746,24 +2752,24 @@ app.get('/api/spotify/trending', async (req, res) => {
             if (!embedRes.ok) {
                 throw new Error(`Failed to fetch Spotify embed: ${embedRes.status}`);
             }
-            
+
             const html = await embedRes.text();
             const nextDataRegex = /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/gi;
             const match = nextDataRegex.exec(html);
             if (!match) {
                 throw new Error("Could not find __NEXT_DATA__ script tag in embed HTML");
             }
-            
+
             const data = JSON.parse(match[1]);
             const trackList = data.props?.pageProps?.state?.data?.entity?.trackList || [];
-            
+
             if (trackList.length === 0) {
                 throw new Error("No tracks found in the embed state data");
             }
-            
+
             // Fetch metadata in parallel for parsed track IDs using client credentials token
             const token = await getSpotifyToken();
-            
+
             const fetchedTracks = await Promise.all(trackList.map(async (item, idx) => {
                 const trackId = item.uri?.split(':').pop() || `track-${idx}`;
                 try {
@@ -2790,7 +2796,7 @@ app.get('/api/spotify/trending', async (req, res) => {
                 } catch (fetchErr) {
                     console.error(`Error fetching track metadata for ${trackId}:`, fetchErr);
                 }
-                
+
                 // Fallback track info if the API call fails for this specific track
                 return {
                     rank: idx + 1,
@@ -2822,29 +2828,29 @@ app.get('/api/spotify/trending', async (req, res) => {
         if (!chartsRes.ok) {
             throw new Error(`Failed to fetch public weekly charts: ${chartsRes.status}`);
         }
-        
+
         const chartsData = await chartsRes.json();
         const responseList = chartsData.chartEntryViewResponses || [];
-        
-        const chartResponse = responseList.find(c => 
+
+        const chartResponse = responseList.find(c =>
             c.displayChart?.chartMetadata?.alias === 'REGIONAL_GLOBAL_WEEKLY'
         ) || responseList[0];
-        
+
         if (!chartResponse) {
             throw new Error("No chart found in Spotify charts response");
         }
-        
+
         const entries = chartResponse.entries || [];
         const tracksToFetch = entries.slice(0, limit);
-        
+
         const tracks = tracksToFetch.map((entry, idx) => {
             const trackMetadata = entry.trackMetadata || {};
             const uri = trackMetadata.trackUri || '';
             const id = uri.split(':').pop() || `track-${idx}`;
-            
+
             const pseudoDurationMs = (150 + (idx * 7) % 91) * 1000;
             const popularity = Math.max(50, 99 - idx);
-            
+
             return {
                 rank: entry.chartEntryData?.currentRank || (idx + 1),
                 id: id,
@@ -2858,7 +2864,7 @@ app.get('/api/spotify/trending', async (req, res) => {
                 durationMs: pseudoDurationMs
             };
         });
-        
+
         res.json(tracks);
     } catch (err) {
         console.error('Erreur trending (fallback final):', err);
@@ -2869,14 +2875,14 @@ app.get('/api/spotify/trending', async (req, res) => {
             const currentYear = new Date().getFullYear();
             const chunkSize = 10;
             const numRequests = Math.ceil(limit / chunkSize);
-            
+
             const fetchPromises = [];
             for (let i = 0; i < numRequests; i++) {
                 const offset = i * chunkSize;
                 const size = Math.min(chunkSize, limit - offset);
                 fetchPromises.push(
                     fetch(
-                        `https://api.spotify.com/v1/search?q=year:${currentYear-1}-${currentYear}&type=track&limit=${size}&offset=${offset}`,
+                        `https://api.spotify.com/v1/search?q=year:${currentYear - 1}-${currentYear}&type=track&limit=${size}&offset=${offset}`,
                         { headers: { Authorization: `Bearer ${token}` } }
                     ).then(async (searchRes) => {
                         if (!searchRes.ok) return [];
@@ -2885,10 +2891,10 @@ app.get('/api/spotify/trending', async (req, res) => {
                     })
                 );
             }
-            
+
             const resultsArray = await Promise.all(fetchPromises);
             const allTracks = resultsArray.flat();
-            
+
             const fallbackTracks = allTracks
                 .map((track, idx) => ({
                     rank: idx + 1,
@@ -2904,7 +2910,7 @@ app.get('/api/spotify/trending', async (req, res) => {
                 }))
                 .filter(t => t.id)
                 .slice(0, limit);
-                
+
             res.json(fallbackTracks);
         } catch (fallbackErr) {
             console.error('Erreur fallback trending:', fallbackErr);
