@@ -8,13 +8,17 @@ import StatsTab from '../components/profile/StatsTab';
 import LyricWall from '../components/profile/LyricWall';
 import ProfileModals from '../components/profile/ProfileModals';
 import useProfileData from '../hooks/useProfileData';
+import NeobrutalLoader from '../components/NeobrutalLoader';
 
 function Profile() {
     const navigate = useNavigate();
     const profile = useProfileData();
 
+    const isProfileLoading = profile.loadingProfile || profile.loadingStats || profile.loadingFollowList;
+
     return (
         <div className="flex min-h-screen bg-[#07050f] text-white font-sans relative">
+            <NeobrutalLoader isLoading={isProfileLoading} />
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 

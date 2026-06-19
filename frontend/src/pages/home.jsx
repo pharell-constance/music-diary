@@ -9,6 +9,7 @@ import SearchTab from '../components/home/SearchTab';
 import LibraryTab from '../components/home/LibraryTab';
 import HomeJournalTab from '../components/home/HomeJournalTab';
 import useHomeData from '../hooks/useHomeData';
+import NeobrutalLoader from '../components/NeobrutalLoader';
 
 function Home() {
     const navigate = useNavigate();
@@ -18,8 +19,11 @@ function Home() {
         return <LandingPage />;
     }
 
+    const isAnyLoading = home.loading || home.loadingTrending || home.loadingSocialFeed || home.loadingExploreReviews || home.loadingExploreUsers;
+
     return (
         <div className="flex min-h-screen bg-black text-white font-sans">
+            <NeobrutalLoader isLoading={isAnyLoading} />
             <Sidebar
                 user={home.user}
                 currentTab={home.currentTab}
