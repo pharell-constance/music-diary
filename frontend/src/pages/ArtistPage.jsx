@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Headphones, Users, Play, Pause, Disc, Music, ExternalLink } from 'lucide-react';
@@ -43,7 +44,7 @@ function ArtistPage() {
 
         async function fetchArtist() {
             try {
-                const r = await fetch(`http://127.0.0.1:5001/api/artists/${artistId}/details`, {
+                const r = await fetch(`${API_URL}/api/artists/${artistId}/details`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = r.ok ? await r.json() : await Promise.reject('Artiste introuvable');

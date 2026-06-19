@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useState } from 'react';
 import { X, User } from 'lucide-react';
 
@@ -18,7 +19,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
         setSearching(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(artistQuery)}&type=artist`, {
+            const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(artistQuery)}&type=artist`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -93,7 +94,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch('http://127.0.0.1:5001/api/users/profile', {
+            const response = await fetch('${API_URL}/api/users/profile', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -131,7 +132,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-[#1a1824] border border-zinc-800 p-6 rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div className="profile-edit-modal bg-[#1a1824] border border-zinc-800 p-6 rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
                 
                 <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white transition cursor-pointer">
                     <X size={20} />

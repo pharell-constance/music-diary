@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,7 +47,7 @@ export default function useAdminDashboard() {
             setLoading(true);
             try {
                 // Fetch stats
-                const statsRes = await fetch('http://127.0.0.1:5001/api/admin/stats', {
+                const statsRes = await fetch('${API_URL}/api/admin/stats', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!statsRes.ok) throw new Error("Erreur de récupération des stats");
@@ -54,7 +55,7 @@ export default function useAdminDashboard() {
                 setStats(statsData);
 
                 // Fetch users
-                const usersRes = await fetch('http://127.0.0.1:5001/api/admin/users', {
+                const usersRes = await fetch('${API_URL}/api/admin/users', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!usersRes.ok) throw new Error("Erreur de récupération des utilisateurs");
@@ -62,7 +63,7 @@ export default function useAdminDashboard() {
                 setUsersList(usersData);
 
                 // Fetch reviews
-                const reviewsRes = await fetch('http://127.0.0.1:5001/api/admin/reviews', {
+                const reviewsRes = await fetch('${API_URL}/api/admin/reviews', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!reviewsRes.ok) throw new Error("Erreur de récupération des critiques");
@@ -70,7 +71,7 @@ export default function useAdminDashboard() {
                 setReviewsList(reviewsData);
 
                 // Fetch reports
-                const reportsRes = await fetch('http://127.0.0.1:5001/api/admin/reports', {
+                const reportsRes = await fetch('${API_URL}/api/admin/reports', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!reportsRes.ok) throw new Error("Erreur de récupération des signalements");
@@ -102,7 +103,7 @@ export default function useAdminDashboard() {
             confirmText: "Modifier",
             onConfirm: async () => {
                 try {
-                    const res = await fetch(`http://127.0.0.1:5001/api/admin/users/${targetUser.id}/role`, {
+                    const res = await fetch(`${API_URL}/api/admin/users/${targetUser.id}/role`, {
                         method: 'PUT',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -134,7 +135,7 @@ export default function useAdminDashboard() {
             confirmText: "Supprimer",
             onConfirm: async () => {
                 try {
-                    const res = await fetch(`http://127.0.0.1:5001/api/admin/users/${targetUser.id}`, {
+                    const res = await fetch(`${API_URL}/api/admin/users/${targetUser.id}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -166,7 +167,7 @@ export default function useAdminDashboard() {
             confirmText: "Supprimer",
             onConfirm: async () => {
                 try {
-                    const res = await fetch(`http://127.0.0.1:5001/api/admin/reviews/${reviewId}`, {
+                    const res = await fetch(`${API_URL}/api/admin/reviews/${reviewId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -188,7 +189,7 @@ export default function useAdminDashboard() {
     // Resolve report (keep content)
     const handleResolveReport = async (reportId) => {
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/admin/reports/${reportId}/resolve`, {
+            const res = await fetch(`${API_URL}/api/admin/reports/${reportId}/resolve`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -211,7 +212,7 @@ export default function useAdminDashboard() {
             confirmText: "Rejeter",
             onConfirm: async () => {
                 try {
-                    const res = await fetch(`http://127.0.0.1:5001/api/admin/reports/${reportId}`, {
+                    const res = await fetch(`${API_URL}/api/admin/reports/${reportId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -243,8 +244,8 @@ export default function useAdminDashboard() {
             onConfirm: async () => {
                 try {
                     const deleteUrl = isReview 
-                        ? `http://127.0.0.1:5001/api/admin/reviews/${targetId}`
-                        : `http://127.0.0.1:5001/api/admin/users/${targetId}`;
+                        ? `${API_URL}/api/admin/reviews/${targetId}`
+                        : `${API_URL}/api/admin/users/${targetId}`;
 
                     const deleteRes = await fetch(deleteUrl, {
                         method: 'DELETE',
@@ -253,7 +254,7 @@ export default function useAdminDashboard() {
                     const deleteData = await deleteRes.json();
                     if (!deleteRes.ok) throw new Error(deleteData.error || "Erreur lors de la suppression");
 
-                    const resolveRes = await fetch(`http://127.0.0.1:5001/api/admin/reports/${report.id}/resolve`, {
+                    const resolveRes = await fetch(`${API_URL}/api/admin/reports/${report.id}/resolve`, {
                         method: 'PUT',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -295,7 +296,7 @@ export default function useAdminDashboard() {
             confirmText: "Avertir",
             onConfirm: async () => {
                 try {
-                    const res = await fetch(`http://127.0.0.1:5001/api/admin/users/${targetUser.id}/warn`, {
+                    const res = await fetch(`${API_URL}/api/admin/users/${targetUser.id}/warn`, {
                         method: 'PUT',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -333,7 +334,7 @@ export default function useAdminDashboard() {
         if (!targetUser) return;
 
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/admin/users/${targetUser.id}/ban`, {
+            const res = await fetch(`${API_URL}/api/admin/users/${targetUser.id}/ban`, {
                 method: 'PUT',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -376,7 +377,7 @@ export default function useAdminDashboard() {
             confirmText: "Débannir",
             onConfirm: async () => {
                 try {
-                    const res = await fetch(`http://127.0.0.1:5001/api/admin/users/${targetUser.id}/unban`, {
+                    const res = await fetch(`${API_URL}/api/admin/users/${targetUser.id}/unban`, {
                         method: 'PUT',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });

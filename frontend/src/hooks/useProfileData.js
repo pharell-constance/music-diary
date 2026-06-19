@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -65,7 +66,7 @@ export default function useProfileData() {
             if (!profileId) return;
             setLoadingProfile(true);
             try {
-                const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/profile`, {
+                const res = await fetch(`${API_URL}/api/users/${profileId}/profile`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error("Utilisateur non trouvé");
@@ -74,8 +75,8 @@ export default function useProfileData() {
                 setConnected(data.connected);
                 if (data.connected) {
                     const recentUrl = isOwnProfile
-                        ? 'http://127.0.0.1:5001/api/spotify/me/recent'
-                        : `http://127.0.0.1:5001/api/users/${profileId}/spotify/recent`;
+                        ? '${API_URL}/api/spotify/me/recent'
+                        : `${API_URL}/api/users/${profileId}/spotify/recent`;
                     const recentRes = await fetch(recentUrl, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -97,7 +98,7 @@ export default function useProfileData() {
         let intervalId;
         const fetchLivePlaying = async () => {
             try {
-                const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/live`, {
+                const res = await fetch(`${API_URL}/api/users/${profileId}/live`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) setLivePlaying(await res.json());
@@ -122,8 +123,8 @@ export default function useProfileData() {
             try {
                 if (activeSubTab === 'tracks' && timeRange === 'week') {
                     const weeklyUrl = isOwnProfile
-                        ? 'http://127.0.0.1:5001/api/spotify/me/weekly-top'
-                        : `http://127.0.0.1:5001/api/users/${userId}/spotify/weekly-top`;
+                        ? '${API_URL}/api/spotify/me/weekly-top'
+                        : `${API_URL}/api/users/${userId}/spotify/weekly-top`;
                     const res = await fetch(weeklyUrl, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -133,8 +134,8 @@ export default function useProfileData() {
                 }
 
                 const apiBase = isOwnProfile
-                    ? 'http://127.0.0.1:5001/api/spotify/me'
-                    : `http://127.0.0.1:5001/api/users/${userId}/spotify`;
+                    ? '${API_URL}/api/spotify/me'
+                    : `${API_URL}/api/users/${userId}/spotify`;
                 const urlMap = {
                     artists: `${apiBase}/top-artists?limit=10&time_range=${timeRange}`,
                     tracks:  `${apiBase}/top-tracks?limit=10&time_range=${timeRange}`,
@@ -165,8 +166,8 @@ export default function useProfileData() {
         async function fetchReviews() {
             try {
                 const url = isOwnProfile
-                    ? 'http://127.0.0.1:5001/api/reviews'
-                    : `http://127.0.0.1:5001/api/users/${userId}/reviews`;
+                    ? '${API_URL}/api/reviews'
+                    : `${API_URL}/api/users/${userId}/reviews`;
                 const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
                 setReviews((await res.json()) || []);
             } catch (err) {
@@ -181,8 +182,8 @@ export default function useProfileData() {
         if (!profileId || !token) return;
         setLoadingPins(true);
         const url = isOwnProfile
-            ? 'http://127.0.0.1:5001/api/lyric-pins'
-            : `http://127.0.0.1:5001/api/users/${profileId}/lyric-pins`;
+            ? '${API_URL}/api/lyric-pins'
+            : `${API_URL}/api/users/${profileId}/lyric-pins`;
         fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(r => r.json())
             .then(data => setLyricPins(Array.isArray(data) ? data : []))
@@ -197,7 +198,7 @@ export default function useProfileData() {
     async function fetchUserStats(profileId) {
         setLoadingStats(true);
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/stats`, {
+            const res = await fetch(`${API_URL}/api/users/${profileId}/stats`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) setUserStats(await res.json());
@@ -213,7 +214,7 @@ export default function useProfileData() {
         if (!profileId || isOwnProfile || !profileUser) return;
         const action = profileUser.isFollowing ? 'unfollow' : 'follow';
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/${action}`, {
+            const res = await fetch(`${API_URL}/api/users/${profileId}/${action}`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -244,7 +245,7 @@ export default function useProfileData() {
     async function handleReportSubmit(reason) {
         if (!reportModalData) return;
         const isReview = reportModalData.type === 'review';
-        const res = await fetch('http://127.0.0.1:5001/api/reports', {
+        const res = await fetch('${API_URL}/api/reports', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({
@@ -265,7 +266,7 @@ export default function useProfileData() {
         setShowFollowModal(true);
         setLoadingFollowList(true);
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/users/${profileId}/${type}`, {
+            const res = await fetch(`${API_URL}/api/users/${profileId}/${type}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) setFollowList((await res.json()) || []);
@@ -282,7 +283,7 @@ export default function useProfileData() {
 
     async function handleDeletePin(pinId) {
         try {
-            await fetch(`http://127.0.0.1:5001/api/lyric-pins/${pinId}`, {
+            await fetch(`${API_URL}/api/lyric-pins/${pinId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -294,7 +295,7 @@ export default function useProfileData() {
 
     async function handleConnect() {
         try {
-            const res = await fetch('http://127.0.0.1:5001/api/spotify/authorize-url', {
+            const res = await fetch('${API_URL}/api/spotify/authorize-url', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -327,7 +328,7 @@ export default function useProfileData() {
             onConfirm: async () => {
                 const tk = localStorage.getItem('token');
                 try {
-                    const response = await fetch(`http://127.0.0.1:5001/api/reviews/${reviewId}`, {
+                    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${tk}` }
                     });
@@ -347,7 +348,7 @@ export default function useProfileData() {
         setReviewSuccess('');
         const tk = localStorage.getItem('token');
         const isEditing = editingReviewId !== null;
-        const url = isEditing ? `http://127.0.0.1:5001/api/reviews/${editingReviewId}` : 'http://127.0.0.1:5001/api/reviews';
+        const url = isEditing ? `${API_URL}/api/reviews/${editingReviewId}` : '${API_URL}/api/reviews';
         try {
             const response = await fetch(url, {
                 method: isEditing ? 'PUT' : 'POST',
@@ -363,7 +364,7 @@ export default function useProfileData() {
             });
             if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
             setReviewSuccess(isEditing ? "Chronique modifiée !" : "Chronique enregistrée !");
-            const reviewsUrl = isOwnProfile ? 'http://127.0.0.1:5001/api/reviews' : `http://127.0.0.1:5001/api/users/${userId}/reviews`;
+            const reviewsUrl = isOwnProfile ? '${API_URL}/api/reviews' : `${API_URL}/api/users/${userId}/reviews`;
             const reviewsRes = await fetch(reviewsUrl, { headers: { 'Authorization': `Bearer ${tk}` } });
             setReviews((await reviewsRes.json()) || []);
             setTimeout(() => {

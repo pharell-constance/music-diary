@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -74,7 +75,7 @@ export default function useHomeData() {
         const token = localStorage.getItem('token');
         setLoadingSocialFeed(true);
         try {
-            const response = await fetch('http://127.0.0.1:5001/api/social/feed', {
+            const response = await fetch('${API_URL}/api/social/feed', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -89,7 +90,7 @@ export default function useHomeData() {
     async function fetchTrending(limit = 20) {
         setLoadingTrending(true);
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/spotify/trending?limit=${limit}`);
+            const res = await fetch(`${API_URL}/api/spotify/trending?limit=${limit}`);
             const data = await res.json();
             if (res.ok) setTrending(data);
         } catch (err) {
@@ -131,7 +132,7 @@ export default function useHomeData() {
     async function fetchMyReviews() {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch('http://127.0.0.1:5001/api/reviews', {
+            const response = await fetch('${API_URL}/api/reviews', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -162,7 +163,7 @@ export default function useHomeData() {
             onConfirm: async () => {
                 const token = localStorage.getItem('token');
                 try {
-                    const response = await fetch(`http://127.0.0.1:5001/api/reviews/${reviewId}`, {
+                    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -184,8 +185,8 @@ export default function useHomeData() {
 
         const isEditing = editingReviewId !== null;
         const url = isEditing
-            ? `http://127.0.0.1:5001/api/reviews/${editingReviewId}`
-            : 'http://127.0.0.1:5001/api/reviews';
+            ? `${API_URL}/api/reviews/${editingReviewId}`
+            : '${API_URL}/api/reviews';
         const method = isEditing ? 'PUT' : 'POST';
 
         try {
@@ -234,20 +235,20 @@ export default function useHomeData() {
         const token = localStorage.getItem('token');
         try {
             if (type === 'albums') {
-                const response = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(query)}&type=album`);
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&type=album`);
                 const data = await response.json();
                 if (data.albums?.items) setAlbums(data.albums.items);
             } else if (type === 'artists') {
-                const response = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(query)}&type=artist`);
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&type=artist`);
                 const data = await response.json();
                 if (data.artists?.items) setArtists(data.artists.items);
             } else if (type === 'tracks') {
-                const response = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(query)}&type=track`);
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&type=track`);
                 const data = await response.json();
                 console.log("[Search] tracks returned:", data.tracks?.items?.length || 0);
                 if (data.tracks?.items) setTracks(data.tracks.items);
             } else {
-                const response = await fetch(`http://127.0.0.1:5001/api/users/search?q=${encodeURIComponent(query)}`, {
+                const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(query)}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await response.json();

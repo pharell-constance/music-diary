@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, Trash2, Pencil, Calendar, Music, Flag, Heart, MessageSquare, Send, Crown } from 'lucide-react';
@@ -23,7 +24,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
         setLikesCount(prev => previouslyLiked ? prev - 1 : prev + 1);
 
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/reviews/${review.id}/like`, {
+            const res = await fetch(`${API_URL}/api/reviews/${review.id}/like`, {
                 method: previouslyLiked ? 'DELETE' : 'POST',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -47,7 +48,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
 
         setLoadingComments(true);
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/reviews/${review.id}/comments`, {
+            const res = await fetch(`${API_URL}/api/reviews/${review.id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
         if (!token) return;
 
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/comments/${commentId}`, {
+            const res = await fetch(`${API_URL}/api/comments/${commentId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

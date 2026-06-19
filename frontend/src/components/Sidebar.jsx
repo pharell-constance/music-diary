@@ -1,11 +1,30 @@
+import API_URL from '../config.js';
 import { useEffect, useState } from 'react';
-import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music } from 'lucide-react';
+import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music, Sun, Moon } from 'lucide-react';
 
 function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     const [unreadCount, setUnreadCount] = useState(0);
     const [currentSong, setCurrentSong] = useState(() => window.spotifyCurrentSong || null);
     const [isPlaying, setIsPlaying] = useState(() => window.spotifyIsPlaying || false);
     const [isLocalPlaying, setIsLocalPlaying] = useState(false);
+    const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+
+    useEffect(() => {
+        const root = document.documentElement;
+        const body = document.body;
+        if (theme === 'light') {
+            root.classList.add('light');
+            body.classList.add('light');
+        } else {
+            root.classList.remove('light');
+            body.classList.remove('light');
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    };
 
     // Fetch live playback status from Spotify
     const fetchSpotifyLive = async () => {
@@ -15,7 +34,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
         if (!token || !user?.id) return;
 
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/users/${user.id}/live`, {
+            const res = await fetch(`${API_URL}/api/users/${user.id}/live`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -91,7 +110,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
         const token = localStorage.getItem('token');
         if (!token) return;
         try {
-            const res = await fetch('http://127.0.0.1:5001/api/notifications/unread-count', {
+            const res = await fetch('${API_URL}/api/notifications/unread-count', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -131,7 +150,17 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     }
 
     return (
-        <>            {/* Desktop Sidebar */}            <div className="w-64 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40 overflow-hidden">
+        <>
+            {/* Mobile Floating Theme Toggle */}
+            <button
+                onClick={toggleTheme}
+                className="md:hidden fixed top-4 right-4 z-50 p-2.5 rounded-xl border-2 border-white/10 bg-zinc-950/80 text-zinc-400 shadow-lg backdrop-blur-md cursor-pointer theme-toggle-btn"
+            >
+                {theme === 'dark' ? <Sun size={18} className="text-amber-400 animate-spin-slow" style={{ animationDuration: '6s' }} /> : <Moon size={18} className="text-indigo-400" />}
+            </button>
+
+            {/* Desktop Sidebar */}
+            <div className="sidebar-container w-64 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40 overflow-hidden">
                 {/* Glow Effect */}
                 <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-44 h-44 bg-gradient-to-br from-violet-600 to-fuchsia-600 opacity-10 rounded-full blur-[60px] pointer-events-none" />
 
@@ -175,6 +204,36 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                 </button>
                             );
                         })}
+                        
+                        {/* Theme Toggle Switch */}
+                        <div className="w-full flex items-center justify-between px-4 py-2 rounded-xl font-mouse-memoirs uppercase tracking-widest text-xs border border-white/10 bg-zinc-900/30 text-zinc-400 theme-toggle-container select-none">
+                            <span className="flex items-center gap-2">
+                                {theme === 'dark' ? (
+                                    <Moon size={14} className="text-indigo-400" />
+                                ) : (
+                                    <Sun size={14} className="text-amber-500 animate-spin-slow" style={{ animationDuration: '6s' }} />
+                                )}
+                                {theme === 'dark' ? 'Mode Sombre' : 'Mode Clair'}
+                            </span>
+                            
+                            {/* Sliding Track */}
+                            <button
+                                onClick={toggleTheme}
+                                className={`w-10 h-6 p-0 rounded-full border-2 transition-colors duration-300 relative flex items-center cursor-pointer outline-none focus:outline-none ${
+                                    theme === 'dark' ? 'bg-violet-600 border-white/20' : 'bg-zinc-300 border-zinc-400'
+                                }`}
+                                aria-label="Toggle Theme"
+                            >
+                                {/* Sliding Thumb */}
+                                <div 
+                                    className="w-4 h-4 rounded-full transition-all duration-300 shadow-md absolute top-[2px]"
+                                    style={{ 
+                                        left: theme === 'dark' ? '18px' : '2px',
+                                        backgroundColor: theme === 'dark' ? '#ffffff' : '#12101b'
+                                    }}
+                                />
+                            </button>
+                        </div>
                     </nav>
 
                     {/* Decorative Cover Art & Music visualizer Widget */}
@@ -266,7 +325,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
             </div>
 
             {/* Mobile Bottom Navigation */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0c0a12]/95 border-t border-white/[0.05] py-2 px-3 flex justify-around items-center z-50 backdrop-blur-xl shadow-[0_-8px_30px_rgba(0,0,0,0.5)]">
+            <div className="mobile-nav-container md:hidden fixed bottom-0 left-0 right-0 bg-[#0c0a12]/95 border-t border-white/[0.05] py-2 px-3 flex justify-around items-center z-50 backdrop-blur-xl shadow-[0_-8px_30px_rgba(0,0,0,0.5)]">
                 {navItems.map(({ key, label, icon: Icon, action, badge }) => {
                     const isActive = currentTab === key;
                     return (

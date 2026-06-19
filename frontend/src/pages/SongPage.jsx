@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, Disc, Music, Star, Calendar, ExternalLink } from 'lucide-react';
@@ -49,7 +50,7 @@ function SongPage() {
             setError('');
             try {
                 // 1. Fetch song details
-                const songRes = await fetch(`http://127.0.0.1:5001/api/songs/${songId}/details`, {
+                const songRes = await fetch(`${API_URL}/api/songs/${songId}/details`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!songRes.ok) throw new Error("Chanson introuvable");
@@ -59,7 +60,7 @@ function SongPage() {
                 setSong(songData);
 
                 // 2. Fetch lyrics
-                const lyricsRes = await fetch(`http://127.0.0.1:5001/api/songs/${songId}/lyrics`, {
+                const lyricsRes = await fetch(`${API_URL}/api/songs/${songId}/lyrics`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (lyricsRes.ok) {
@@ -68,7 +69,7 @@ function SongPage() {
                 }
 
                 // 3. Fetch reviews
-                const reviewsRes = await fetch(`http://127.0.0.1:5001/api/songs/${songId}/reviews`, {
+                const reviewsRes = await fetch(`${API_URL}/api/songs/${songId}/reviews`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (reviewsRes.ok) {
@@ -163,8 +164,8 @@ function SongPage() {
 
         const isEditing = editingReviewId !== null;
         const url = isEditing
-            ? `http://127.0.0.1:5001/api/reviews/${editingReviewId}`
-            : 'http://127.0.0.1:5001/api/reviews';
+            ? `${API_URL}/api/reviews/${editingReviewId}`
+            : '${API_URL}/api/reviews';
         const method = isEditing ? 'PUT' : 'POST';
 
         try {
@@ -192,7 +193,7 @@ function SongPage() {
             setReviewSuccess(isEditing ? "Avis modifié !" : "Avis publié !");
             
             // Reload reviews
-            const reviewsRes = await fetch(`http://127.0.0.1:5001/api/songs/${songId}/reviews`, {
+            const reviewsRes = await fetch(`${API_URL}/api/songs/${songId}/reviews`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (reviewsRes.ok) {
@@ -226,7 +227,7 @@ function SongPage() {
         if (!window.confirm("Voulez-vous vraiment supprimer cet avis ?")) return;
 
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/reviews/${reviewId}`, {
+            const res = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -247,7 +248,7 @@ function SongPage() {
                 handleLogout={() => { localStorage.clear(); navigate('/login'); }}
             />
 
-            <div className="flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg no-scrollbar flex flex-col pb-24 md:pb-8 p-4 md:p-8">
+            <div className="song-page-content flex-1 bg-[#12101b] md:my-2 md:mr-2 md:rounded-lg no-scrollbar flex flex-col pb-24 md:pb-8 p-4 md:p-8">
                 {/* Loading */}
                 {loading && (
                     <div className="flex-1 flex flex-col items-center justify-center gap-4">

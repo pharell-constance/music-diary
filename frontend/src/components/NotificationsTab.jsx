@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useEffect, useState, useRef } from 'react';
 import { Bell, UserPlus, AlertTriangle, Info, Trash2, Check, CheckCheck, Disc } from 'lucide-react';
 import gsap from 'gsap';
@@ -27,7 +28,7 @@ function NotificationsTab() {
     const fetchNotifications = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://127.0.0.1:5001/api/notifications', {
+            const res = await fetch('${API_URL}/api/notifications', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!res.ok) throw new Error("Impossible de charger les notifications.");
@@ -43,7 +44,7 @@ function NotificationsTab() {
 
     const handleMarkAsRead = async (id) => {
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/notifications/${id}/read`, {
+            const res = await fetch(`${API_URL}/api/notifications/${id}/read`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -58,7 +59,7 @@ function NotificationsTab() {
 
     const handleDelete = async (id) => {
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/notifications/${id}`, {
+            const res = await fetch(`${API_URL}/api/notifications/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -73,7 +74,7 @@ function NotificationsTab() {
 
     const handleMarkAllAsRead = async () => {
         try {
-            const res = await fetch('http://127.0.0.1:5001/api/notifications/read', {
+            const res = await fetch('${API_URL}/api/notifications/read', {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -91,7 +92,7 @@ function NotificationsTab() {
         if (!confirmClear) return;
 
         try {
-            const res = await fetch('http://127.0.0.1:5001/api/notifications', {
+            const res = await fetch('${API_URL}/api/notifications', {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

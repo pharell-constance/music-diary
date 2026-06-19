@@ -1,3 +1,4 @@
+import API_URL from '../../config.js';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Plus, X, Music, Search, Quote } from 'lucide-react';
@@ -48,7 +49,7 @@ function AddPinForm({ onAdd, onClose, token }) {
         if (!searchQuery.trim()) return;
         setSearching(true);
         try {
-            const res = await fetch(`http://127.0.0.1:5001/api/search?q=${encodeURIComponent(searchQuery)}&type=track`, {
+            const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(searchQuery)}&type=track`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -77,7 +78,7 @@ function AddPinForm({ onAdd, onClose, token }) {
         }
         setSubmitting(true);
         try {
-            const res = await fetch('http://127.0.0.1:5001/api/lyric-pins', {
+            const res = await fetch('${API_URL}/api/lyric-pins', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ lyric, trackName, artistName, albumCover, color })

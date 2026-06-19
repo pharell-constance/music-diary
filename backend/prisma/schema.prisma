@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,11 +18,11 @@ model User {
   pseudo    String   @unique
   role      String   @default("USER") 
   spotifyId String?  
-  spotifyAccessToken String? @db.Text
-  spotifyRefreshToken String? @db.Text
+  spotifyAccessToken String? 
+  spotifyRefreshToken String? 
   spotifyTokenExpiresAt DateTime?
-  avatar    String?  @db.LongText
-  bio       String?  @db.Text
+  avatar    String?  
+  bio       String?  
   statusEmoji String?
   statusText  String?
   favArtistId     String?
@@ -114,7 +114,7 @@ model Like {
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  content   String   @db.Text
+  content   String   
   createdAt DateTime @default(now())
   userId    Int
   reviewId  Int
@@ -128,7 +128,7 @@ model LyricPin {
   lyric      String   @db.Text
   trackName  String
   artistName String
-  albumCover String?  @db.LongText
+  albumCover String?  
   color      String   @default("#1DB954")
   createdAt  DateTime @default(now())
 

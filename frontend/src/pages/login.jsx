@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Disc } from 'lucide-react';
@@ -16,7 +17,7 @@ function Login() {
         setSuccess('');
 
         try {
-            const response = await fetch('http://127.0.0.1:5001/api/auth/login', {
+            const response = await fetch('${API_URL}/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

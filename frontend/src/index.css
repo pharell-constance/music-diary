@@ -462,3 +462,1025 @@ textarea:focus {
   border-radius: 12px;
   animation: skeleton-pulse 1.8s ease-in-out infinite;
 }
+
+/* =============================================
+   LIGHT THEME OVERRIDES (NEOBRUTALIST VIBRANT POP-ART)
+   ============================================= */
+
+body.light {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  background-attachment: fixed;
+}
+
+/* Disable cosmic ambient background glows in light mode, but keep backdrop blurs */
+body.light::before,
+body.light::after,
+body.light [class*="blur-"]:not([class*="backdrop-blur"]) {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+  filter: none !important;
+}
+
+/* Eradicate background gradients inside light theme */
+body.light .bg-gradient-to-br,
+body.light .bg-gradient-to-r,
+body.light .bg-gradient-to-tr,
+body.light .bg-gradient-to-t,
+body.light .bg-gradient-to-b {
+  background-image: none !important;
+}
+
+/* Standard solid colors for specific layout components */
+body.light .bg-black {
+  background-color: #ffffff !important;
+}
+
+body.light .bg-\[\#12101b\] {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 6px 6px 0px #000000 !important;
+  border-radius: 20px !important;
+}
+
+body.light .bg-\[\#07050f\] {
+  background-color: #ffffff !important;
+}
+
+body.light .sidebar-container {
+  background-color: #ffffff !important;
+  border-right: 3px solid #000000 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  left: 0 !important;
+}
+
+body.light .bg-\[\#07050f\]\/80 {
+  background-color: #ffffff !important;
+  border-right: 3px solid #000000 !important;
+}
+
+body.light .mobile-nav-container {
+  background-color: #ffffff !important;
+  border-top: 3px solid #000000 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.light .bg-\[\#0c0a12\]\/95 {
+  background-color: #ffffff !important;
+  border-top: 3px solid #000000 !important;
+}
+
+body.light .bg-zinc-900 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .bg-zinc-950 {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+}
+
+body.light .bg-zinc-950\/40 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .bg-zinc-900\/50 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light .bg-black\/70 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light .bg-white\/2 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .bg-white\/\[0\.03\] {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light .bg-white\/\[0\.01\] {
+  background-color: #ffffff !important;
+}
+
+body.light .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light .bg-zinc-900\/30 {
+  background-color: #ffffff !important;
+}
+
+body.light .bg-violet-600 {
+  background-color: #7c3aed !important;
+}
+
+body.light .hover\:bg-violet-500:hover {
+  background-color: #6d28d9 !important;
+}
+
+body.light .bg-fuchsia-600 {
+  background-color: #db2777 !important;
+}
+
+body.light .hover\:bg-fuchsia-500:hover {
+  background-color: #be185d !important;
+}
+
+body.light .bg-red-500 {
+  background-color: #ef4444 !important;
+}
+
+body.light .bg-red-500\/10 {
+  background-color: #fee2e2 !important;
+  border-color: #ef4444 !important;
+}
+
+body.light .bg-violet-500\/10 {
+  background-color: #f5f3ff !important;
+  border-color: #7c3aed !important;
+}
+
+body.light .bg-fuchsia-500\/10 {
+  background-color: #fdf2f8 !important;
+  border-color: #db2777 !important;
+}
+
+body.light .bg-yellow-500\/10 {
+  background-color: #fef9c3 !important;
+  border-color: #eab308 !important;
+}
+
+body.light .bg-purple-500\/10 {
+  background-color: #faf5ff !important;
+  border-color: #a855f7 !important;
+}
+
+body.light .bg-\[\#0c0c0e\] {
+  background-color: #ffffff !important;
+}
+
+body.light .bg-\[\#121214\] {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.light .bg-\[\#0e0e11\] {
+  background-color: #facc15 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+/* Typography, contrast and text readability overrides */
+body.light .text-white {
+  color: #000000 !important;
+}
+
+body.light .text-zinc-100 {
+  color: #000000 !important;
+}
+
+body.light .text-zinc-200 {
+  color: #1a1a1a !important;
+}
+
+body.light .text-zinc-300 {
+  color: #2b2b2b !important;
+}
+
+body.light .text-zinc-400 {
+  color: #4b5563 !important;
+}
+
+body.light .text-zinc-550,
+body.light .text-zinc-500 {
+  color: #52525b !important;
+}
+
+body.light .text-zinc-650,
+body.light .text-zinc-600 {
+  color: #6b7280 !important;
+}
+
+body.light .text-violet-400 {
+  color: #7c3aed !important;
+}
+
+body.light .text-fuchsia-400 {
+  color: #db2777 !important;
+}
+
+body.light .text-pink-500 {
+  color: #db2777 !important;
+}
+
+body.light .text-red-400,
+body.light .text-red-200 {
+  color: #dc2626 !important;
+}
+
+body.light .text-yellow-400 {
+  color: #b45309 !important;
+}
+
+body.light .text-emerald-400 {
+  color: #047857 !important;
+}
+
+body.light .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+/* Ensure outlined text headings inside light theme keep their styles */
+body.light .text-stroke-dark,
+body.light .text-stroke-black {
+  color: #ffffff !important;
+}
+
+/* Neobrutalist card, button and modal layouts overrides */
+body.light .neobrutal-card {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 6px 6px 0px 0px #000000 !important;
+  border-radius: 24px !important;
+}
+
+body.light .neobrutal-card:hover {
+  transform: translate(-3px, -3px) !important;
+  border-color: #000000 !important;
+  box-shadow: 8px 8px 0px 0px #000000 !important;
+}
+
+/* Fix white-on-white text inside neobrutal cards in light mode */
+body.light .neobrutal-card .text-white {
+  color: #000000 !important;
+}
+
+body.light .neobrutal-card .text-zinc-300 {
+  color: #333333 !important;
+}
+
+body.light .neobrutal-card .text-zinc-400 {
+  color: #555555 !important;
+}
+
+body.light .neobrutal-card .text-zinc-500 {
+  color: #777777 !important;
+}
+
+body.light .neobrutal-card .text-zinc-700 {
+  color: #999999 !important;
+}
+
+/* Lyrics hover: use violet instead of white on white bg */
+body.light .neobrutal-card .hover\:text-white:hover {
+  color: #7c3aed !important;
+}
+
+/* Album tracklist hover bg visible on white */
+body.light .neobrutal-card .hover\:bg-zinc-800\/30:hover {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+}
+
+/* Inputs/textareas inside neobrutal cards */
+body.light .neobrutal-card textarea,
+body.light .neobrutal-card input {
+  background-color: #f5f5f5 !important;
+  color: #000000 !important;
+  border-color: #cccccc !important;
+}
+
+body.light .neobrutal-card textarea::placeholder,
+body.light .neobrutal-card input::placeholder {
+  color: #999999 !important;
+}
+
+body.light .neobrutal-btn {
+  background-color: #facc15 !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+  border-radius: 14px !important;
+}
+
+body.light .neobrutal-btn:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+  box-shadow: 6px 6px 0px 0px #000000 !important;
+}
+
+body.light .neobrutal-btn:active {
+  transform: translate(3px, 3px) !important;
+  box-shadow: none !important;
+}
+
+body.light .neobrutal-btn.border-red-500 {
+  background-color: #ef4444 !important;
+  border-color: #000000 !important;
+  color: #ffffff !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+}
+
+body.light .neobrutal-btn.border-red-500:hover {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 6px 6px 0px 0px #000000 !important;
+}
+
+body.light .neo-section {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.light .neo-list-item {
+  border: 3px solid #000000 !important;
+  background: #ffffff !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.light .neo-list-item:hover {
+  border-color: #7c3aed !important;
+  background: rgba(139, 92, 246, 0.05) !important;
+  box-shadow: 5px 5px 0px #000000 !important;
+}
+
+body.light .neo-stat-card {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 5px 5px 0px #000000 !important;
+}
+
+body.light .neo-stat-card:hover {
+  border-color: #7c3aed !important;
+  box-shadow: 7px 7px 0px #000000 !important;
+}
+
+body.light .neo-empty {
+  background: #ffffff !important;
+  border: 3px dashed #000000 !important;
+}
+
+body.light .neo-modal {
+  background: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px 0px #000000 !important;
+}
+
+body.light .neo-divider {
+  background: #000000 !important;
+  height: 2px !important;
+  opacity: 0.15 !important;
+}
+
+/* Inputs & Forms overrides */
+body.light input[type="text"],
+body.light input[type="password"],
+body.light input[type="email"],
+body.light input[type="search"],
+body.light input[type="number"],
+body.light textarea {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  color: #000000 !important;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.light input[type="text"]:focus,
+body.light input[type="password"]:focus,
+body.light input[type="email"]:focus,
+body.light input[type="search"]:focus,
+body.light input[type="number"]:focus,
+body.light textarea:focus {
+  background: #ffffff !important;
+  border-color: #7c3aed !important;
+  box-shadow: 5px 5px 0px 0px #000000 !important;
+}
+
+body.light .page-header {
+  border-bottom: 2px dashed #000000 !important;
+}
+
+/* Tabs & Pills navigation overrides */
+body.light .tab-nav-btn.active {
+  color: #000000 !important;
+  border-color: #7c3aed !important;
+}
+
+body.light .tab-nav-btn.inactive {
+  color: #6b7280 !important;
+}
+
+body.light .tab-nav-btn.inactive:hover {
+  color: #000000 !important;
+  border-color: #a78bfa !important;
+}
+
+body.light .pill-btn.inactive {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+
+body.light .pill-btn.inactive:hover {
+  color: #ffffff !important;
+  border-color: #000000 !important;
+  background: #7c3aed !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.light .pill-btn.active {
+  background: #7c3aed !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+/* Custom scrollbars overrides */
+body.light .custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f0e8 !important;
+}
+
+body.light .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #000000 !important;
+  border: 1px solid #f3f0e8;
+}
+
+body.light .custom-scrollbar {
+  scrollbar-color: #000000 #f3f0e8 !important;
+}
+
+/* Toggle themes overrides */
+body.light .theme-toggle-btn {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.light .theme-toggle-container {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+/* Specific elements & custom neobrutalist styling exceptions */
+body.light .w-9.h-9.bg-gradient-to-br,
+body.light .w-10.h-10.bg-gradient-to-br,
+body.light .w-12.h-12.bg-gradient-to-br,
+body.light .w-6.h-6.bg-gradient-to-br {
+  background-color: #7c3aed !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+
+body.light .anim-card[style*="background"] {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.light .anim-card[style*="background"]:hover {
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+body.light .anim-card[style*="background"] .text-white {
+  color: #000000 !important;
+}
+
+body.light .anim-card[style*="background"] .text-zinc-400 {
+  color: #555555 !important;
+}
+
+body.light .anim-card[style*="background"] .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light .anim-card[style*="background"] .bg-black\/40:hover {
+  background-color: #ef4444 !important;
+}
+
+body.light .bg-gradient-to-br.from-violet-600.to-fuchsia-500 {
+  background-color: #7c3aed !important;
+}
+
+body.light .bg-gradient-to-br.from-blue-600.to-cyan-500 {
+  background-color: #06b6d4 !important;
+}
+
+body.light .bg-gradient-to-br.from-purple-600.to-indigo-500 {
+  background-color: #8b5cf6 !important;
+}
+
+body.light .bg-gradient-to-br.from-fuchsia-600.to-pink-500 {
+  background-color: #ec4899 !important;
+}
+
+body.light .bg-gradient-to-br.from-violet-700.to-purple-600 {
+  background-color: #6d28d9 !important;
+}
+
+body.light .bg-gradient-to-br.from-yellow-600.to-amber-500 {
+  background-color: #facc15 !important;
+  color: #000000 !important;
+}
+
+body.light .bg-gradient-to-br.from-red-600.to-rose-500 {
+  background-color: #ef4444 !important;
+}
+
+/* Liquid SVG dividers fill adjustments */
+body.light svg path[fill="#121214"] {
+  fill: #ffffff !important;
+}
+
+/* Artist header bottom transparent gradient fade correction */
+body.light .bg-gradient-to-t.from-\[\#12101b\],
+body.light .bg-gradient-to-t.from-\[\#121214\] {
+  background-image: linear-gradient(to top, #ffffff 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%) !important;
+}
+
+body.light .bg-gradient-to-b.from-violet-950\/20,
+body.light .bg-gradient-to-b.from-white\/\[0\.01\] {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* SongPage main banner neobrutal pop styling */
+body.light .bg-gradient-to-r.from-violet-900\/40.to-fuchsia-950\/40 {
+  background-color: #7c3aed !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+body.light .bg-gradient-to-r.from-violet-900\/40.to-fuchsia-950\/40 .text-white {
+  color: #ffffff !important;
+}
+
+/* Fix invisible artist names (vibrant yellow on violet background) */
+body.light .bg-gradient-to-r.from-violet-900\/40.to-fuchsia-950\/40 .text-violet-400 {
+  color: #facc15 !important;
+}
+
+body.light .bg-gradient-to-r.from-violet-900\/40.to-fuchsia-950\/40 .text-violet-400:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Fix low-contrast metadata labels (light zinc/white-translucent on violet background) */
+body.light .bg-gradient-to-r.from-violet-900\/40.to-fuchsia-950\/40 .text-zinc-400 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* SongPage: back button */
+body.light .song-page-content button.bg-\[\#1a1824\] {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.light .song-page-content button.text-zinc-300 {
+  color: #000000 !important;
+}
+
+body.light .song-page-content button.bg-\[\#1a1824\]:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* SongPage: review form card */
+body.light .song-page-content .neobrutal-card.bg-\[\#1a1824\]\/70 {
+  background-color: #ffffff !important;
+}
+
+/* SongPage: text colors inside the main content area */
+body.light .song-page-content .text-zinc-300 {
+  color: #333333 !important;
+}
+
+body.light .song-page-content .text-zinc-400 {
+  color: #555555 !important;
+}
+
+body.light .song-page-content .text-zinc-500 {
+  color: #777777 !important;
+}
+
+body.light .song-page-content .text-white {
+  color: #000000 !important;
+}
+
+/* SongPage: fuchsia section headers — keep vivid */
+body.light .song-page-content .text-fuchsia-400 {
+  color: #c026d3 !important;
+}
+
+/* SongPage: violet artist links — keep vivid but darker */
+body.light .song-page-content .text-violet-400 {
+  color: #7c3aed !important;
+}
+
+body.light .song-page-content .text-violet-300 {
+  color: #6d28d9 !important;
+}
+
+/* SongPage: empty stars nearly invisible on white */
+body.light .song-page-content .text-zinc-700 {
+  color: #cccccc !important;
+}
+
+/* SongPage: review error/success messages */
+body.light .song-page-content .text-red-300 {
+  color: #dc2626 !important;
+}
+
+/* SongPage: bg-black/40 inside neobrutal-card (lyrics container) */
+body.light .song-page-content .neobrutal-card.bg-black\/40 {
+  background-color: #ffffff !important;
+}
+
+/* SongPage: review textarea */
+body.light .song-page-content textarea {
+  background-color: #f5f5f5 !important;
+  color: #000000 !important;
+  border: 2px solid #cccccc !important;
+  border-radius: 12px !important;
+}
+
+body.light .song-page-content textarea:focus {
+  border-color: #7c3aed !important;
+}
+
+body.light .song-page-content textarea::placeholder {
+  color: #999999 !important;
+}
+
+/* SongPage: cancel button in review form */
+body.light .song-page-content .border-zinc-700.text-zinc-400 {
+  border-color: #000000 !important;
+  color: #000000 !important;
+}
+
+body.light .song-page-content .border-zinc-700.text-zinc-400:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* SongPage: neo-empty state */
+body.light .neo-empty {
+  background-color: #f9f9f9 !important;
+  border: 2px dashed #cccccc !important;
+  border-radius: 16px !important;
+  color: #777777 !important;
+}
+
+/* SongPage: banner shadow fix (white shadow invisible on white bg) */
+body.light .shadow-\[6px_6px_0px_rgba\(255\,255\,255\,0\.1\)\] {
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+/* SongPage: hover:text-white */
+body.light .song-page-content .hover\:text-white:hover {
+  color: #7c3aed !important;
+}
+
+/* SongPage: hover:border-white on back button */
+body.light .song-page-content .hover\:border-white:hover {
+  border-color: #7c3aed !important;
+}
+
+/* SongPage: divide-zinc-800/40 inside tracklist */
+body.light .divide-zinc-800\/40 > * + * {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* SongPage: main content background */
+body.light .song-page-content {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Borders utility classes normalization */
+body.light .border-white\/10,
+body.light .border-white\/5,
+body.light .border-white\/20,
+body.light .border-white\/\[0\.05\],
+body.light .border-white\/\[0\.06\],
+body.light .border-white\/\[0\.08\],
+body.light .border-white\/\[0\.04\],
+body.light .border-white\/\[0\.07\] {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+body.light .border-white {
+  border-color: #000000 !important;
+  border-width: 2.5px !important;
+}
+
+body.light .divide-white\/\[0\.04\] > * + *,
+body.light .divide-zinc-800\/60 > * + * {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* CTA container text normalization */
+body.light .bg-\[\#0e0e11\] .text-white {
+  color: #000000 !important;
+}
+
+body.light .bg-\[\#0e0e11\] .text-zinc-400 {
+  color: #1a1a1a !important;
+}
+
+body.light .shadow-\[6px_6px_0px_\#fff\] {
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+/* ── Profile Edit Modal: Light mode overrides ─────────────────────── */
+
+/* Modal container */
+body.light .profile-edit-modal {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 8px 8px 0px #000000 !important;
+  color: #000000 !important;
+  overflow-y: auto !important;
+}
+
+/* Modal title & text */
+body.light .profile-edit-modal .text-white {
+  color: #000000 !important;
+}
+
+body.light .profile-edit-modal .text-zinc-300 {
+  color: #222222 !important;
+}
+
+body.light .profile-edit-modal .text-zinc-400 {
+  color: #555555 !important;
+}
+
+body.light .profile-edit-modal .text-zinc-500 {
+  color: #777777 !important;
+}
+
+body.light .profile-edit-modal .text-zinc-200 {
+  color: #222222 !important;
+}
+
+body.light .profile-edit-modal .text-\[\#A7A7A7\] {
+  color: #555555 !important;
+}
+
+body.light .profile-edit-modal .text-\[\#A7A7A7\]:hover {
+  color: #000000 !important;
+}
+
+/* Inputs inside modal: bg-[#292738] → light gray */
+body.light .profile-edit-modal .bg-\[\#292738\] {
+  background-color: #f5f5f5 !important;
+  color: #000000 !important;
+  border-color: #cccccc !important;
+}
+
+body.light .profile-edit-modal .bg-\[\#292738\]:focus {
+  border-color: #7c3aed !important;
+}
+
+/* Input text color override */
+body.light .profile-edit-modal input,
+body.light .profile-edit-modal textarea {
+  color: #000000 !important;
+  background-color: #f5f5f5 !important;
+  border-color: #cccccc !important;
+}
+
+body.light .profile-edit-modal input:focus,
+body.light .profile-edit-modal textarea:focus {
+  border-color: #7c3aed !important;
+}
+
+body.light .profile-edit-modal input::placeholder,
+body.light .profile-edit-modal textarea::placeholder {
+  color: #999999 !important;
+}
+
+/* Sections with bg-[#292738]/20 or bg-[#292738]/40 */
+body.light .profile-edit-modal .bg-\[\#292738\]\/20 {
+  background-color: #f9f9f9 !important;
+  border-color: #dddddd !important;
+}
+
+body.light .profile-edit-modal .bg-\[\#292738\]\/40 {
+  background-color: #f0f0f0 !important;
+  border-color: #dddddd !important;
+}
+
+/* Search results dropdown: bg-[#12101b] */
+body.light .profile-edit-modal .bg-\[\#12101b\] {
+  background-color: #ffffff !important;
+  border-color: #cccccc !important;
+  color: #000000 !important;
+}
+
+/* Avatar circle container */
+body.light .profile-edit-modal .border-zinc-700.bg-\[\#12101b\] {
+  background-color: #f0f0f0 !important;
+}
+
+/* Search result hover items */
+body.light .profile-edit-modal .hover\:bg-\[\#292738\]\/50:hover {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+}
+
+/* Status suggestion buttons */
+body.light .profile-edit-modal .bg-\[\#292738\].hover\:bg-zinc-700 {
+  background-color: #f0f0f0 !important;
+  color: #333333 !important;
+  border: 1px solid #dddddd !important;
+}
+
+body.light .profile-edit-modal .bg-\[\#292738\].hover\:bg-zinc-700:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* Upload button: bg-zinc-800 */
+body.light .profile-edit-modal .bg-zinc-800 {
+  background-color: #f0f0f0 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .profile-edit-modal .bg-zinc-800:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* Border dividers inside modal */
+body.light .profile-edit-modal .border-zinc-800 {
+  border-color: #e0e0e0 !important;
+}
+
+body.light .profile-edit-modal .border-zinc-700 {
+  border-color: #cccccc !important;
+}
+
+/* Close button hover */
+body.light .profile-edit-modal .hover\:text-white:hover {
+  color: #000000 !important;
+}
+
+/* Submit button */
+body.light .bg-\[\#8B5CF6\] {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.light .bg-\[\#8B5CF6\]:hover {
+  background-color: #6d28d9 !important;
+}
+
+/* Delete/remove red buttons */
+body.light .profile-edit-modal .bg-red-950\/30,
+body.light .profile-edit-modal .bg-red-950\/20 {
+  background-color: #fef2f2 !important;
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+
+/* Error/success messages */
+body.light .profile-edit-modal .bg-red-950\/50 {
+  background-color: #fef2f2 !important;
+  border-color: #ef4444 !important;
+}
+
+body.light .profile-edit-modal .text-red-400 {
+  color: #dc2626 !important;
+}
+
+body.light .profile-edit-modal .bg-emerald-950\/50 {
+  background-color: #ecfdf5 !important;
+  border-color: #10b981 !important;
+}
+
+body.light .profile-edit-modal .text-emerald-400 {
+  color: #059669 !important;
+}
+
+/* Modal overlay backdrop */
+body.light .bg-black\/80 {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Ensure group hover text colors are dark and visible in light mode */
+body.light .group:hover .group-hover\:text-violet-400 {
+  color: #7c3aed !important;
+}
+body.light .group:hover .group-hover\:text-emerald-400 {
+  color: #7c3aed !important; /* since emerald is aliased to violet */
+}
+body.light .group:hover .group-hover\:text-fuchsia-400 {
+  color: #db2777 !important;
+}
+body.light .group:hover .group-hover\:text-green-400 {
+  color: #db2777 !important; /* since green is aliased to fuchsia */
+}
+
+/* ── Artist Page: Light mode overrides ─────────────────────── */
+
+/* Stat Cards */
+body.light .anim-section .bg-\[\#1a1824\] {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  border-radius: 16px !important;
+}
+
+body.light .anim-section .bg-\[\#1a1824\] .text-white {
+  color: #000000 !important;
+}
+
+/* Track list container */
+body.light .bg-\[\#1a1824\]\/70.border-zinc-800\/40 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.light .bg-\[\#1a1824\]\/70.border-zinc-800\/40 .text-white {
+  color: #000000 !important;
+}
+
+/* Tracklist row hover background */
+body.light .track-row:hover {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+}
+
+/* Genre Pills */
+body.light .anim-section .bg-\[\#292738\] {
+  background-color: #f5f3ff !important;
+  border: 1.5px solid #000000 !important;
+  color: #7c3aed !important;
+}
+
+body.light .anim-section .bg-\[\#292738\]:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* Back button in artist header hero */
+body.light .absolute.top-5.left-5.bg-black\/60 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+body.light .absolute.top-5.left-5.bg-black\/60:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* Popularity bar background container */
+body.light .bg-zinc-800.rounded-full {
+  background-color: #e4e4e7 !important;
+  border: 1px solid #000000 !important;
+}
+
+/* Solid popularity progress bar fills (override eradicated gradients) */
+body.light .from-red-500.to-rose-600 {
+  background-color: #ef4444 !important;
+}
+body.light .from-amber-400.to-orange-500 {
+  background-color: #f97316 !important;
+}
+body.light .from-emerald-400.to-teal-500 {
+  background-color: #10b981 !important;
+}
+body.light .from-blue-400.to-indigo-500 {
+  background-color: #3b82f6 !important;
+}
+body.light .from-purple-500.to-violet-600 {
+  background-color: #8b5cf6 !important;
+}
+body.light .from-zinc-500.to-zinc-700 {
+  background-color: #71717a !important;
+}
