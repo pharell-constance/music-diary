@@ -78,24 +78,21 @@ export default function HomeJournalTab({ home }) {
             <div className="flex gap-2 select-none overflow-x-auto no-scrollbar pb-1">
                 <button
                     onClick={() => home.setHomeSubTab('my-journal')}
-                    className={`pill-btn px-5 py-2 flex items-center gap-2 ${home.homeSubTab === 'my-journal' ? 'active' : 'inactive'}`}
+                    className={`pill-btn px-5 py-2 ${home.homeSubTab === 'my-journal' ? 'active' : 'inactive'}`}
                 >
-                    <BookOpen size={13} />
-                    <span>Mon Journal</span>
+                    Mon Journal
                 </button>
                 <button
                     onClick={() => home.setHomeSubTab('social-feed')}
-                    className={`pill-btn px-5 py-2 flex items-center gap-2 ${home.homeSubTab === 'social-feed' ? 'active' : 'inactive'}`}
+                    className={`pill-btn px-5 py-2 ${home.homeSubTab === 'social-feed' ? 'active' : 'inactive'}`}
                 >
-                    <Users size={13} />
-                    <span>Fil d'activité</span>
+                    Fil d'activité
                 </button>
                 <button
                     onClick={() => home.setHomeSubTab('explore')}
-                    className={`pill-btn px-5 py-2 flex items-center gap-2 ${home.homeSubTab === 'explore' ? 'active' : 'inactive'}`}
+                    className={`pill-btn px-5 py-2 ${home.homeSubTab === 'explore' ? 'active' : 'inactive'}`}
                 >
-                    <Sparkles size={13} />
-                    <span>Découvrir</span>
+                    Découvrir
                 </button>
             </div>
 
