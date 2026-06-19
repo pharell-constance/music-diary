@@ -29,9 +29,9 @@ export default function HomeTrendingSidebar({
     const topArtists = extractTrendingArtists(trending, 6);
 
     return (
-        <aside className="flex flex-col gap-5 w-full lg:w-[30%] lg:min-w-[260px] lg:max-w-[340px] flex-shrink-0">
+        <aside className="flex flex-col gap-5 w-full lg:w-[30%] lg:min-w-[260px] lg:max-w-[340px] flex-shrink-0 lg:sticky lg:top-8 lg:self-start">
             {/* Tendances */}
-            <div className="neobrutal-card bg-[#121214] p-4 flex flex-col gap-3 sticky top-4">
+            <div className="neobrutal-card bg-[#121214] p-4 flex flex-col gap-3 min-h-0">
                 <div className="flex items-center gap-2 pb-2 border-b-2 border-white/10">
                     <div className="w-8 h-8 rounded-lg bg-orange-500/15 border-2 border-orange-400/40 flex items-center justify-center shadow-[2px_2px_0px_rgba(251,146,60,0.25)]">
                         <Flame size={15} className="text-orange-400" />
@@ -51,7 +51,10 @@ export default function HomeTrendingSidebar({
                 ) : topTracks.length === 0 ? (
                     <p className="text-zinc-500 text-xs italic py-4 text-center">Aucune tendance disponible.</p>
                 ) : (
-                    <ul className="flex flex-col gap-1.5 max-h-[420px] overflow-y-auto custom-scrollbar pr-0.5">
+                    <ul
+                        className="flex flex-col gap-1.5 max-h-[min(24rem,calc(100dvh-14rem))] overflow-y-auto overscroll-contain custom-scrollbar pr-1 -mr-1 min-h-0"
+                        data-lenis-prevent
+                    >
                         {topTracks.map((track) => (
                             <li
                                 key={track.id}

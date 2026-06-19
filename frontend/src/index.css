@@ -1484,3 +1484,95 @@ body.light .from-purple-500.to-violet-600 {
 body.light .from-zinc-500.to-zinc-700 {
   background-color: #71717a !important;
 }
+
+/* ───────────────────────────────────────────────────────────────────────────────
+   SPOTIFY TAB PILLS AND SELECTORS STYLING
+   ─────────────────────────────────────────────────────────────────────────────── */
+
+/* 1. Subtabs buttons (Artistes, Sons, Albums, Genres) */
+.spotify-subtab-btn {
+  background: rgba(255, 255, 255, 0.03);
+  color: #a1a1aa; /* zinc-400 */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.spotify-subtab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.spotify-subtab-btn.active {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Light Theme for Subtabs */
+body.light .spotify-subtab-btn {
+  background: rgba(0, 0, 0, 0.03) !important;
+  color: #3f3f46 !important; /* zinc-700 */
+  border: 2px solid #000000 !important;
+}
+
+body.light .spotify-subtab-btn:hover {
+  color: #000000 !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light .spotify-subtab-btn.active {
+  background-color: #000000 !important; /* Solid black in light mode */
+  color: #ffffff !important; /* White text on active tab */
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+/* 2. Time range selector container (Cette Semaine, 4 Semaines, etc.) */
+.spotify-time-range-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.spotify-time-range-btn {
+  padding: 6px 16px;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #a1a1aa; /* zinc-400 */
+  border: none;
+  background: transparent;
+}
+
+.spotify-time-range-btn:hover {
+  color: #e4e4e7; /* zinc-200 */
+}
+
+.spotify-time-range-btn.active {
+  background-color: #3f3f46; /* zinc-700 */
+  color: #ffffff !important; /* Forced white text */
+}
+
+/* Light Theme for Time Range Selector */
+body.light .spotify-time-range-container {
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.light .spotify-time-range-btn {
+  color: #3f3f46 !important; /* zinc-700 */
+}
+
+body.light .spotify-time-range-btn:hover {
+  color: #000000 !important;
+}
+
+body.light .spotify-time-range-btn.active {
+  background-color: #000000 !important; /* Solid black active background */
+  color: #ffffff !important; /* White text */
+}
