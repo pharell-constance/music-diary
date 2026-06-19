@@ -94,7 +94,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch('${API_URL}/api/users/profile', {
+            const response = await fetch(`${API_URL}/api/users/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

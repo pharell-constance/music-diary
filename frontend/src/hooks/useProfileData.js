@@ -75,7 +75,7 @@ export default function useProfileData() {
                 setConnected(data.connected);
                 if (data.connected) {
                     const recentUrl = isOwnProfile
-                        ? '${API_URL}/api/spotify/me/recent'
+                        ? `${API_URL}/api/spotify/me/recent`
                         : `${API_URL}/api/users/${profileId}/spotify/recent`;
                     const recentRes = await fetch(recentUrl, {
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -123,7 +123,7 @@ export default function useProfileData() {
             try {
                 if (activeSubTab === 'tracks' && timeRange === 'week') {
                     const weeklyUrl = isOwnProfile
-                        ? '${API_URL}/api/spotify/me/weekly-top'
+                        ? `${API_URL}/api/spotify/me/weekly-top`
                         : `${API_URL}/api/users/${userId}/spotify/weekly-top`;
                     const res = await fetch(weeklyUrl, {
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -134,7 +134,7 @@ export default function useProfileData() {
                 }
 
                 const apiBase = isOwnProfile
-                    ? '${API_URL}/api/spotify/me'
+                    ? `${API_URL}/api/spotify/me`
                     : `${API_URL}/api/users/${userId}/spotify`;
                 const urlMap = {
                     artists: `${apiBase}/top-artists?limit=10&time_range=${timeRange}`,
@@ -166,7 +166,7 @@ export default function useProfileData() {
         async function fetchReviews() {
             try {
                 const url = isOwnProfile
-                    ? '${API_URL}/api/reviews'
+                    ? `${API_URL}/api/reviews`
                     : `${API_URL}/api/users/${userId}/reviews`;
                 const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
                 setReviews((await res.json()) || []);
@@ -182,7 +182,7 @@ export default function useProfileData() {
         if (!profileId || !token) return;
         setLoadingPins(true);
         const url = isOwnProfile
-            ? '${API_URL}/api/lyric-pins'
+            ? `${API_URL}/api/lyric-pins`
             : `${API_URL}/api/users/${profileId}/lyric-pins`;
         fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(r => r.json())
@@ -245,7 +245,7 @@ export default function useProfileData() {
     async function handleReportSubmit(reason) {
         if (!reportModalData) return;
         const isReview = reportModalData.type === 'review';
-        const res = await fetch('${API_URL}/api/reports', {
+        const res = await fetch(`${API_URL}/api/reports`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({
@@ -295,7 +295,7 @@ export default function useProfileData() {
 
     async function handleConnect() {
         try {
-            const res = await fetch('${API_URL}/api/spotify/authorize-url', {
+            const res = await fetch(`${API_URL}/api/spotify/authorize-url`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -348,7 +348,7 @@ export default function useProfileData() {
         setReviewSuccess('');
         const tk = localStorage.getItem('token');
         const isEditing = editingReviewId !== null;
-        const url = isEditing ? `${API_URL}/api/reviews/${editingReviewId}` : '${API_URL}/api/reviews';
+        const url = isEditing ? `${API_URL}/api/reviews/${editingReviewId}` : `${API_URL}/api/reviews`;
         try {
             const response = await fetch(url, {
                 method: isEditing ? 'PUT' : 'POST',
@@ -364,7 +364,7 @@ export default function useProfileData() {
             });
             if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
             setReviewSuccess(isEditing ? "Chronique modifiée !" : "Chronique enregistrée !");
-            const reviewsUrl = isOwnProfile ? '${API_URL}/api/reviews' : `${API_URL}/api/users/${userId}/reviews`;
+            const reviewsUrl = isOwnProfile ? `${API_URL}/api/reviews` : `${API_URL}/api/users/${userId}/reviews`;
             const reviewsRes = await fetch(reviewsUrl, { headers: { 'Authorization': `Bearer ${tk}` } });
             setReviews((await reviewsRes.json()) || []);
             setTimeout(() => {

@@ -78,7 +78,7 @@ function AddPinForm({ onAdd, onClose, token }) {
         }
         setSubmitting(true);
         try {
-            const res = await fetch('${API_URL}/api/lyric-pins', {
+            const res = await fetch(`${API_URL}/api/lyric-pins`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ lyric, trackName, artistName, albumCover, color })

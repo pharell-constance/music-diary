@@ -47,7 +47,7 @@ export default function useAdminDashboard() {
             setLoading(true);
             try {
                 // Fetch stats
-                const statsRes = await fetch('${API_URL}/api/admin/stats', {
+                const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!statsRes.ok) throw new Error("Erreur de récupération des stats");
@@ -55,7 +55,7 @@ export default function useAdminDashboard() {
                 setStats(statsData);
 
                 // Fetch users
-                const usersRes = await fetch('${API_URL}/api/admin/users', {
+                const usersRes = await fetch(`${API_URL}/api/admin/users`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!usersRes.ok) throw new Error("Erreur de récupération des utilisateurs");
@@ -63,7 +63,7 @@ export default function useAdminDashboard() {
                 setUsersList(usersData);
 
                 // Fetch reviews
-                const reviewsRes = await fetch('${API_URL}/api/admin/reviews', {
+                const reviewsRes = await fetch(`${API_URL}/api/admin/reviews`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!reviewsRes.ok) throw new Error("Erreur de récupération des critiques");
@@ -71,7 +71,7 @@ export default function useAdminDashboard() {
                 setReviewsList(reviewsData);
 
                 // Fetch reports
-                const reportsRes = await fetch('${API_URL}/api/admin/reports', {
+                const reportsRes = await fetch(`${API_URL}/api/admin/reports`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!reportsRes.ok) throw new Error("Erreur de récupération des signalements");

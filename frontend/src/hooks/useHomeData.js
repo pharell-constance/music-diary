@@ -75,7 +75,7 @@ export default function useHomeData() {
         const token = localStorage.getItem('token');
         setLoadingSocialFeed(true);
         try {
-            const response = await fetch('${API_URL}/api/social/feed', {
+            const response = await fetch(`${API_URL}/api/social/feed`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -132,7 +132,7 @@ export default function useHomeData() {
     async function fetchMyReviews() {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch('${API_URL}/api/reviews', {
+            const response = await fetch(`${API_URL}/api/reviews`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -186,7 +186,7 @@ export default function useHomeData() {
         const isEditing = editingReviewId !== null;
         const url = isEditing
             ? `${API_URL}/api/reviews/${editingReviewId}`
-            : '${API_URL}/api/reviews';
+            : `${API_URL}/api/reviews`;
         const method = isEditing ? 'PUT' : 'POST';
 
         try {

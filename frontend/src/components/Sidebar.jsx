@@ -110,7 +110,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
         const token = localStorage.getItem('token');
         if (!token) return;
         try {
-            const res = await fetch('${API_URL}/api/notifications/unread-count', {
+            const res = await fetch(`${API_URL}/api/notifications/unread-count`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {

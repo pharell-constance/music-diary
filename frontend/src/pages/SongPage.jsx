@@ -165,7 +165,7 @@ function SongPage() {
         const isEditing = editingReviewId !== null;
         const url = isEditing
             ? `${API_URL}/api/reviews/${editingReviewId}`
-            : '${API_URL}/api/reviews';
+            : `${API_URL}/api/reviews`;
         const method = isEditing ? 'PUT' : 'POST';
 
         try {

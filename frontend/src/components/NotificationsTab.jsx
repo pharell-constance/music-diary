@@ -28,7 +28,7 @@ function NotificationsTab() {
     const fetchNotifications = async () => {
         setLoading(true);
         try {
-            const res = await fetch('${API_URL}/api/notifications', {
+            const res = await fetch(`${API_URL}/api/notifications`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!res.ok) throw new Error("Impossible de charger les notifications.");
@@ -74,7 +74,7 @@ function NotificationsTab() {
 
     const handleMarkAllAsRead = async () => {
         try {
-            const res = await fetch('${API_URL}/api/notifications/read', {
+            const res = await fetch(`${API_URL}/api/notifications/read`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -92,7 +92,7 @@ function NotificationsTab() {
         if (!confirmClear) return;
 
         try {
-            const res = await fetch('${API_URL}/api/notifications', {
+            const res = await fetch(`${API_URL}/api/notifications`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
