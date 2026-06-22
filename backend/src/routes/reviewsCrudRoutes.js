@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken, requireRegularUser } = require('../middlewares/auth');
 const { getSpotifyToken } = require('../services/spotifyAuthService');
 
-router.post('/reviews', authenticateToken, async (req, res) => {
+router.post('/reviews', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const { content, rating, spotifyAlbumId, albumName, artistName, albumCover } = req.body;
         const authorId = req.user.userId;
@@ -157,7 +157,7 @@ router.delete('/reviews/:id', authenticateToken, async (req, res) => {
     }
 });
 
-router.put('/reviews/:id', authenticateToken, async (req, res) => {
+router.put('/reviews/:id', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
         const userId = req.user.userId;

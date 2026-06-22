@@ -34,7 +34,7 @@ const AdminRoute = ({ children }) => {
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
   
-  if (!token || !user || user.role !== 'ADMIN') {
+  if (!token || !user || (user.role !== 'ADMIN' && user.role !== 'OWNER')) {
     return <Navigate to="/" replace />;
   }
   return children;

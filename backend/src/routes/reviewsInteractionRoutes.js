@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken, requireRegularUser } = require('../middlewares/auth');
 
-router.post('/reviews/:reviewId/like', authenticateToken, async (req, res) => {
+router.post('/reviews/:reviewId/like', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const userId = req.user.userId;
         const reviewId = parseInt(req.params.reviewId);
@@ -50,7 +50,7 @@ router.delete('/reviews/:reviewId/like', authenticateToken, async (req, res) => 
     }
 });
 
-router.post('/reviews/:reviewId/comments', authenticateToken, async (req, res) => {
+router.post('/reviews/:reviewId/comments', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const userId = req.user.userId;
         const reviewId = parseInt(req.params.reviewId);

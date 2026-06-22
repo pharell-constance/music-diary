@@ -137,16 +137,17 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
         };
     }, []);
 
-    const navItems = [
-        { key: 'home', label: 'Accueil', icon: HomeIcon, action: () => setCurrentTab('home') },
-        { key: 'search', label: 'Rechercher', icon: Search, action: () => setCurrentTab('search') },
-        { key: 'library', label: 'Ma Bibliothèque', icon: Library, action: () => setCurrentTab('library') },
-        { key: 'notifications', label: 'Notifications', icon: Bell, action: () => setCurrentTab('notifications'), badge: unreadCount },
-        { key: 'profile', label: 'Mon Profil', icon: User, action: () => window.location.href = '/profile' },
-    ];
-
+    const navItems = [];
     if (user?.role === 'ADMIN' || user?.role === 'OWNER') {
         navItems.push({ key: 'admin', label: 'Dashboard Admin', icon: Shield, action: () => window.location.href = '/admin' });
+    } else {
+        navItems.push(
+            { key: 'home', label: 'Accueil', icon: HomeIcon, action: () => setCurrentTab('home') },
+            { key: 'search', label: 'Rechercher', icon: Search, action: () => setCurrentTab('search') },
+            { key: 'library', label: 'Ma Bibliothèque', icon: Library, action: () => setCurrentTab('library') },
+            { key: 'notifications', label: 'Notifications', icon: Bell, action: () => setCurrentTab('notifications'), badge: unreadCount },
+            { key: 'profile', label: 'Mon Profil', icon: User, action: () => window.location.href = '/profile' }
+        );
     }
 
     return (

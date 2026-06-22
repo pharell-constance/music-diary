@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import ReviewModal from '../components/ReviewModal';
 import ConfirmModal from '../components/ConfirmModal';
@@ -14,6 +15,12 @@ import NeobrutalLoader from '../components/NeobrutalLoader';
 function Home() {
     const navigate = useNavigate();
     const home = useHomeData();
+
+    useEffect(() => {
+        if (home.user && (home.user.role === 'ADMIN' || home.user.role === 'OWNER')) {
+            navigate('/admin');
+        }
+    }, [home.user, navigate]);
 
     if (!home.user) {
         return <LandingPage />;

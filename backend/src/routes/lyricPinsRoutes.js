@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken, requireRegularUser } = require('../middlewares/auth');
 
 router.get('/lyric-pins', authenticateToken, async (req, res) => {
     try {
@@ -29,7 +29,7 @@ router.get('/users/:userId/lyric-pins', authenticateToken, async (req, res) => {
     }
 });
 
-router.post('/lyric-pins', authenticateToken, async (req, res) => {
+router.post('/lyric-pins', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const { lyric, trackName, artistName, albumCover, color } = req.body;
         if (!lyric || !trackName || !artistName) {

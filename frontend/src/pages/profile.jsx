@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import ProfileHero from '../components/profile/ProfileHero';
 import ProfileTabs from '../components/profile/ProfileTabs';
@@ -13,6 +14,12 @@ import NeobrutalLoader from '../components/NeobrutalLoader';
 function Profile() {
     const navigate = useNavigate();
     const profile = useProfileData();
+
+    useEffect(() => {
+        if (profile.user && (profile.user.role === 'ADMIN' || profile.user.role === 'OWNER') && profile.isOwnProfile) {
+            navigate('/admin');
+        }
+    }, [profile.user, profile.isOwnProfile, navigate]);
 
     const isProfileLoading = profile.loadingProfile || profile.loadingStats || profile.loadingFollowList;
 

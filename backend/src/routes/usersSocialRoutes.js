@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken, requireRegularUser } = require('../middlewares/auth');
 
-router.post('/users/:userId/follow', authenticateToken, async (req, res) => {
+router.post('/users/:userId/follow', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const followerId = req.user.userId;
         const followingId = parseInt(req.params.userId);
@@ -58,7 +58,7 @@ router.post('/users/:userId/follow', authenticateToken, async (req, res) => {
     }
 });
 
-router.post('/users/:userId/unfollow', authenticateToken, async (req, res) => {
+router.post('/users/:userId/unfollow', authenticateToken, requireRegularUser, async (req, res) => {
     try {
         const followerId = req.user.userId;
         const followingId = parseInt(req.params.userId);

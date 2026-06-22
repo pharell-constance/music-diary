@@ -42,7 +42,15 @@ function requireAdmin(req, res, next) {
     next();
 }
 
+function requireRegularUser(req, res, next) {
+    if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'OWNER')) {
+        return res.status(403).json({ error: "Action interdite. Les administrateurs ne peuvent pas effectuer d'actions utilisateur standards." });
+    }
+    next();
+}
+
 module.exports = {
     authenticateToken,
-    requireAdmin
+    requireAdmin,
+    requireRegularUser
 };
