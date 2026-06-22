@@ -112,6 +112,9 @@ app.use('/api', require('./src/routes/usersStatsRoutes'));
 // Notifications Router
 app.use('/api', require('./src/routes/notifications'));
 
+// Game Router
+app.use('/api', require('./src/routes/gameRoutes'));
+
 // Admin Routers
 app.use('/api', require('./src/routes/adminStatsRoutes'));
 app.use('/api', require('./src/routes/adminModerationRoutes'));

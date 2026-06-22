@@ -1,6 +1,6 @@
 import API_URL from '../config.js';
 import { useEffect, useState } from 'react';
-import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music, Sun, Moon } from 'lucide-react';
+import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music, Sun, Moon, Trophy } from 'lucide-react';
 
 function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     const [unreadCount, setUnreadCount] = useState(0);
@@ -144,6 +144,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
         navItems.push(
             { key: 'home', label: 'Accueil', icon: HomeIcon, action: () => setCurrentTab('home') },
             { key: 'search', label: 'Rechercher', icon: Search, action: () => setCurrentTab('search') },
+            { key: 'blindtest', label: 'Blind Test', icon: Trophy, action: () => setCurrentTab('blindtest') },
             { key: 'library', label: 'Ma Bibliothèque', icon: Library, action: () => setCurrentTab('library') },
             { key: 'notifications', label: 'Notifications', icon: Bell, action: () => setCurrentTab('notifications'), badge: unreadCount },
             { key: 'profile', label: 'Mon Profil', icon: User, action: () => window.location.href = '/profile' }
@@ -358,7 +359,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                 )}
                             </div>
                             <span className="text-[9px] font-black uppercase tracking-wider scale-90 mt-0.5">
-                                {key === 'library' ? 'Biblio' : key === 'admin' ? 'Admin' : label}
+                                {key === 'library' ? 'Biblio' : key === 'admin' ? 'Admin' : key === 'blindtest' ? 'Quiz' : label}
                             </span>
                         </button>
                     );

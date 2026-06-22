@@ -11,6 +11,7 @@ import LibraryTab from '../components/home/LibraryTab';
 import HomeJournalTab from '../components/home/HomeJournalTab';
 import useHomeData from '../hooks/useHomeData';
 import NeobrutalLoader from '../components/NeobrutalLoader';
+import BlindTestTab from '../components/home/BlindTestTab';
 
 function Home() {
     const navigate = useNavigate();
@@ -76,6 +77,14 @@ function Home() {
                 {/* Notifications */}
                 {home.currentTab === 'notifications' && (
                     <NotificationsTab />
+                )}
+
+                {/* Blind Test */}
+                {home.currentTab === 'blindtest' && (
+                    <BlindTestTab
+                        user={home.user}
+                        onBackToHome={() => home.setCurrentTab('home')}
+                    />
                 )}
             </div>
 
