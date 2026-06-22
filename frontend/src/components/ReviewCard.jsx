@@ -121,7 +121,19 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
 
                 {/* Pochette de l'album */}
                 <div 
-                    onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
+                    onClick={() => navigate(`/song/${review.spotifyAlbumId}`, {
+                        state: {
+                            songData: {
+                                id: review.spotifyAlbumId,
+                                name: review.albumName,
+                                albumName: review.albumName,
+                                albumCover: review.albumCover,
+                                album: { cover: review.albumCover, name: review.albumName },
+                                artistName: review.artistName,
+                                artists: [{ name: review.artistName }]
+                            }
+                        }
+                    })}
                     className="w-24 h-24 md:w-28 md:h-28 bg-white/[0.03] border-2 border-white/15 rounded-xl shadow-[3px_3px_0px_rgba(255,255,255,0.08)] overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-90 hover:border-violet-400/40 transition-all"
                 >
                     {review.albumCover ? (
@@ -139,7 +151,19 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-violet-400/80 mb-0.5">Album</p>
                             <h3 
-                                onClick={() => navigate(`/song/${review.spotifyAlbumId}`)}
+                                onClick={() => navigate(`/song/${review.spotifyAlbumId}`, {
+                                    state: {
+                                        songData: {
+                                            id: review.spotifyAlbumId,
+                                            name: review.albumName,
+                                            albumName: review.albumName,
+                                            albumCover: review.albumCover,
+                                            album: { cover: review.albumCover, name: review.albumName },
+                                            artistName: review.artistName,
+                                            artists: [{ name: review.artistName }]
+                                        }
+                                    }
+                                })}
                                 className="font-mouse-memoirs uppercase tracking-wide text-base md:text-lg text-white truncate leading-tight cursor-pointer hover:text-violet-400 transition-colors"
                             >
                                 {review.albumName}

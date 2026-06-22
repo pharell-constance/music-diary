@@ -1,6 +1,6 @@
 import API_URL from '../config.js';
 import { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Headphones, Users, Play, Pause, Disc, Music, ExternalLink } from 'lucide-react';
 import gsap from 'gsap';
 import Sidebar from '../components/Sidebar';
@@ -9,6 +9,7 @@ import NeobrutalLoader from '../components/NeobrutalLoader';
 function ArtistPage() {
     const { artistId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const token = localStorage.getItem('token');
     const [user] = useState(() => {
         const saved = localStorage.getItem('user');
@@ -44,20 +45,57 @@ function ArtistPage() {
         let cancelled = false;
 
         async function fetchArtist() {
+            // 1. Tenter d'utiliser les données transmises par la navigation (state)
+            if (location.state?.artistData) {
+                const ad = location.state.artistData;
+                const formattedArtist = {
+                    id: ad.id,
+                    name: ad.name,
+                    images: ad.images || [],
+                    followers: ad.followers?.total || ad.followers || 0,
+                    popularity: ad.popularity || 50,
+                    monthlyListeners: ad.monthlyListeners || 0,
+                    genres: ad.genres || [],
+                    topTracks: [] // topTracks sera vide mais la page s'affichera
+                };
+                if (!cancelled) {
+                    setArtist(formattedArtist);
+                    setLoading(false);
+                }
+                
+                // On essaie quand même de charger les détails complets en arrière-plan
+                try {
+                    const r = await fetch(`${API_URL}/api/artists/${artistId}/details`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (r.ok) {
+                        const data = await r.json();
+                        if (!cancelled) setArtist(data);
+                    }
+                } catch (e) {
+                    console.error("Erreur de chargement d'arrière-plan de l'artiste :", e);
+                }
+                return;
+            }
+
             try {
                 const r = await fetch(`${API_URL}/api/artists/${artistId}/details`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = r.ok ? await r.json() : await Promise.reject('Artiste introuvable');
+                if (!r.ok) {
+                    const errData = await r.json().catch(() => ({}));
+                    throw new Error(errData.error || `Erreur ${r.status} : Impossible de charger l'artiste`);
+                }
+                const data = await r.json();
                 if (!cancelled) { setArtist(data); setLoading(false); }
             } catch (err) {
-                if (!cancelled) { setError(String(err)); setLoading(false); }
+                if (!cancelled) { setError(err.message || String(err)); setLoading(false); }
             }
         }
 
         fetchArtist();
         return () => { cancelled = true; };
-    }, [artistId, token]);
+    }, [artistId, token, location.state]);
 
     // GSAP entrance once data loaded
     useLayoutEffect(() => {

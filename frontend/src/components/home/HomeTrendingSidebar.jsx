@@ -59,7 +59,19 @@ export default function HomeTrendingSidebar({
                             <li
                                 key={track.id}
                                 className="group flex items-center gap-2.5 p-2 rounded-xl hover:bg-violet-500/[0.06] border-2 border-transparent hover:border-white/10 transition-all cursor-pointer"
-                                onClick={() => navigate(`/song/${track.id}`)}
+                                onClick={() => navigate(`/song/${track.id}`, {
+                                    state: {
+                                        songData: {
+                                            id: track.id,
+                                            name: track.name,
+                                            albumName: track.albumName || "",
+                                            albumCover: track.albumCover || "",
+                                            album: { cover: track.albumCover, name: track.albumName },
+                                            artistName: track.artists,
+                                            artists: (track.artists || '').split(',').map(name => ({ name: name.trim() }))
+                                        }
+                                    }
+                                })}
                             >
                                 <span className="w-6 text-center flex-shrink-0">
                                     {track.rank === 1 ? (
