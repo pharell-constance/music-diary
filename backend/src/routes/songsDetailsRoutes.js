@@ -184,9 +184,21 @@ router.get('/songs/:trackId/details', authenticateToken, async (req, res) => {
     }
 });
 
+// Cache mémoire pour les paroles LRCLIB
+const lyricsCache = new Map();
+const CACHE_SUCCESS_TTL = 24 * 60 * 60 * 1000; // 24 heures
+const CACHE_FAILURE_TTL = 2 * 60 * 60 * 1000;  // 2 heures (cache négatif)
+
 router.get('/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
     try {
         const { trackId } = req.params;
+
+        // Vérifier le cache mémoire
+        const cached = lyricsCache.get(trackId);
+        if (cached && (Date.now() - cached.timestamp < cached.ttl)) {
+            return res.json(cached.data);
+        }
+
         let artistName = req.query.artistName;
         let trackName = req.query.trackName;
         let trackData = null;
@@ -256,14 +268,28 @@ router.get('/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
         }
 
         if (!lyricsData) {
-            return res.json({ lyrics: null, syncedLyrics: null, instrumental: false });
+            const negativeResult = { lyrics: null, syncedLyrics: null, instrumental: false };
+            lyricsCache.set(trackId, {
+                data: negativeResult,
+                timestamp: Date.now(),
+                ttl: CACHE_FAILURE_TTL
+            });
+            return res.json(negativeResult);
         }
 
-        res.json({
+        const successResult = {
             lyrics: lyricsData.plainLyrics || null,
             syncedLyrics: lyricsData.syncedLyrics || null,
             instrumental: lyricsData.instrumental || false
+        };
+
+        lyricsCache.set(trackId, {
+            data: successResult,
+            timestamp: Date.now(),
+            ttl: CACHE_SUCCESS_TTL
         });
+
+        res.json(successResult);
     } catch (error) {
         console.error("Erreur paroles chanson:", error);
         res.status(500).json({ error: "Erreur serveur lors de la récupération des paroles" });

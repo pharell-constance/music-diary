@@ -21,8 +21,8 @@ model User {
   spotifyAccessToken String? @db.Text
   spotifyRefreshToken String? @db.Text
   spotifyTokenExpiresAt DateTime?
-  avatar    String?  
-  bio       String?  
+  avatar    String?  @db.LongText
+  bio       String?  @db.Text
   statusEmoji String?
   statusText  String?
   favArtistId     String?
@@ -56,7 +56,7 @@ model Review {
   albumCover     String   @default("")
   createdAt      DateTime @default(now())
   
-  author         User     @relation(fields: [authorId], references: [id])
+  author         User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId       Int
   reports        Report[]
   likes          Like[]
@@ -80,7 +80,7 @@ model Report {
   createdAt        DateTime @default(now())
   resolved         Boolean  @default(false)
 
-  reporter         User     @relation("filedReports", fields: [reporterId], references: [id])
+  reporter         User     @relation("filedReports", fields: [reporterId], references: [id], onDelete: Cascade)
   reporterId       Int
 
   reportedReview   Review?  @relation(fields: [reportedReviewId], references: [id], onDelete: Cascade)

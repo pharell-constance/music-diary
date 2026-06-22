@@ -1,5 +1,15 @@
 require('dotenv').config();
 
+// Intercepteur global pour ajouter un timeout par défaut de 5s sur fetch
+const originalFetch = global.fetch;
+global.fetch = function (url, options = {}) {
+    const opts = options || {};
+    if (!opts.signal) {
+        opts.signal = AbortSignal.timeout(5000);
+    }
+    return originalFetch(url, opts);
+};
+
 function cleanEnv(value) {
     if (value == null || value === '') return value;
     return value.trim().replace(/^["']|["']$/g, '');
