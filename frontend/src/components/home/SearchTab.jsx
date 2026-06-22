@@ -98,7 +98,7 @@ function SearchTab({
                         artists.map((art) => (
                             <div
                                 key={art.id}
-                                onClick={() => navigate(`/artist/${art.id}`)}
+                                onClick={() => navigate(`/artist/${art.id}`, { state: { artistData: art } })}
                                 className="neobrutal-card p-4 flex flex-col items-center text-center cursor-pointer hover:rotate-[1deg]"
                             >
                                 <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden mb-3 flex items-center justify-center bg-zinc-800 shadow-[3px_3px_0px_rgba(255,255,255,0.1)]">
@@ -129,7 +129,7 @@ function SearchTab({
                         tracks.map((track) => (
                             <div
                                 key={track.id}
-                                onClick={() => navigate(`/song/${track.id}`)}
+                                onClick={() => navigate(`/song/${track.id}`, { state: { songData: track } })}
                                 className="neobrutal-card p-4 flex items-center gap-4 cursor-pointer hover:rotate-[0.5deg] transition-all duration-200"
                             >
                                 <div className="w-16 h-16 bg-zinc-800 border-2 border-white rounded-xl shadow-[3px_3px_0px_rgba(255,255,255,0.1)] overflow-hidden flex-shrink-0 flex items-center justify-center">

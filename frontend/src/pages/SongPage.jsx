@@ -1,6 +1,6 @@
 import API_URL from '../config.js';
 import { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, Disc, Music, Star, Calendar, ExternalLink } from 'lucide-react';
 import gsap from 'gsap';
 import Sidebar from '../components/Sidebar';
@@ -10,6 +10,7 @@ import NeobrutalLoader from '../components/NeobrutalLoader';
 function SongPage() {
     const { songId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const token = localStorage.getItem('token');
     
     // User info
@@ -46,22 +47,104 @@ function SongPage() {
         if (!songId) return;
         let cancelled = false;
 
+        async function fetchLyricsAndReviews() {
+            try {
+                const sd = location.state?.songData;
+                const artistName = sd?.artists?.[0]?.name || sd?.artistName || "";
+                const trackName = sd?.name || "";
+                
+                const lyricsRes = await fetch(`${API_URL}/api/songs/${songId}/lyrics?artistName=${encodeURIComponent(artistName)}&trackName=${encodeURIComponent(trackName)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (lyricsRes.ok && !cancelled) {
+                    const lyricsData = await lyricsRes.json();
+                    setLyrics(lyricsData.lyrics);
+                }
+
+                const reviewsRes = await fetch(`${API_URL}/api/songs/${songId}/reviews`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (reviewsRes.ok && !cancelled) {
+                    const reviewsData = await reviewsRes.json();
+                    setReviews(reviewsData);
+                }
+            } catch (e) {
+                console.error("Erreur de chargement d'arrière-plan :", e);
+            }
+        }
+
         async function fetchSongData() {
             setLoading(true);
             setError('');
+
+            // 1. Tenter d'utiliser les données transmises par la navigation (state)
+            if (location.state?.songData) {
+                const sd = location.state.songData;
+                const formattedSong = {
+                    id: sd.id,
+                    name: sd.name,
+                    durationMs: sd.duration_ms || sd.durationMs || 0,
+                    previewUrl: sd.preview_url || sd.previewUrl || null,
+                    isAlbum: sd.isAlbum || false,
+                    album: {
+                        id: sd.album?.id || "",
+                        name: sd.album?.name || sd.albumName || "",
+                        cover: sd.album?.images?.[0]?.url || sd.album?.cover || sd.albumCover || "",
+                        releaseDate: sd.album?.release_date || sd.album?.releaseDate || null
+                    },
+                    artists: sd.artists?.map(art => ({
+                        id: art.id || "",
+                        name: art.name
+                    })) || [{ id: "", name: sd.artistName || "" }]
+                };
+                setSong(formattedSong);
+                setLoading(false);
+                fetchLyricsAndReviews();
+                return;
+            }
+
             try {
-                // 1. Fetch song details
+                // Fetch song details
+                let songData = null;
                 const songRes = await fetch(`${API_URL}/api/songs/${songId}/details`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!songRes.ok) throw new Error("Chanson introuvable");
-                const songData = await songRes.json();
+                
+                if (songRes.ok) {
+                    songData = await songRes.json();
+                } else {
+                    // Si l'API échoue, on tente de récupérer les critiques locales pour reconstruire les métadonnées
+                    const reviewsRes = await fetch(`${API_URL}/api/songs/${songId}/reviews`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (reviewsRes.ok) {
+                        const reviewsData = await reviewsRes.json();
+                        setReviews(reviewsData);
+                        if (reviewsData.length > 0) {
+                            const first = reviewsData[0];
+                            songData = {
+                                id: songId,
+                                name: first.albumName,
+                                isAlbum: false,
+                                album: { cover: first.albumCover },
+                                artists: [{ name: first.artistName }]
+                            };
+                        }
+                    }
+                    
+                    if (!songData) {
+                        const errData = await songRes.json().catch(() => ({}));
+                        throw new Error(errData.error || `Erreur ${songRes.status} : Impossible de charger la chanson`);
+                    }
+                }
                 
                 if (cancelled) return;
                 setSong(songData);
 
-                // 2. Fetch lyrics
-                const lyricsRes = await fetch(`${API_URL}/api/songs/${songId}/lyrics`, {
+                // Fetch lyrics
+                const artistName = songData?.artists?.[0]?.name || "";
+                const trackName = songData?.name || "";
+                const lyricsRes = await fetch(`${API_URL}/api/songs/${songId}/lyrics?artistName=${encodeURIComponent(artistName)}&trackName=${encodeURIComponent(trackName)}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (lyricsRes.ok) {
@@ -69,13 +152,15 @@ function SongPage() {
                     setLyrics(lyricsData.lyrics);
                 }
 
-                // 3. Fetch reviews
-                const reviewsRes = await fetch(`${API_URL}/api/songs/${songId}/reviews`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (reviewsRes.ok) {
-                    const reviewsData = await reviewsRes.json();
-                    setReviews(reviewsData);
+                // Charger les avis s'ils ne l'ont pas été
+                if (reviews.length === 0) {
+                    const reviewsRes = await fetch(`${API_URL}/api/songs/${songId}/reviews`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (reviewsRes.ok) {
+                        const reviewsData = await reviewsRes.json();
+                        setReviews(reviewsData);
+                    }
                 }
 
                 setLoading(false);
@@ -96,7 +181,7 @@ function SongPage() {
             window.spotifyIsPlaying = false;
             window.dispatchEvent(new CustomEvent('spotify-pause'));
         };
-    }, [songId, token]);
+    }, [songId, token, location.state]);
 
     // GSAP animations
     useLayoutEffect(() => {

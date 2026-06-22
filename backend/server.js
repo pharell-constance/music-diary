@@ -661,8 +661,15 @@ app.get('/api/spotify/me/top-genres', authenticateToken, async (req, res) => {
     }
 });
 
-// 1. Fonction d'authentification Spotify
+let cachedClientToken = null;
+let cachedClientTokenExpiresAt = null;
+
+// 1. Fonction d'authentification Spotify avec mise en cache
 async function getSpotifyToken() {
+    if (cachedClientToken && cachedClientTokenExpiresAt && Date.now() < cachedClientTokenExpiresAt) {
+        return cachedClientToken;
+    }
+    
     const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
@@ -674,8 +681,16 @@ async function getSpotifyToken() {
             client_secret: process.env.SPOTIFY_CLIENT_SECRET
         })
     });
+    
     const data = await response.json();
-    return data.access_token;
+    if (data.access_token) {
+        cachedClientToken = data.access_token;
+        const expiresIn = data.expires_in || 3600;
+        // Expire 60 secondes avant pour plus de sécurité
+        cachedClientTokenExpiresAt = Date.now() + (expiresIn - 60) * 1000;
+        return cachedClientToken;
+    }
+    return null;
 }
 
 // 2. La fameuse route de recherche (Celle qui causait l'erreur)
@@ -795,12 +810,27 @@ app.get('/api/artists/:artistId/details', authenticateToken, async (req, res) =>
         // Use client credentials for basic artist info (still works)
         const clientToken = await getSpotifyToken();
 
-        // 1. Infos basiques de l'artiste
         const artistResponse = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
             headers: { 'Authorization': `Bearer ${clientToken}` }
         });
+
         if (!artistResponse.ok) {
-            return res.status(artistResponse.status).json({ error: "Impossible de récupérer les détails de l'artiste" });
+            const userWithFav = await prisma.user.findFirst({
+                where: { favArtistId: artistId }
+            });
+            if (userWithFav) {
+                return res.json({
+                    id: artistId,
+                    name: userWithFav.favArtistName,
+                    images: userWithFav.favArtistImage ? [{ url: userWithFav.favArtistImage }] : [],
+                    followers: 0,
+                    popularity: 50,
+                    monthlyListeners: 0,
+                    genres: [],
+                    topTracks: []
+                });
+            }
+            return res.status(artistResponse.status).json({ error: "Impossible de récupérer les détails de l'artiste depuis Spotify (Erreur 429 Rate Limit)" });
         }
         const artistData = await artistResponse.json();
 
@@ -910,7 +940,32 @@ app.get('/api/songs/:trackId/details', authenticateToken, async (req, res) => {
                     })) || []
                 });
             }
-            return res.status(response.status).json({ error: "Impossible de récupérer les détails depuis Spotify" });
+
+            // Fallback locale : essayer de trouver des informations dans les critiques de la base de données
+            const localReview = await prisma.review.findFirst({
+                where: { spotifyAlbumId: trackId }
+            });
+            if (localReview) {
+                return res.json({
+                    id: trackId,
+                    name: localReview.albumName,
+                    durationMs: 0,
+                    previewUrl: null,
+                    isAlbum: false,
+                    album: {
+                        id: trackId,
+                        name: localReview.albumName,
+                        cover: localReview.albumCover,
+                        releaseDate: null
+                    },
+                    artists: [{
+                        id: "",
+                        name: localReview.artistName
+                    }]
+                });
+            }
+
+            return res.status(response.status).json({ error: "Impossible de récupérer les détails depuis Spotify (erreur rate limit 429)" });
         }
 
         const data = await response.json();
@@ -941,20 +996,34 @@ app.get('/api/songs/:trackId/details', authenticateToken, async (req, res) => {
 app.get('/api/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
     try {
         const { trackId } = req.params;
-        const clientToken = await getSpotifyToken();
+        let artistName = req.query.artistName;
+        let trackName = req.query.trackName;
 
-        // 1. Récupérer les infos sur Spotify pour avoir le titre et l'artiste précis
-        const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-            headers: { 'Authorization': `Bearer ${clientToken}` }
-        });
+        if (!artistName || !trackName) {
+            const clientToken = await getSpotifyToken();
 
-        if (!trackRes.ok) {
-            return res.status(trackRes.status).json({ error: "Impossible de récupérer le morceau sur Spotify" });
+            // 1. Récupérer les infos sur Spotify pour avoir le titre et l'artiste précis
+            const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+                headers: { 'Authorization': `Bearer ${clientToken}` }
+            });
+
+            if (trackRes.ok) {
+                const trackData = await trackRes.json();
+                artistName = trackData.artists?.[0]?.name;
+                trackName = trackData.name;
+            } else {
+                // Tenter de récupérer depuis les critiques de la base de données locales
+                const localReview = await prisma.review.findFirst({
+                    where: { spotifyAlbumId: trackId }
+                });
+                if (localReview) {
+                    artistName = localReview.artistName;
+                    trackName = localReview.albumName;
+                } else {
+                    return res.status(trackRes.status).json({ error: "Impossible de récupérer le morceau sur Spotify (Erreur 429)" });
+                }
+            }
         }
-
-        const trackData = await trackRes.json();
-        const artistName = trackData.artists?.[0]?.name;
-        const trackName = trackData.name;
 
         if (!artistName || !trackName) {
             return res.status(400).json({ error: "Informations de morceau incomplètes" });
@@ -2997,7 +3066,35 @@ app.get('/api/spotify/trending', async (req, res) => {
                     console.error(`Error fetching track metadata for ${trackId}:`, fetchErr);
                 }
 
-                // Fallback track info if the API call fails for this specific track
+                // Fallback : Tenter de chercher via l'API de recherche car le Search n'est pas bloqué (erreur 429)
+                try {
+                    const cleanQuery = encodeURIComponent(`track:${item.title} artist:${item.subtitle}`);
+                    const searchRes = await fetch(`https://api.spotify.com/v1/search?q=${cleanQuery}&type=track&limit=1`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (searchRes.ok) {
+                        const searchData = await searchRes.json();
+                        const foundTrack = searchData.tracks?.items?.[0];
+                        if (foundTrack) {
+                            return {
+                                rank: idx + 1,
+                                id: foundTrack.id,
+                                name: foundTrack.name,
+                                artists: foundTrack.artists?.map(a => a.name).join(', ') || item.subtitle || 'Artiste Inconnu',
+                                albumName: foundTrack.album?.name || 'Top Global',
+                                albumCover: foundTrack.album?.images?.[0]?.url || null,
+                                albumId: foundTrack.album?.id || '',
+                                popularity: foundTrack.popularity !== undefined ? foundTrack.popularity : Math.max(50, 99 - idx),
+                                previewUrl: foundTrack.preview_url || null,
+                                durationMs: foundTrack.duration_ms || item.duration || 180000
+                            };
+                        }
+                    }
+                } catch (searchErr) {
+                    console.error("Error fetching fallback metadata via search:", searchErr);
+                }
+
+                // Fallback track info if the API call and search fallback both fail
                 return {
                     rank: idx + 1,
                     id: trackId,

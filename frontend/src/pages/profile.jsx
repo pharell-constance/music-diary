@@ -48,7 +48,7 @@ function Profile() {
                             onLogoutClick={profile.handleLogout}
                         />
 
-                        <div className="p-8 space-y-8">
+                        <div className="p-4 md:p-8 space-y-8">
                             <ProfileTabs
                                 profileTab={profile.profileTab}
                                 setProfileTab={profile.setProfileTab}

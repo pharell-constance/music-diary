@@ -160,7 +160,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
             </button>
 
             {/* Desktop Sidebar */}
-            <div className="sidebar-container w-64 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40 overflow-hidden">
+            <div className="sidebar-container w-64 shrink-0 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40 overflow-hidden">
                 {/* Glow Effect */}
                 <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-44 h-44 bg-gradient-to-br from-violet-600 to-fuchsia-600 opacity-10 rounded-full blur-[60px] pointer-events-none" />
 
