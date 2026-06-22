@@ -91,7 +91,7 @@ function ArtistDetailModal({ artist, onClose }) {
 
     return (
         <div ref={backdropRef} className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <div ref={modalRef} className="bg-[#12101b] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
+            <div ref={modalRef} data-lenis-prevent className="bg-[#12101b] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
                 
                 {/* Header d'artiste avec couverture et overlay dégradé */}
                 <div className="relative h-48 md:h-56 w-full flex-shrink-0">

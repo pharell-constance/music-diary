@@ -451,7 +451,21 @@ function SongPage() {
                                                 song.tracks.map((track, idx) => (
                                                     <div 
                                                         key={track.id}
-                                                        onClick={() => navigate(`/song/${track.id}`)}
+                                                        onClick={() => navigate(`/song/${track.id}`, {
+                                                             state: {
+                                                                songData: {
+                                                                    id: track.id,
+                                                                    name: track.name,
+                                                                    albumName: song.name,
+                                                                    albumCover: song.album?.cover || "",
+                                                                    album: { cover: song.album?.cover || "", name: song.name },
+                                                                    artistName: song.artists?.map(a => a.name).join(', ') || "",
+                                                                    artists: song.artists,
+                                                                    durationMs: track.durationMs,
+                                                                    previewUrl: track.previewUrl
+                                                                }
+                                                             }
+                                                         })}
                                                         className="flex items-center justify-between py-3 hover:bg-zinc-800/30 px-3 rounded-xl transition duration-150 cursor-pointer group"
                                                     >
                                                         <div className="flex items-center gap-3">
@@ -577,7 +591,7 @@ function SongPage() {
                                         Avis de la communauté ({reviews.length})
                                     </h3>
 
-                                    <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar">
+                                    <div data-lenis-prevent className="space-y-4 max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar">
                                         {reviews.length === 0 ? (
                                             <div className="neo-empty p-8 text-center text-zinc-500 text-xs italic">
                                                 Aucun avis sur ce morceau pour le moment. Soyez le premier !

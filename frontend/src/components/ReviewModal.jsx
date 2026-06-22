@@ -16,7 +16,7 @@ function ReviewModal({
 
     return (
         <div className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="neo-modal w-full max-w-lg relative max-h-[90vh] overflow-y-auto p-7">
+            <div data-lenis-prevent className="neo-modal w-full max-w-lg relative max-h-[90vh] overflow-y-auto p-7">
 
                 {/* Close Button */}
                 <button

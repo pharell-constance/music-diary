@@ -96,7 +96,7 @@ function AddPinForm({ onAdd, onClose, token }) {
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div ref={formRef} className="bg-[#1a1824] border border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+            <div ref={formRef} data-lenis-prevent className="bg-[#1a1824] border border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-zinc-800/80 flex-shrink-0">
                     <div className="flex items-center gap-2">

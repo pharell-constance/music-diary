@@ -437,7 +437,7 @@ export default function BlindTestTab({ user, onBackToHome }) {
                             Récapitulatif de la session
                         </h3>
 
-                        <div className="space-y-3 max-h-96 overflow-y-auto no-scrollbar pr-1">
+                        <div data-lenis-prevent className="space-y-3 max-h-96 overflow-y-auto no-scrollbar pr-1">
                             {answersHistory.map((historyItem, idx) => (
                                 <div 
                                     key={idx}

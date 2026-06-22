@@ -20,7 +20,7 @@ function FollowModal({ show, type, followList, loadingFollowList, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div ref={modalRef} className="neo-modal w-full max-w-md overflow-hidden flex flex-col">
+            <div ref={modalRef} data-lenis-prevent className="neo-modal w-full max-w-md overflow-hidden flex flex-col">
                 {/* Header */}
                 <div className="p-5 pb-4 border-b-2 border-white/[0.07] flex items-center justify-between">
                     <h3 className="font-mouse-memoirs uppercase tracking-wide text-xl text-white">

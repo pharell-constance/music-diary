@@ -85,6 +85,7 @@ function BanModal({ userToBan, onConfirm, onClose }) {
         >
             <div 
                 ref={modalRef} 
+                data-lenis-prevent
                 className="neo-modal w-full max-w-md relative p-7 flex flex-col gap-4"
                 onClick={(e) => e.stopPropagation()}
             >

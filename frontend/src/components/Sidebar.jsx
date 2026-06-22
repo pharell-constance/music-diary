@@ -1,8 +1,10 @@
 import API_URL from '../config.js';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music, Sun, Moon, Trophy } from 'lucide-react';
 
 function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
+    const navigate = useNavigate();
     const [unreadCount, setUnreadCount] = useState(0);
     const [currentSong, setCurrentSong] = useState(() => window.spotifyCurrentSong || null);
     const [isPlaying, setIsPlaying] = useState(() => window.spotifyIsPlaying || false);
@@ -46,6 +48,9 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                         name: data.trackName,
                         artist: data.artistName,
                         cover: data.albumCover,
+                        albumName: data.albumName,
+                        durationMs: data.durationMs,
+                        previewUrl: data.previewUrl,
                         isSpotifyLive: true
                     });
                     setIsPlaying(true);
@@ -73,12 +78,18 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                 name: songData.name,
                 artist: songData.artist,
                 cover: songData.cover,
+                albumName: songData.albumName || songData.album?.name || "",
+                durationMs: songData.durationMs || songData.duration_ms || 0,
+                previewUrl: songData.previewUrl || songData.preview_url || null,
                 isSpotifyLive: false
             });
             setIsPlaying(true);
             setIsLocalPlaying(true);
             window.spotifyCurrentSong = {
                 ...songData,
+                albumName: songData.albumName || songData.album?.name || "",
+                durationMs: songData.durationMs || songData.duration_ms || 0,
+                previewUrl: songData.previewUrl || songData.preview_url || null,
                 isSpotifyLive: false
             };
             window.spotifyIsPlaying = true;
@@ -139,7 +150,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
 
     const navItems = [];
     if (user?.role === 'ADMIN' || user?.role === 'OWNER') {
-        navItems.push({ key: 'admin', label: 'Dashboard Admin', icon: Shield, action: () => window.location.href = '/admin' });
+        navItems.push({ key: 'admin', label: 'Dashboard Admin', icon: Shield, action: () => navigate('/admin') });
     } else {
         navItems.push(
             { key: 'home', label: 'Accueil', icon: HomeIcon, action: () => setCurrentTab('home') },
@@ -147,7 +158,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
             { key: 'blindtest', label: 'Blind Test', icon: Trophy, action: () => setCurrentTab('blindtest') },
             { key: 'library', label: 'Ma Bibliothèque', icon: Library, action: () => setCurrentTab('library') },
             { key: 'notifications', label: 'Notifications', icon: Bell, action: () => setCurrentTab('notifications'), badge: unreadCount },
-            { key: 'profile', label: 'Mon Profil', icon: User, action: () => window.location.href = '/profile' }
+            { key: 'profile', label: 'Mon Profil', icon: User, action: () => navigate('/profile') }
         );
     }
 
@@ -161,8 +172,11 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                 {theme === 'dark' ? <Sun size={18} className="text-amber-400 animate-spin-slow" style={{ animationDuration: '6s' }} /> : <Moon size={18} className="text-indigo-400" />}
             </button>
 
-            {/* Desktop Sidebar */}
-            <div className="sidebar-container w-64 shrink-0 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen sticky top-0 z-40 overflow-hidden">
+            {/* Desktop Sidebar Placeholder (takes up space in flex container) */}
+            <div className="w-64 shrink-0 hidden md:block" />
+
+            {/* Desktop Sidebar (fixed positioning) */}
+            <div className="sidebar-container w-64 bg-[#07050f]/80 backdrop-blur-xl border-r-2 border-white/10 p-6 flex flex-col justify-between hidden md:flex h-screen fixed top-0 left-0 z-40 overflow-hidden">
                 {/* Glow Effect */}
                 <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-44 h-44 bg-gradient-to-br from-violet-600 to-fuchsia-600 opacity-10 rounded-full blur-[60px] pointer-events-none" />
 
@@ -252,7 +266,20 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                             <div 
                                 onClick={() => {
                                     if (currentSong && currentSong.id !== 'spotify-live') {
-                                        window.location.href = `/song/${currentSong.id}`;
+                                        navigate(`/song/${currentSong.id}`, {
+                                            state: {
+                                                songData: {
+                                                    id: currentSong.id,
+                                                    name: currentSong.name,
+                                                    artistName: currentSong.artist,
+                                                    albumCover: currentSong.cover,
+                                                    albumName: currentSong.albumName || "",
+                                                    durationMs: currentSong.durationMs || 0,
+                                                    previewUrl: currentSong.previewUrl || null,
+                                                    artists: [{ name: currentSong.artist }]
+                                                }
+                                            }
+                                        });
                                     }
                                 }}
                                 className="w-full flex flex-col items-center gap-3.5 cursor-pointer group/player z-10"

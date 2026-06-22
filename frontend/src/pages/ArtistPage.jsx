@@ -351,7 +351,21 @@ function ArtistPage() {
                                                 key={track.id}
                                                 onClick={(e) => {
                                                     if (e.target.closest('button')) return;
-                                                    navigate(`/song/${track.id}`);
+                                                    navigate(`/song/${track.id}`, {
+                                                        state: {
+                                                            songData: {
+                                                                id: track.id,
+                                                                name: track.name,
+                                                                albumName: track.albumName,
+                                                                albumCover: track.albumCover,
+                                                                album: { cover: track.albumCover, name: track.albumName },
+                                                                artistName: artist.name,
+                                                                artists: [{ name: artist.name }],
+                                                                durationMs: track.durationMs,
+                                                                previewUrl: track.previewUrl
+                                                            }
+                                                        }
+                                                    });
                                                 }}
                                                 className="track-row flex items-center gap-4 px-5 py-3.5 hover:bg-zinc-800/30 transition-colors duration-200 group cursor-pointer"
                                             >

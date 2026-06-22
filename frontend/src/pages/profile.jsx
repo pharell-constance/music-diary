@@ -110,11 +110,10 @@ function Profile() {
                                 />
                             )}
                         </div>
-
-                        <ProfileModals profile={profile} />
                     </>
                 )}
             </div>
+            <ProfileModals profile={profile} />
         </div>
     );
 }

@@ -248,7 +248,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                 <div className="px-5 md:px-6 pb-5 md:pb-6 pt-3 border-t border-white/[0.05] flex flex-col gap-3">
                     <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Commentaires ({commentsList.length})</h4>
                     
-                    <div className="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+                    <div data-lenis-prevent className="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
                         {commentsList.length === 0 ? (
                             <p className="text-zinc-500 text-xs italic">Aucun commentaire pour le moment.</p>
                         ) : (
