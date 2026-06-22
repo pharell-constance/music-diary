@@ -1,6 +1,6 @@
 import API_URL from '../../config.js';
 import { useEffect, useRef, useState } from 'react';
-import { Play, RotateCcw, Trophy, CheckCircle2, XCircle, ArrowRight, Music, AlertTriangle, Disc } from 'lucide-react';
+import { Play, RotateCcw, Trophy, CheckCircle2, XCircle, ArrowRight, Music, AlertTriangle, Disc, Timer, Target } from 'lucide-react';
 
 export default function BlindTestTab({ user, onBackToHome }) {
     const [gameState, setGameState] = useState('LOBBY'); // LOBBY | LOADING | PLAYING | RESULTS
@@ -224,10 +224,19 @@ export default function BlindTestTab({ user, onBackToHome }) {
                         </div>
                     )}
 
-                    <div className="text-zinc-400 text-xs font-semibold space-y-1.5 max-w-sm z-10 bg-black/20 p-4 rounded-xl border border-white/5">
-                        <p>⏱️ 15 secondes d'écoute par morceau</p>
-                        <p>🎯 10 questions à choix multiples</p>
-                        <p>🎵 Des extraits aléatoires de sa discographie</p>
+                    <div className="text-zinc-400 text-xs font-semibold space-y-2.5 max-w-sm z-10 bg-black/20 p-4 rounded-xl border border-white/5 text-left w-full">
+                        <div className="flex items-center gap-2.5">
+                            <Timer size={14} className="text-violet-400 shrink-0" />
+                            <span>15 secondes d'écoute par morceau</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                            <Target size={14} className="text-violet-400 shrink-0" />
+                            <span>10 questions à choix multiples</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                            <Music size={14} className="text-violet-400 shrink-0" />
+                            <span>Des extraits aléatoires de sa discographie</span>
+                        </div>
                     </div>
 
                     <button
