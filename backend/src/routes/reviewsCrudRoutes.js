@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
 const { authenticateToken } = require('../middlewares/auth');
-const { getSpotifyToken } = require('../services/spotifyService');
+const { getSpotifyToken } = require('../services/spotifyAuthService');
 
-// Route pour créer une critique (Sécurisée)
 router.post('/reviews', authenticateToken, async (req, res) => {
     try {
         const { content, rating, spotifyAlbumId, albumName, artistName, albumCover } = req.body;
@@ -41,7 +40,6 @@ router.post('/reviews', authenticateToken, async (req, res) => {
     }
 });
 
-// Route pour récupérer les critiques de l'utilisateur connecté (Sécurisée)
 async function getUserReviews(req, res) {
     try {
         const authorId = req.user.userId;
@@ -79,7 +77,6 @@ async function getUserReviews(req, res) {
             return res.json([]);
         }
 
-        // Migration à la volée (fallback) pour les anciennes critiques sans métadonnées d'album
         const reviewsToFetch = reviews.filter(r => !r.albumName || !r.albumCover);
         if (reviewsToFetch.length > 0) {
             try {
@@ -131,7 +128,6 @@ async function getUserReviews(req, res) {
 router.get('/reviews', authenticateToken, getUserReviews);
 router.get('/reviews/me', authenticateToken, getUserReviews);
 
-// Route pour supprimer une critique (Sécurisée)
 router.delete('/reviews/:id', authenticateToken, async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
@@ -161,7 +157,6 @@ router.delete('/reviews/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Route pour modifier une critique (Sécurisée)
 router.put('/reviews/:id', authenticateToken, async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
@@ -203,7 +198,6 @@ router.put('/reviews/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Explorer les critiques publiques (toutes récentes)
 router.get('/reviews/explore', authenticateToken, async (req, res) => {
     try {
         const reviews = await prisma.review.findMany({
@@ -238,137 +232,6 @@ router.get('/reviews/explore', authenticateToken, async (req, res) => {
     } catch (err) {
         console.error("Erreur get explore reviews:", err);
         res.status(500).json({ error: "Erreur lors de la récupération des critiques d'exploration." });
-    }
-});
-
-// Aimer une critique
-router.post('/reviews/:reviewId/like', authenticateToken, async (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const reviewId = parseInt(req.params.reviewId);
-
-        const review = await prisma.review.findUnique({ where: { id: reviewId } });
-        if (!review) return res.status(404).json({ error: "Critique introuvable" });
-
-        const existingLike = await prisma.like.findUnique({
-            where: {
-                userId_reviewId: { userId, reviewId }
-            }
-        });
-
-        if (existingLike) {
-            return res.status(400).json({ error: "Vous aimez déjà cette critique." });
-        }
-
-        await prisma.like.create({
-            data: { userId, reviewId }
-        });
-
-        res.json({ message: "Critique aimée." });
-    } catch (err) {
-        console.error("Erreur like review:", err);
-        res.status(500).json({ error: "Erreur lors du like." });
-    }
-});
-
-// Ne plus aimer une critique
-router.delete('/reviews/:reviewId/like', authenticateToken, async (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const reviewId = parseInt(req.params.reviewId);
-
-        await prisma.like.delete({
-            where: {
-                userId_reviewId: { userId, reviewId }
-            }
-        });
-
-        res.json({ message: "Like retiré." });
-    } catch (err) {
-        console.error("Erreur unlike review:", err);
-        res.status(500).json({ error: "Erreur lors du retrait du like." });
-    }
-});
-
-// Commenter une critique
-router.post('/reviews/:reviewId/comments', authenticateToken, async (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const reviewId = parseInt(req.params.reviewId);
-        const { content } = req.body;
-
-        if (!content || !content.trim()) {
-            return res.status(400).json({ error: "Le contenu du commentaire ne peut pas être vide." });
-        }
-
-        const comment = await prisma.comment.create({
-            data: {
-                content: content.trim(),
-                userId,
-                reviewId
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        pseudo: true,
-                        avatar: true,
-                        role: true
-                    }
-                }
-            }
-        });
-
-        res.json({ comment });
-    } catch (err) {
-        console.error("Erreur add comment:", err);
-        res.status(500).json({ error: "Erreur lors de l'ajout du commentaire." });
-    }
-});
-
-// Récupérer les commentaires d'une critique
-router.get('/reviews/:reviewId/comments', authenticateToken, async (req, res) => {
-    try {
-        const reviewId = parseInt(req.params.reviewId);
-        const comments = await prisma.comment.findMany({
-            where: { reviewId },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        pseudo: true,
-                        avatar: true,
-                        role: true
-                    }
-                }
-            },
-            orderBy: { createdAt: 'asc' }
-        });
-        res.json(comments);
-    } catch (err) {
-        console.error("Erreur get comments:", err);
-        res.status(500).json({ error: "Erreur lors de la récupération des commentaires." });
-    }
-});
-
-// Supprimer un commentaire
-router.delete('/comments/:commentId', authenticateToken, async (req, res) => {
-    try {
-        const commentId = parseInt(req.params.commentId);
-        const comment = await prisma.comment.findUnique({ where: { id: commentId } });
-
-        if (!comment) return res.status(404).json({ error: "Commentaire introuvable" });
-
-        const currentUser = await prisma.user.findUnique({ where: { id: req.user.userId } });
-        if (comment.userId !== req.user.userId && currentUser.role !== 'ADMIN' && currentUser.role !== 'OWNER') {
-            return res.status(403).json({ error: "Accès refusé : vous n'avez pas l'autorisation de supprimer ce commentaire." });
-        }
-
-        await prisma.comment.delete({ where: { id: commentId } });
-        res.json({ message: "Commentaire supprimé." });
-    } catch (err) {
-        console.error("Erreur delete comment:", err);
-        res.status(500).json({ error: "Erreur lors de la suppression du commentaire." });
     }
 });
 

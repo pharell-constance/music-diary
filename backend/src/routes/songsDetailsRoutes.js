@@ -2,14 +2,9 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
 const { authenticateToken } = require('../middlewares/auth');
-const {
-    getSpotifyToken,
-    getArtistGenres,
-    getArtistStats,
-    getValidUserAccessToken
-} = require('../services/spotifyService');
+const { getSpotifyToken, getValidUserAccessToken } = require('../services/spotifyAuthService');
+const { getArtistGenres, getArtistStats } = require('../services/spotifyDataService');
 
-// Route pour obtenir les détails d'un artiste
 router.get('/artists/:artistId/details', authenticateToken, async (req, res) => {
     try {
         const artistId = req.params.artistId;
@@ -100,7 +95,6 @@ router.get('/artists/:artistId/details', authenticateToken, async (req, res) => 
     }
 });
 
-// Routes pour les chansons / morceaux (détails)
 router.get('/songs/:trackId/details', authenticateToken, async (req, res) => {
     try {
         const { trackId } = req.params;
@@ -190,7 +184,6 @@ router.get('/songs/:trackId/details', authenticateToken, async (req, res) => {
     }
 });
 
-// Route pour les paroles (lyrics)
 router.get('/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
     try {
         const { trackId } = req.params;
@@ -277,7 +270,6 @@ router.get('/songs/:trackId/lyrics', authenticateToken, async (req, res) => {
     }
 });
 
-// Route pour récupérer les critiques d'une chanson
 router.get('/songs/:trackId/reviews', authenticateToken, async (req, res) => {
     try {
         const { trackId } = req.params;
@@ -313,74 +305,6 @@ router.get('/songs/:trackId/reviews', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error("Erreur récupération critiques chanson:", error);
         res.status(500).json({ error: "Erreur lors de la récupération des avis" });
-    }
-});
-
-// --- LYRIC PINS ROUTES ---
-
-// GET — pins de l'utilisateur connecté
-router.get('/lyric-pins', authenticateToken, async (req, res) => {
-    try {
-        const pins = await prisma.lyricPin.findMany({
-            where: { authorId: req.user.userId },
-            orderBy: { createdAt: 'desc' }
-        });
-        res.json(pins);
-    } catch (err) {
-        console.error('Erreur lyric-pins GET:', err);
-        res.status(500).json({ error: 'Erreur serveur' });
-    }
-});
-
-// GET — pins d'un autre utilisateur
-router.get('/users/:userId/lyric-pins', authenticateToken, async (req, res) => {
-    try {
-        const pins = await prisma.lyricPin.findMany({
-            where: { authorId: parseInt(req.params.userId) },
-            orderBy: { createdAt: 'desc' }
-        });
-        res.json(pins);
-    } catch (err) {
-        console.error('Erreur lyric-pins GET user:', err);
-        res.status(500).json({ error: 'Erreur serveur' });
-    }
-});
-
-// POST — créer un pin
-router.post('/lyric-pins', authenticateToken, async (req, res) => {
-    try {
-        const { lyric, trackName, artistName, albumCover, color } = req.body;
-        if (!lyric || !trackName || !artistName) {
-            return res.status(400).json({ error: 'Paroles, titre et artiste sont requis.' });
-        }
-        const pin = await prisma.lyricPin.create({
-            data: {
-                lyric,
-                trackName,
-                artistName,
-                albumCover: albumCover || null,
-                color: color || '#1DB954',
-                authorId: req.user.userId
-            }
-        });
-        res.status(201).json(pin);
-    } catch (err) {
-        console.error('Erreur lyric-pins POST:', err);
-        res.status(500).json({ error: 'Erreur serveur' });
-    }
-});
-
-// DELETE — supprimer un pin
-router.delete('/lyric-pins/:id', authenticateToken, async (req, res) => {
-    try {
-        const pin = await prisma.lyricPin.findUnique({ where: { id: parseInt(req.params.id) } });
-        if (!pin) return res.status(404).json({ error: 'Pin non trouvé.' });
-        if (pin.authorId !== req.user.userId) return res.status(403).json({ error: 'Interdit.' });
-        await prisma.lyricPin.delete({ where: { id: pin.id } });
-        res.json({ message: 'Pin supprimé.' });
-    } catch (err) {
-        console.error('Erreur lyric-pins DELETE:', err);
-        res.status(500).json({ error: 'Erreur serveur' });
     }
 });
 

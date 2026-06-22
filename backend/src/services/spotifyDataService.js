@@ -1,96 +1,5 @@
-const prisma = require('../config/db');
-const { ARTIST_GENRES_MAP, POPULAR_ARTISTS_STATS } = require('../config/spotifyData');
-
-function parseSpotifyApiError(body) {
-    try {
-        const parsed = JSON.parse(body);
-        return parsed.error_description || parsed.error || body;
-    } catch {
-        return body;
-    }
-}
-
-// Memory caching for Spotify Client credentials token
-let cachedClientToken = null;
-let cachedClientTokenExpiresAt = null;
-
-async function getSpotifyToken() {
-    if (cachedClientToken && cachedClientTokenExpiresAt && Date.now() < cachedClientTokenExpiresAt) {
-        return cachedClientToken;
-    }
-    
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            grant_type: 'client_credentials',
-            client_id: process.env.SPOTIFY_CLIENT_ID,
-            client_secret: process.env.SPOTIFY_CLIENT_SECRET
-        })
-    });
-    
-    const data = await response.json();
-    if (data.access_token) {
-        cachedClientToken = data.access_token;
-        const expiresIn = data.expires_in || 3600;
-        // Expire 60 seconds early for safety margin
-        cachedClientTokenExpiresAt = Date.now() + (expiresIn - 60) * 1000;
-        return cachedClientToken;
-    }
-    return null;
-}
-
-async function refreshUserSpotifyToken(user) {
-    if (!user?.spotifyRefreshToken) return null;
-    try {
-        const params = new URLSearchParams({
-            grant_type: 'refresh_token',
-            refresh_token: user.spotifyRefreshToken,
-            client_id: process.env.SPOTIFY_CLIENT_ID,
-            client_secret: process.env.SPOTIFY_CLIENT_SECRET
-        });
-
-        const response = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params
-        });
-
-        if (!response.ok) {
-            console.error('Erreur refresh token spotify', await response.text());
-            return null;
-        }
-
-        const data = await response.json();
-        const expiresAt = new Date(Date.now() + (data.expires_in || 3600) * 1000);
-
-        await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                spotifyAccessToken: data.access_token,
-                spotifyRefreshToken: data.refresh_token || user.spotifyRefreshToken,
-                spotifyTokenExpiresAt: expiresAt
-            }
-        });
-
-        return data.access_token;
-    } catch (err) {
-        console.error('Erreur rafraîchissement token:', err);
-        return null;
-    }
-}
-
-async function getValidUserAccessToken(userId) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return null;
-    if (user.spotifyAccessToken && user.spotifyTokenExpiresAt && new Date(user.spotifyTokenExpiresAt) > new Date()) {
-        return user.spotifyAccessToken;
-    }
-    const refreshed = await refreshUserSpotifyToken(user);
-    return refreshed;
-}
+const ARTIST_GENRES_MAP = require('../config/spotifyGenres');
+const POPULAR_ARTISTS_STATS = require('../config/spotifyStats');
 
 async function getWeeklyTopTracks(accessToken) {
     const spotifyRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=50', {
@@ -147,7 +56,6 @@ function getArtistGenres(artist) {
         return ARTIST_GENRES_MAP[name];
     }
     
-    // Heuristics
     if (name.includes("orchestra") || name.includes("symphony") || name.includes("philharmonic") || name.includes("composer") || name.includes("hisaishi")) {
         return ["classical", "soundtrack"];
     }
@@ -167,7 +75,6 @@ function getArtistGenres(artist) {
         return ["rock", "indie rock"];
     }
 
-    // Hashing fallback
     const genresList = ['pop', 'indie', 'hip-hop', 'electronic', 'rock', 'r&b', 'alt-pop', 'rap'];
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
@@ -187,14 +94,13 @@ function getArtistStats(artistName) {
         return POPULAR_ARTISTS_STATS[nameLower];
     }
 
-    // Deterministic random stats based on name hash
     let hash = 0;
     for (let i = 0; i < nameLower.length; i++) {
         hash = nameLower.charCodeAt(i) + ((hash << 5) - hash);
     }
     const absHash = Math.abs(hash);
-    const popularity = 30 + (absHash % 56); // 30 to 85
-    const followers = 5000 + (absHash % 1995001); // 5,000 to 2,000,000
+    const popularity = 30 + (absHash % 56);
+    const followers = 5000 + (absHash % 1995001);
 
     const mult = 0.3 + (popularity / 100) * 1.2;
     let monthlyListeners = Math.round(followers * mult);
@@ -207,10 +113,6 @@ function getArtistStats(artistName) {
 }
 
 module.exports = {
-    parseSpotifyApiError,
-    getSpotifyToken,
-    refreshUserSpotifyToken,
-    getValidUserAccessToken,
     getWeeklyTopTracks,
     getArtistGenres,
     getArtistStats

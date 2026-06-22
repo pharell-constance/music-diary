@@ -77,14 +77,35 @@ app.get('/api/test', (req, res) => {
     res.json({ message: "Serveur opérationnel." });
 });
 
-// Enregistrement des sous-routeurs modularisés
+// Enregistrement des sous-routeurs modularisés (~100 lignes par fichier)
 app.use('/api/auth', require('./src/routes/auth'));
-app.use('/api', require('./src/routes/spotify'));
-app.use('/api', require('./src/routes/songs'));
-app.use('/api', require('./src/routes/reviews'));
-app.use('/api', require('./src/routes/users'));
+
+// Spotify Routers
+app.use('/api', require('./src/routes/spotifyAuthRoutes'));
+app.use('/api', require('./src/routes/spotifyUserRoutes'));
+app.use('/api', require('./src/routes/spotifyTrendingRoutes'));
+
+// Songs & Lyric Pins Routers
+app.use('/api', require('./src/routes/songsDetailsRoutes'));
+app.use('/api', require('./src/routes/lyricPinsRoutes'));
+
+// Reviews Routers
+app.use('/api', require('./src/routes/reviewsCrudRoutes'));
+app.use('/api', require('./src/routes/reviewsInteractionRoutes'));
+
+// Users Routers
+app.use('/api', require('./src/routes/usersProfileRoutes'));
+app.use('/api', require('./src/routes/usersSocialRoutes'));
+app.use('/api', require('./src/routes/usersSpotifyActivityRoutes'));
+app.use('/api', require('./src/routes/usersStatsRoutes'));
+
+// Notifications Router
 app.use('/api', require('./src/routes/notifications'));
-app.use('/api', require('./src/routes/admin'));
+
+// Admin Routers
+app.use('/api', require('./src/routes/adminStatsRoutes'));
+app.use('/api', require('./src/routes/adminModerationRoutes'));
+app.use('/api', require('./src/routes/adminReportsRoutes'));
 
 const PORT = process.env.PORT || 5001;
 const DEFAULT_SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:5001/api/spotify/callback';
