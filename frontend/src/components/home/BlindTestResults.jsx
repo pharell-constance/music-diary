@@ -37,7 +37,7 @@ export default function BlindTestResults({
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm mt-2 z-10">
                     <button
                         onClick={startNewGame}
-                        className="neobrutal-button flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white font-mouse-memoirs uppercase tracking-widest text-sm border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        className="neobrutal-button flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white-always font-mouse-memoirs uppercase tracking-widest text-sm border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                         <RotateCcw size={14} />
                         Rejouer
@@ -52,7 +52,7 @@ export default function BlindTestResults({
             </div>
 
             {/* Summary list details */}
-            <div className="neobrutal-card bg-zinc-100/50 dark:bg-zinc-950/40 border-2.5 border-zinc-250 dark:border-white/10 p-6 rounded-2xl space-y-4">
+            <div className="neobrutal-card bg-zinc-100/50 dark:bg-zinc-950/40 border-2.5 border-zinc-300 dark:border-white/10 p-6 rounded-2xl space-y-4">
                 <h3 className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-white/10 pb-2">
                     Récapitulatif de la session
                 </h3>

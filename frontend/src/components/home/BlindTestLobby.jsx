@@ -10,8 +10,8 @@ export default function BlindTestLobby({ user, startNewGame }) {
             </div>
 
             <div className="hidden lg:flex absolute -right-28 top-28 w-24 h-24 bg-[#ec4899] border-3 border-black rounded-2xl shadow-[4px_4px_0px_#000000] p-4 flex-col items-center justify-center float-accent-right rotate-[12deg] z-0 select-none">
-                <Music size={32} className="text-white animate-bounce" style={{ animationDuration: '1.2s' }} />
-                <span className="font-mouse-memoirs text-xs text-white uppercase tracking-wider mt-1.5 font-black">BEAT</span>
+                <Music size={32} className="text-white-always animate-bounce" style={{ animationDuration: '1.2s' }} />
+                <span className="font-mouse-memoirs text-xs text-white-always uppercase tracking-wider mt-1.5 font-black">BEAT</span>
             </div>
 
             <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-6 game-card-anim z-10">
@@ -20,7 +20,7 @@ export default function BlindTestLobby({ user, startNewGame }) {
                 <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-fuchsia-600/15 rounded-full blur-[80px] pointer-events-none" />
 
                 <div className="w-20 h-20 bg-violet-600 border-2.5 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#ffffff] z-10 animate-pulse">
-                    <Trophy className="text-white" size={36} />
+                    <Trophy className="text-white-always" size={36} />
                 </div>
 
                 <div className="z-10">
@@ -34,7 +34,7 @@ export default function BlindTestLobby({ user, startNewGame }) {
 
                 {user?.favArtistName && (
                     <div className="neobrutal-card bg-zinc-100 dark:bg-[#12101b] border-2.5 border-zinc-200 dark:border-white/10 p-5 rounded-2xl flex items-center gap-4 w-full max-w-md z-10">
-                        <div className="w-16 h-16 rounded-xl bg-zinc-350 dark:bg-zinc-800 border-2 border-zinc-400 dark:border-white/20 overflow-hidden flex-shrink-0 shadow-md">
+                        <div className="w-16 h-16 rounded-xl bg-zinc-300 dark:bg-zinc-800 border-2 border-zinc-400 dark:border-white/20 overflow-hidden flex-shrink-0 shadow-md">
                             {user.favArtistImage ? (
                                 <img src={user.favArtistImage} alt={user.favArtistName} className="w-full h-full object-cover" />
                             ) : (
@@ -65,7 +65,7 @@ export default function BlindTestLobby({ user, startNewGame }) {
 
                 <button
                     onClick={startNewGame}
-                    className="neobrutal-button px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-mouse-memoirs uppercase tracking-widest text-lg shadow-[6px_6px_0px_#000000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0px_#000000] transition-all cursor-pointer z-10"
+                    className="neobrutal-button px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white-always font-mouse-memoirs uppercase tracking-widest text-lg shadow-[6px_6px_0px_#000000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[3px_3px_0px_#000000] transition-all cursor-pointer z-10"
                 >
                     DÉMARRER LA PARTIE
                 </button>

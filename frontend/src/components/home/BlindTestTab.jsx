@@ -139,13 +139,13 @@ export default function BlindTestTab({ user, onBackToHome }) {
             {/* GSAP Stage Curtain */}
             <div
                 ref={curtainRef}
-                className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center gap-6 border-b-8 border-white/10 shadow-2xl"
-                style={{ transform: 'translateY(-100vh)', willChange: 'transform' }}
+                className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-6 border-b-8 border-white/10 shadow-2xl"
+                style={{ transform: 'translateY(-100vh)', willChange: 'transform', backgroundColor: '#09090b' }}
             >
                 <div className="w-24 h-24 rounded-full bg-white/5 border-4 border-white/10 flex items-center justify-center shadow-2xl">
-                    <Disc size={52} className="text-white/50 animate-spin-slow" style={{ animationDuration: '2s' }} />
+                    <Disc size={52} className="text-white-always animate-spin-slow" style={{ animationDuration: '2s', opacity: 0.55 }} />
                 </div>
-                <p className="font-mouse-memoirs text-5xl text-white uppercase tracking-widest">Blind Test</p>
+                <p className="font-mouse-memoirs text-5xl text-white-always uppercase tracking-widest">Blind Test</p>
             </div>
         </div>
     );

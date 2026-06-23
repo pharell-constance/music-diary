@@ -19,7 +19,7 @@ export default function BlindTestPlaying({
             {/* Quit button */}
             <button
                 onClick={quitGame}
-                className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 hover:bg-red-650 dark:hover:bg-red-650 text-zinc-800 dark:text-white font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-zinc-250 dark:border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
+                className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 hover:bg-red-600 dark:hover:bg-red-600 text-zinc-800 dark:text-white hover:text-white-always font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-zinc-300 dark:border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
             >
                 <X size={14} className="group-hover:rotate-90 transition-transform duration-200" />
                 Quitter
@@ -32,7 +32,7 @@ export default function BlindTestPlaying({
                     </div>
                     <div className="flex items-center gap-3">
                         <span className="text-xs uppercase font-black tracking-widest text-zinc-500">Score</span>
-                        <div className="neobrutal-card border-2 border-black bg-violet-600 text-white px-3 py-1 font-black text-sm shadow-[2px_2px_0px_#000000]">
+                        <div className="neobrutal-card border-2 border-black bg-violet-600 text-white-always px-3 py-1 font-black text-sm shadow-[2px_2px_0px_#000000]">
                             {score} pts
                         </div>
                     </div>
@@ -41,14 +41,17 @@ export default function BlindTestPlaying({
                 {/* Main playing card */}
                 <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
                     <div 
-                        className="absolute top-0 left-0 h-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 transition-all duration-1000 ease-linear"
+                        className="absolute top-0 left-0 h-2 bg-violet-600 bg-gradient-to-r from-violet-600 to-fuchsia-600 transition-all duration-1000 ease-linear"
                         style={{ width: `${(timeLeft / 15) * 100}%` }}
                     />
 
                     <div className="flex flex-col items-center gap-4 mt-2">
                         <div className="relative flex items-center justify-center w-56 h-36 border-2 border-black/10 bg-black/10 rounded-2xl p-4">
                             <div className="relative z-10">
-                                <div className={`w-28 h-28 rounded-full bg-zinc-950 border-3 border-black ring-4 ring-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.2),4px_4px_0px_#000000] flex items-center justify-center relative ${!locked ? 'animate-spin-slow' : ''}`} style={{ animationDuration: '6s' }}>
+                                <div 
+                                    className={`w-28 h-28 rounded-full border-3 border-black ring-4 ring-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.2),4px_4px_0px_#000000] flex items-center justify-center relative ${!locked ? 'animate-spin-slow' : ''}`} 
+                                    style={{ animationDuration: '6s', backgroundColor: '#09090b' }}
+                                >
                                     <div className="absolute inset-2.5 rounded-full border border-white/5" />
                                     <div className="absolute inset-5 rounded-full border border-white/5" />
                                     <div className="absolute inset-8 rounded-full border border-white/10" />
@@ -100,7 +103,7 @@ export default function BlindTestPlaying({
                     </div>
 
                     <div className={`w-14 h-14 rounded-full border-3 border-black font-mouse-memoirs text-2xl flex items-center justify-center shadow-[3px_3px_0px_#000000] select-none ${
-                        timeLeft <= 5 ? 'bg-red-500 text-white animate-bounce' : 'bg-white dark:bg-zinc-800 text-black dark:text-white'
+                        timeLeft <= 5 ? 'bg-red-500 text-white-always animate-bounce' : 'bg-white dark:bg-zinc-800 text-black dark:text-white'
                     }`}>
                         {timeLeft}s
                     </div>
@@ -116,11 +119,11 @@ export default function BlindTestPlaying({
 
                             if (locked) {
                                 if (isCorrectAnswer) {
-                                    btnClass = "bg-emerald-500 text-white border-emerald-600 shadow-[2px_2px_0px_#000000] scale-100";
-                                    icon = <CheckCircle2 size={16} className="text-white shrink-0" />;
+                                    btnClass = "bg-emerald-500 text-white-always border-emerald-600 shadow-[2px_2px_0px_#000000] scale-100";
+                                    icon = <CheckCircle2 size={16} className="text-white-always shrink-0" />;
                                 } else if (isSelected) {
-                                    btnClass = "bg-red-500 text-white border-red-600 shadow-[2px_2px_0px_#000000] scale-100";
-                                    icon = <XCircle size={16} className="text-white shrink-0" />;
+                                    btnClass = "bg-red-500 text-white-always border-red-600 shadow-[2px_2px_0px_#000000] scale-100";
+                                    icon = <XCircle size={16} className="text-white-always shrink-0" />;
                                 } else {
                                     btnClass = "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border-zinc-200 dark:border-zinc-950 opacity-45 shadow-none pointer-events-none";
                                 }
@@ -146,7 +149,7 @@ export default function BlindTestPlaying({
                     {locked && (
                         <button
                             onClick={nextQuestion}
-                            className="neobrutal-button mt-4 px-8 py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-95 text-white font-mouse-memoirs uppercase tracking-widest text-md flex items-center gap-2.5 border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer animate-fade-in"
+                            className="neobrutal-button mt-4 px-8 py-3.5 bg-violet-600 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-95 text-white-always font-mouse-memoirs uppercase tracking-widest text-md flex items-center gap-2.5 border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer animate-fade-in"
                         >
                             <span>
                                 {currentQuestionIdx + 1 === questions.length ? "Voir les résultats" : "Chanson Suivante"}

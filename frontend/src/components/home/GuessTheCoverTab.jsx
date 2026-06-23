@@ -104,7 +104,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                     </div>
                     <div className="space-y-1.5">
                         <h3 className="font-mouse-memoirs text-3xl uppercase tracking-widest text-zinc-900 dark:text-white">Création du défi...</h3>
-                        <p className="text-zinc-655 dark:text-zinc-400 text-sm font-medium">Téléchargement des pochettes d'albums haute définition...</p>
+                        <p className="text-zinc-650 dark:text-zinc-400 text-sm font-medium">Téléchargement des pochettes d'albums haute définition...</p>
                     </div>
                 </div>
             )}
@@ -141,13 +141,13 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
             {/* GSAP Transition Curtain */}
             <div
                 ref={curtainRef}
-                className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center gap-6 border-b-8 border-white/10 shadow-2xl"
-                style={{ transform: 'translateY(-100vh)', willChange: 'transform' }}
+                className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-6 border-b-8 border-white/10 shadow-2xl"
+                style={{ transform: 'translateY(-100vh)', willChange: 'transform', backgroundColor: '#09090b' }}
             >
                 <div className="w-24 h-24 rounded-full bg-white/5 border-4 border-white/10 flex items-center justify-center shadow-2xl">
-                    <Disc size={52} className="text-white/55 animate-spin-slow" style={{ animationDuration: '2s' }} />
+                    <Disc size={52} className="text-white-always animate-spin-slow" style={{ animationDuration: '2s', opacity: 0.55 }} />
                 </div>
-                <p className="font-mouse-memoirs text-5xl text-white uppercase tracking-widest">Guess The Cover</p>
+                <p className="font-mouse-memoirs text-5xl text-white-always uppercase tracking-widest">Guess The Cover</p>
             </div>
         </div>
     );

@@ -22,7 +22,7 @@ export default function GuessTheCoverPlaying({
             {/* Quit button */}
             <button
                 onClick={quitGame}
-                className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 hover:bg-red-650 dark:hover:bg-red-650 text-zinc-800 dark:text-white font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-zinc-250 dark:border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
+                className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 hover:bg-red-600 dark:hover:bg-red-600 text-zinc-800 dark:text-white hover:text-white-always font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-zinc-300 dark:border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
             >
                 <X size={14} className="group-hover:rotate-90 transition-transform duration-200" />
                 Quitter
@@ -31,7 +31,7 @@ export default function GuessTheCoverPlaying({
             <div className="w-full max-w-2xl px-4 space-y-6">
                 {/* Header Progress / Score */}
                 <div className="flex items-center justify-between gap-4">
-                    <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-655 dark:text-zinc-400">
+                    <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-650 dark:text-zinc-400">
                         Album <span className="text-zinc-900 dark:text-white font-black text-3xl">{currentQuestionIdx + 1}</span> / {questions.length}
                     </div>
                     
@@ -42,7 +42,7 @@ export default function GuessTheCoverPlaying({
                             <span>{correctAnswersCount} / {questions.length} correct</span>
                         </div>
                         {/* Score */}
-                        <div className="neobrutal-card border-2 border-black bg-fuchsia-600 text-white px-3.5 py-1 font-black text-sm shadow-[2px_2px_0px_#000000] flex items-center gap-1">
+                        <div className="neobrutal-card border-2 border-black bg-fuchsia-600 text-white-always px-3.5 py-1 font-black text-sm shadow-[2px_2px_0px_#000000] flex items-center gap-1">
                             <Zap size={12} className="fill-white" />
                             {score} pts
                         </div>
@@ -53,7 +53,7 @@ export default function GuessTheCoverPlaying({
                 <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
                     {/* Timer Progress Bar */}
                     <div 
-                        className="absolute top-0 left-0 h-2 bg-gradient-to-r from-fuchsia-600 to-pink-500 transition-all duration-1000 ease-linear"
+                        className="absolute top-0 left-0 h-2 bg-fuchsia-600 bg-gradient-to-r from-fuchsia-600 to-pink-500 transition-all duration-1000 ease-linear"
                         style={{ width: `${(timeLeft / 15) * 100}%` }}
                     />
 
@@ -83,7 +83,7 @@ export default function GuessTheCoverPlaying({
 
                     {/* Timer Countdown */}
                     <div className={`w-14 h-14 rounded-full border-3 border-black font-mouse-memoirs text-2xl flex items-center justify-center shadow-[3px_3px_0px_#000000] select-none ${
-                        timeLeft <= 4 ? 'bg-red-500 text-white animate-bounce' : 'bg-white dark:bg-zinc-800 text-black dark:text-white'
+                        timeLeft <= 4 ? 'bg-red-500 text-white-always animate-bounce' : 'bg-white dark:bg-zinc-800 text-black dark:text-white'
                     }`}>
                         {timeLeft}s
                     </div>
@@ -99,13 +99,13 @@ export default function GuessTheCoverPlaying({
 
                             if (locked) {
                                 if (isCorrectAnswer) {
-                                    btnClass = "bg-emerald-500 text-white border-emerald-600 shadow-[2px_2px_0px_#000000] scale-100";
-                                    icon = <CheckCircle2 size={16} className="text-white shrink-0" />;
+                                    btnClass = "bg-emerald-500 text-white-always border-emerald-600 shadow-[2px_2px_0px_#000000] scale-100";
+                                    icon = <CheckCircle2 size={16} className="text-white-always shrink-0" />;
                                 } else if (isSelected) {
-                                    btnClass = "bg-red-500 text-white border-red-600 shadow-[2px_2px_0px_#000000] scale-100";
-                                    icon = <XCircle size={16} className="text-white shrink-0" />;
+                                    btnClass = "bg-red-500 text-white-always border-red-600 shadow-[2px_2px_0px_#000000] scale-100";
+                                    icon = <XCircle size={16} className="text-white-always shrink-0" />;
                                 } else {
-                                    btnClass = "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border-zinc-250 dark:border-zinc-950 opacity-45 shadow-none pointer-events-none";
+                                    btnClass = "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border-zinc-300 dark:border-zinc-950 opacity-45 shadow-none pointer-events-none";
                                 }
                             }
 
@@ -130,7 +130,7 @@ export default function GuessTheCoverPlaying({
                     {locked && (
                         <button
                             onClick={nextQuestion}
-                            className="neobrutal-button mt-4 px-8 py-3.5 bg-gradient-to-r from-fuchsia-600 to-pink-500 hover:opacity-95 text-white font-mouse-memoirs uppercase tracking-widest text-md flex items-center gap-2.5 border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer animate-fade-in"
+                            className="neobrutal-button mt-4 px-8 py-3.5 bg-fuchsia-600 bg-gradient-to-r from-fuchsia-600 to-pink-500 hover:opacity-95 text-white-always font-mouse-memoirs uppercase tracking-widest text-md flex items-center gap-2.5 border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer animate-fade-in"
                         >
                             <span>
                                 {currentQuestionIdx + 1 === questions.length ? "Voir les résultats" : "Album Suivant"}

@@ -82,7 +82,7 @@ export default function GuessTheCoverLobby({ user, startNewGame }) {
 
                 {user?.favArtistName && (
                     <div className="flex items-center gap-3 bg-zinc-100 dark:bg-[#110e19] border-2 border-zinc-200 dark:border-white/5 p-4 rounded-2xl w-full max-w-sm text-left shadow-lg">
-                        <div className="w-12 h-12 rounded-xl bg-zinc-355 dark:bg-zinc-800 border-2 border-zinc-400 dark:border-white/10 overflow-hidden flex-shrink-0 shadow-md">
+                        <div className="w-12 h-12 rounded-xl bg-zinc-300 dark:bg-zinc-800 border-2 border-zinc-400 dark:border-white/10 overflow-hidden flex-shrink-0 shadow-md">
                             {user.favArtistImage ? (
                                 <img src={user.favArtistImage} alt={user.favArtistName} className="w-full h-full object-cover" />
                             ) : (
@@ -100,7 +100,7 @@ export default function GuessTheCoverLobby({ user, startNewGame }) {
                 <div ref={startBtnRef} className="pt-6">
                     <button
                         onClick={startNewGame}
-                        className="neobrutal-button px-10 py-5 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:opacity-95 text-white font-mouse-memoirs uppercase tracking-widest text-xl shadow-[8px_8px_0px_#000000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[4px_4px_0px_#000000] transition-all cursor-pointer"
+                        className="neobrutal-button px-10 py-5 bg-violet-600 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:opacity-95 text-white-always font-mouse-memoirs uppercase tracking-widest text-xl shadow-[8px_8px_0px_#000000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[4px_4px_0px_#000000] transition-all cursor-pointer"
                     >
                         DÉMARRER LE DÉFI
                     </button>

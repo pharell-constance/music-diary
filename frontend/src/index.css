@@ -1606,3 +1606,40 @@ body.light .spotify-time-range-btn.active {
   background-color: #000000 !important; /* Solid black active background */
   color: #ffffff !important; /* White text */
 }
+
+/* =============================================
+   GAME THEME OVERRIDES FOR LIGHT MODE
+   ============================================= */
+
+/* Force text to remain white inside dark elements (buttons, badges) in light mode */
+.text-white-always,
+body.light .text-white-always {
+  color: #ffffff !important;
+}
+
+.hover\:text-white-always:hover,
+body.light .hover\:text-white-always:hover {
+  color: #ffffff !important;
+}
+
+/* Override emerald/green to green in light mode (since they are aliased to violet/fuchsia) */
+body.light .bg-emerald-500 {
+  background-color: #10b981 !important;
+}
+
+body.light .border-emerald-600 {
+  border-color: #059669 !important;
+}
+
+body.light .text-emerald-500 {
+  color: #059669 !important;
+}
+
+body.light .text-emerald-600 {
+  color: #047857 !important;
+}
+
+/* Red border override for incorrect options in light mode */
+body.light .border-red-600 {
+  border-color: #dc2626 !important;
+}

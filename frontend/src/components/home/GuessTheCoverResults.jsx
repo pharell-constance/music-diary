@@ -28,7 +28,7 @@ export default function GuessTheCoverResults({
                     <h2 className="font-mouse-memoirs text-6xl text-zinc-900 dark:text-white">
                         {score} <span className="text-2xl text-zinc-650 dark:text-zinc-500">points</span>
                     </h2>
-                    <p className="text-zinc-655 dark:text-zinc-400 font-extrabold text-sm uppercase tracking-wide">
+                    <p className="text-zinc-650 dark:text-zinc-400 font-extrabold text-sm uppercase tracking-wide">
                         {correctAnswersCount} / {questions.length} albums trouvés
                     </p>
                     <p className={`text-sm font-bold mt-3 ${getScoreFeedback().color}`}>
@@ -39,7 +39,7 @@ export default function GuessTheCoverResults({
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm mt-3 z-10">
                     <button
                         onClick={startNewGame}
-                        className="neobrutal-button flex-1 py-3.5 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-mouse-memoirs uppercase tracking-widest text-sm border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        className="neobrutal-button flex-1 py-3.5 bg-fuchsia-600 hover:bg-fuchsia-500 text-white-always font-mouse-memoirs uppercase tracking-widest text-sm border-3 border-black shadow-[4px_4px_0px_#000000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000000] transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                         <RotateCcw size={14} />
                         Rejouer
@@ -54,7 +54,7 @@ export default function GuessTheCoverResults({
             </div>
 
             {/* Summary list */}
-            <div className="neobrutal-card bg-zinc-100/50 dark:bg-zinc-950/40 border-2.5 border-zinc-250 dark:border-white/10 p-6 rounded-2xl space-y-4">
+            <div className="neobrutal-card bg-zinc-100/50 dark:bg-zinc-950/40 border-2.5 border-zinc-300 dark:border-white/10 p-6 rounded-2xl space-y-4">
                 <h3 className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-white/10 pb-2">
                     Récapitulatif des Découvertes
                 </h3>
@@ -69,7 +69,7 @@ export default function GuessTheCoverResults({
                             <div className="flex-1 min-w-0">
                                 <h4 className="font-bold text-xs text-zinc-900 dark:text-white truncate uppercase tracking-wider">{hItem.correctAnswer}</h4>
                                 <div className="flex items-center gap-2 mt-1">
-                                    <p className="text-[10px] text-zinc-655 dark:text-zinc-400 truncate">
+                                    <p className="text-[10px] text-zinc-650 dark:text-zinc-400 truncate">
                                         Choix : <span className={hItem.correct ? "text-emerald-500 font-extrabold" : "text-red-500 font-extrabold"}>{hItem.userChoice}</span>
                                     </p>
                                     {hItem.correct && (

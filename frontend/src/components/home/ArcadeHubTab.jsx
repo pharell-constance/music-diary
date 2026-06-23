@@ -22,7 +22,7 @@ export default function ArcadeHubTab({ user, onSelectGame }) {
                 {user?.favArtistName && (
                     <div className="inline-flex items-center gap-3 bg-zinc-100 dark:bg-black/30 border border-zinc-200 dark:border-white/5 px-4 py-2 rounded-full mt-5">
                         {user.favArtistImage ? (
-                            <img src={user.favArtistImage} alt={user.favArtistName} className="w-6 h-6 rounded-full object-cover border border-zinc-350 dark:border-white/10" />
+                            <img src={user.favArtistImage} alt={user.favArtistName} className="w-6 h-6 rounded-full object-cover border border-zinc-300 dark:border-white/10" />
                         ) : (
                             <Music size={12} className="text-violet-500 dark:text-violet-400" />
                         )}
