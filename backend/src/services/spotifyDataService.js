@@ -48,44 +48,49 @@ async function getWeeklyTopTracks(accessToken) {
 
 function getArtistGenres(artist) {
     if (!artist) return [];
-    if (artist.genres && Array.isArray(artist.genres) && artist.genres.length > 0) {
-        return artist.genres;
-    }
-    const name = (artist.name || "").toLowerCase().trim();
-    if (ARTIST_GENRES_MAP[name]) {
-        return ARTIST_GENRES_MAP[name];
-    }
     
-    if (name.includes("orchestra") || name.includes("symphony") || name.includes("philharmonic") || name.includes("composer") || name.includes("hisaishi")) {
-        return ["classical", "soundtrack"];
-    }
-    if (name.includes("lofi") || name.includes("beats") || name.includes("chill")) {
-        return ["lo-fi", "chillhop"];
-    }
-    if (name.includes("dj ") || name.includes("project") || name.includes("system") || name.includes("acid") || name.includes("club") || name.includes("daft")) {
-        return ["electronic", "house"];
-    }
-    if (name.startsWith("lil ") || name.startsWith("yung ") || name.startsWith("big ") || name.startsWith("mc ") || name.includes("rap") || name.includes("drill") || name.includes("trap") || name.includes("carti")) {
-        return ["hip-hop", "rap"];
-    }
-    if (name.includes("bts") || name.includes("twice") || name.includes("red velvet") || name.includes("girls' generation") || name.includes("stray kids") || name.includes("ateez") || name.includes("txt")) {
-        return ["k-pop", "pop"];
-    }
-    if (name.startsWith("the ")) {
-        return ["rock", "indie rock"];
+    const name = (artist.name || artist.artistName || "").toLowerCase().trim();
+    const vocaloidKeywords = [
+        "miku", "rin", "len", "luka", "gumi", "kaito", "meiko", "vocaloid", "deco*27", 
+        "pinocchiop", "mitchie m", "kikuo", "wowaka", "neru", "inabakumori", 
+        "syudou", "kanaria", "maretu", "hachi", "n-buna", "orangestar", "utau", "kasane teto"
+    ];
+    const isVocaloid = vocaloidKeywords.some(keyword => name.includes(keyword));
+
+    let genres = [];
+    if (artist.genres && Array.isArray(artist.genres) && artist.genres.length > 0) {
+        genres = [...artist.genres];
+    } else if (ARTIST_GENRES_MAP[name]) {
+        genres = [...ARTIST_GENRES_MAP[name]];
+    } else {
+        if (name.includes("orchestra") || name.includes("symphony") || name.includes("philharmonic") || name.includes("composer") || name.includes("hisaishi")) {
+            genres = ["classical", "soundtrack"];
+        } else if (name.includes("lofi") || name.includes("beats") || name.includes("chill")) {
+            genres = ["lo-fi", "chillhop"];
+        } else if (name.includes("dj ") || name.includes("project") || name.includes("system") || name.includes("acid") || name.includes("club") || name.includes("daft")) {
+            genres = ["electronic", "house"];
+        } else if (name.startsWith("lil ") || name.startsWith("yung ") || name.startsWith("big ") || name.startsWith("mc ") || name.includes("rap") || name.includes("drill") || name.includes("trap") || name.includes("carti")) {
+            genres = ["hip-hop", "rap"];
+        } else if (name.includes("bts") || name.includes("twice") || name.includes("red velvet") || name.includes("girls' generation") || name.includes("stray kids") || name.includes("ateez") || name.includes("txt")) {
+            genres = ["k-pop", "pop"];
+        } else if (name.startsWith("the ")) {
+            genres = ["rock", "indie rock"];
+        } else {
+            const genresList = ['pop', 'indie', 'hip-hop', 'electronic', 'rock', 'r&b', 'alt-pop', 'rap'];
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index1 = Math.abs(hash) % genresList.length;
+            const index2 = Math.abs(hash >> 3) % genresList.length;
+            genres = index1 === index2 ? [genresList[index1]] : [genresList[index1], genresList[index2]];
+        }
     }
 
-    const genresList = ['pop', 'indie', 'hip-hop', 'electronic', 'rock', 'r&b', 'alt-pop', 'rap'];
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    if (isVocaloid && !genres.includes("vocaloid")) {
+        genres.unshift("vocaloid");
     }
-    const index1 = Math.abs(hash) % genresList.length;
-    const index2 = Math.abs(hash >> 3) % genresList.length;
-    if (index1 === index2) {
-        return [genresList[index1]];
-    }
-    return [genresList[index1], genresList[index2]];
+    return genres;
 }
 
 function getArtistStats(artistName) {

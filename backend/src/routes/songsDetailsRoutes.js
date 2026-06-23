@@ -180,11 +180,10 @@ router.get('/artists/:artistId/details', authenticateToken, async (req, res) => 
             }
         }
 
-        // Use real Spotify info instead of fake mocked statistics when Spotify returns data
         const stats = getArtistStats(artistData.name);
         const realFollowers = artistData.followers?.total || stats.followers;
         const realPopularity = artistData.popularity || stats.popularity;
-        const genres = artistData.genres && artistData.genres.length > 0 ? artistData.genres : getArtistGenres(artistData);
+        const genres = getArtistGenres(artistData);
 
         // Estimate monthly listeners based on real followers and popularity
         const mult = 0.4 + (realPopularity / 100) * 0.8;
