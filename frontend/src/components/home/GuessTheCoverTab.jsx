@@ -1,37 +1,41 @@
-import API_URL from '../../config.js';
-import { useEffect, useRef, useState, useLayoutEffect } from 'react';
-import { RotateCcw, Trophy, CheckCircle2, XCircle, ArrowRight, Disc, AlertTriangle, Timer, Target, X, Zap } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { RotateCcw, Trophy, CheckCircle2, XCircle, ArrowRight, Disc, AlertTriangle, Target, X, Zap } from 'lucide-react';
 import gsap from 'gsap';
+import useGuessTheCover from '../../hooks/useGuessTheCover';
+import ConfettiCanvas from './ConfettiCanvas';
 
 export default function GuessTheCoverTab({ user, onBackToHome }) {
-    const [gameState, setGameState] = useState('LOBBY'); // LOBBY | LOADING | PLAYING | RESULTS
-    const [artist, setArtist] = useState(null);
-    const [questions, setQuestions] = useState([]);
-    const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
-    const [selectedOption, setSelectedOption] = useState(null);
-    const [locked, setLocked] = useState(false);
-    const [score, setScore] = useState(0); // Score global en points
-    const [correctAnswersCount, setCorrectAnswersCount] = useState(0); // Nombre de bonnes réponses
-    const [timeLeft, setTimeLeft] = useState(15);
-    const [answersHistory, setAnswersHistory] = useState([]);
-    const [error, setError] = useState(null);
-    const [imageReady, setImageReady] = useState(false);
+    const {
+        gameState, setGameState,
+        artist,
+        questions,
+        currentQuestionIdx,
+        selectedOption,
+        locked, setLocked,
+        score, setScore,
+        correctAnswersCount,
+        timeLeft,
+        answersHistory,
+        error, setError,
+        imageReady, setImageReady,
+        stopGameTimer,
+        fetchQuestionsAndStart,
+        handleSelectOption,
+        nextQuestion
+    } = useGuessTheCover(user);
 
-    const timerRef = useRef(null);
     const containerRef = useRef(null);
     const titleRef = useRef(null);
     const subtitleRef = useRef(null);
     const startBtnRef = useRef(null);
-    const confettiCanvasRef = useRef(null);
     const curtainRef = useRef(null);
     const curtainTriggered = useRef(false);
 
     // Inkwell.tech-style text reveal animation on Lobby Mount
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (gameState !== 'LOBBY') return;
 
         const ctx = gsap.context(() => {
-            // Split title letters or animate word-by-word
             const titleChars = titleRef.current?.querySelectorAll('.char');
             if (titleChars && titleChars.length > 0) {
                 gsap.fromTo(titleChars, 
@@ -85,131 +89,10 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
         }
     }, [gameState]);
 
-    // Initial check for favorite artist presence
-    useEffect(() => {
-        if (!user?.favArtistId) {
-            setError("Veuillez d'abord choisir un artiste favori dans votre profil pour jouer !");
-        }
-        
-        return () => {
-            stopGameTimer();
-        };
-    }, [user]);
-
-    // HTML5 Confetti Explosion
-    useEffect(() => {
-        if (gameState !== 'RESULTS') return;
-
-        const canvas = confettiCanvasRef.current;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        let animationFrameId;
-        let isActive = true;
-        let particles = [];
-        let particlesInitialized = false;
-
-        const initParticles = (width, height) => {
-            const colors = ['#a855f7', '#ec4899', '#facc15', '#3b82f6', '#10b981'];
-            const count = 150;
-            for (let i = 0; i < count; i++) {
-                const angle = (Math.random() * 120 + 30) * Math.PI / 180;
-                const speed = Math.random() * 16 + 8;
-                particles.push({
-                    x: width / 2,
-                    y: height + 10,
-                    sizeX: Math.random() * 7 + 4,
-                    sizeY: Math.random() * 11 + 6,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    vx: Math.cos(angle) * speed,
-                    vy: -Math.sin(angle) * speed,
-                    gravity: 0.38,
-                    drag: 0.97,
-                    rotation: Math.random() * Math.PI * 2,
-                    rotationSpeed: (Math.random() - 0.5) * 0.18,
-                    wobble: Math.random() * Math.PI * 2,
-                    wobbleSpeed: Math.random() * 0.09 + 0.04
-                });
-            }
-            particlesInitialized = true;
-        };
-
-        const render = () => {
-            if (!isActive) return;
-            
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            const width = rect.width;
-            const height = rect.height;
-
-            if (width === 0 || height === 0) {
-                animationFrameId = requestAnimationFrame(render);
-                return;
-            }
-
-            if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
-                canvas.width = Math.floor(width * dpr);
-                canvas.height = Math.floor(height * dpr);
-                ctx.scale(dpr, dpr);
-            }
-
-            if (!particlesInitialized) {
-                initParticles(width, height);
-            }
-
-            ctx.clearRect(0, 0, width, height);
-
-            let activeParticles = 0;
-            particles.forEach(p => {
-                if (p.y < height + 20) {
-                    activeParticles++;
-
-                    p.vx *= p.drag;
-                    p.vy *= p.drag;
-                    p.vy += p.gravity;
-                    p.x += p.vx + Math.sin(p.wobble) * 0.6;
-                    p.y += p.vy;
-                    p.rotation += p.rotationSpeed;
-                    p.wobble += p.wobbleSpeed;
-
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rotation);
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(-p.sizeX / 2, -p.sizeY / 2, p.sizeX, p.sizeY);
-                    ctx.restore();
-                }
-            });
-
-            if (activeParticles > 0) {
-                animationFrameId = requestAnimationFrame(render);
-            }
-        };
-
-        const timerId = setTimeout(() => {
-            render();
-        }, 200);
-
-        return () => {
-            isActive = false;
-            clearTimeout(timerId);
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-        };
-    }, [gameState]);
-
-    const stopGameTimer = () => {
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-        }
-    };
-
     const startNewGame = () => {
         if (!curtainRef.current) return;
         curtainTriggered.current = true;
 
-        // Position curtain above then slide it down
         gsap.set(curtainRef.current, { y: '-100vh' });
         gsap.to(curtainRef.current, {
             y: '0vh',
@@ -219,36 +102,10 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                 setError(null);
                 setGameState('LOADING');
                 setScore(0);
-                setCorrectAnswersCount(0);
-                setCurrentQuestionIdx(0);
-                setAnswersHistory([]);
-                setSelectedOption(null);
-                setLocked(false);
                 stopGameTimer();
                 fetchQuestionsAndStart();
             }
         });
-    };
-
-    const fetchQuestionsAndStart = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const res = await fetch(`${API_URL}/api/game/guessthecover`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Impossible de charger le jeu.");
-            if (!data.questions || data.questions.length === 0) throw new Error("Aucun album disponible pour cet artiste.");
-            
-            setArtist(data.artist);
-            setQuestions(data.questions);
-            setGameState('PLAYING');
-            startQuestion(data.questions, 0);
-        } catch (err) {
-            console.error(err);
-            setError(err.message);
-            setGameState('LOBBY');
-        }
     };
 
     const quitGame = () => {
@@ -263,91 +120,9 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                 stopGameTimer();
                 setGameState('LOBBY');
                 setScore(0);
-                setCorrectAnswersCount(0);
-                setCurrentQuestionIdx(0);
-                setAnswersHistory([]);
-                setSelectedOption(null);
                 setLocked(false);
             }
         });
-    };
-
-    const startQuestion = (questionsList, idx) => {
-        setSelectedOption(null);
-        setLocked(false);
-        setTimeLeft(15);
-        setImageReady(false);
-
-        if (timerRef.current) clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timerRef.current);
-                    handleTimeOut(questionsList[idx]);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-    };
-
-    const handleSelectOption = (option) => {
-        if (locked) return;
-        setLocked(true);
-        setSelectedOption(option);
-        stopGameTimer();
-
-        const currentQ = questions[currentQuestionIdx];
-        const isCorrect = option === currentQ.correctAnswer;
-
-        let pointsGained = 0;
-        if (isCorrect) {
-            // Points proportionnels à la rapidité (au flou restant)
-            // Plus le timeLeft est grand, plus c'est flou, plus on gagne de points.
-            // Minimum 10 points pour avoir trouvé à la toute fin, max 100 points au début.
-            pointsGained = Math.max(10, Math.round((timeLeft / 15) * 100));
-            setScore(prev => prev + pointsGained);
-            setCorrectAnswersCount(prev => prev + 1);
-        }
-
-        setAnswersHistory(prev => [
-            ...prev,
-            {
-                albumCover: currentQ.albumCover,
-                correctAnswer: currentQ.correctAnswer,
-                correct: isCorrect,
-                userChoice: option,
-                pointsGained,
-                timeLeft
-            }
-        ]);
-    };
-
-    const handleTimeOut = (question) => {
-        setLocked(true);
-        setSelectedOption(null);
-        setAnswersHistory(prev => [
-            ...prev,
-            {
-                albumCover: question.albumCover,
-                correctAnswer: question.correctAnswer,
-                correct: false,
-                userChoice: "Temps écoulé",
-                pointsGained: 0,
-                timeLeft: 0
-            }
-        ]);
-    };
-
-    const nextQuestion = () => {
-        const nextIdx = currentQuestionIdx + 1;
-        if (nextIdx < questions.length) {
-            setCurrentQuestionIdx(nextIdx);
-            startQuestion(questions, nextIdx);
-        } else {
-            setGameState('RESULTS');
-            stopGameTimer();
-        }
     };
 
     const getScoreFeedback = () => {
@@ -359,12 +134,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
         return { text: "Essaye encore ! La discographie mérite d'être contemplée de plus près.", color: "text-red-400" };
     };
 
-    // Splitting "GUESS THE COVER" title into span characters
     const titleText = "GUESS THE COVER";
-
-    // Dynamic blur calculation based on timeLeft
-    // at 15s -> blur 40px
-    // at 0s -> blur 0px
     const currentBlur = locked ? 0 : Math.max(0, (timeLeft / 15) * 45);
 
     return (
@@ -412,8 +182,8 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                 ))}
                             </h1>
 
-                            <p ref={subtitleRef} className="text-zinc-600 dark:text-zinc-400 font-medium text-xs md:text-sm max-w-md mx-auto tracking-wide leading-relaxed pt-2">
-                                Un jeu visuel où les détails comptent. Identifiez l'illustration d'album de <span className="text-violet-600 dark:text-violet-400 font-extrabold uppercase">{user?.favArtistName || 'votre artiste favori'}</span> qui émerge lentement du flou.
+                            <p ref={subtitleRef} className="text-zinc-650 dark:text-zinc-400 font-medium text-xs md:text-sm max-w-md mx-auto tracking-wide leading-relaxed pt-2">
+                                Un jeu visuel où les détails comptent. Identifiez l'illustration d'album de <span className="text-violet-650 dark:text-violet-400 font-extrabold uppercase">{user?.favArtistName || 'votre artiste favori'}</span> qui émerge lentement du flou.
                             </p>
                         </div>
 
@@ -428,7 +198,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                     )}
                                 </div>
                                 <div className="min-w-0">
-                                    <span className="text-[9px] uppercase font-black text-fuchsia-600 dark:text-fuchsia-400 tracking-wider">Artiste Configuré</span>
+                                    <span className="text-[9px] uppercase font-black text-fuchsia-650 dark:text-fuchsia-400 tracking-wider">Artiste Configuré</span>
                                     <h3 className="text-base font-bold text-zinc-900 dark:text-white uppercase tracking-wider truncate mt-0.5">{user.favArtistName}</h3>
                                 </div>
                             </div>
@@ -464,30 +234,26 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
             {/* PLAYING SCREEN */}
             {gameState === 'PLAYING' && questions.length > 0 && (
                 <div className="fixed inset-0 z-40 bg-zinc-50 dark:bg-zinc-950 bg-grid-pattern flex flex-col justify-center items-center overflow-y-auto py-8 game-card-anim">
-                    
                     {/* Quit button */}
                     <button
                         onClick={quitGame}
-                        className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 hover:bg-red-600 dark:hover:bg-red-600 text-zinc-800 dark:text-white font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-zinc-250 dark:border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
+                        className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 hover:bg-red-655 hover:bg-red-600 dark:hover:bg-red-600 text-zinc-800 dark:text-white font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-zinc-250 dark:border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
                     >
                         <X size={14} className="group-hover:rotate-90 transition-transform duration-200" />
                         Quitter
                     </button>
 
                     <div className="w-full max-w-2xl px-4 space-y-6">
-                        {/* Header Progress / Score */}
                         <div className="flex items-center justify-between gap-4">
-                            <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
+                            <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-655 dark:text-zinc-400">
                                 Album <span className="text-zinc-900 dark:text-white font-black text-3xl">{currentQuestionIdx + 1}</span> / {questions.length}
                             </div>
                             
                             <div className="flex gap-4 items-center">
-                                {/* Correct Count */}
-                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 text-xs font-semibold">
+                                <div className="flex items-center gap-1.5 text-zinc-655 dark:text-zinc-400 text-xs font-semibold">
                                     <Target size={14} className="text-zinc-500" />
                                     <span>{correctAnswersCount} / {questions.length} correct</span>
                                 </div>
-                                {/* Score */}
                                 <div className="neobrutal-card border-2 border-black bg-fuchsia-600 text-white px-3.5 py-1 font-black text-sm shadow-[2px_2px_0px_#000000] flex items-center gap-1">
                                     <Zap size={12} className="fill-white" />
                                     {score} pts
@@ -497,13 +263,11 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
 
                         {/* Main gameplay card */}
                         <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
-                            {/* Timer Progress Bar */}
                             <div 
                                 className="absolute top-0 left-0 h-2 bg-gradient-to-r from-fuchsia-600 to-pink-500 transition-all duration-1000 ease-linear"
                                 style={{ width: `${(timeLeft / 15) * 100}%` }}
                             />
 
-                            {/* Floating dynamic points multiplier indicator */}
                             {!locked && (
                                 <div className="absolute top-5 right-5 text-right flex flex-col items-end">
                                     <span className="text-[10px] font-black uppercase text-fuchsia-600 dark:text-fuchsia-400 tracking-wider">Points à gagner</span>
@@ -519,7 +283,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                     src={questions[currentQuestionIdx].albumCover} 
                                     onLoad={() => setImageReady(true)}
                                     alt="Mysterious Album Cover" 
-                                    className="w-full h-full object-cover transition-all duration-350 transform-gpu select-none pointer-events-none"
+                                    className="w-full h-full object-cover transition-all duration-355 transform-gpu select-none pointer-events-none"
                                     style={{
                                         filter: `blur(${!imageReady ? 45 : currentBlur}px)`,
                                         transform: locked ? 'scale(1)' : 'scale(1.04)'
@@ -527,7 +291,6 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                 />
                             </div>
 
-                            {/* Floating Timer Countdown */}
                             <div className={`w-14 h-14 rounded-full border-3 border-black font-mouse-memoirs text-2xl flex items-center justify-center shadow-[3px_3px_0px_#000000] select-none ${
                                 timeLeft <= 4 ? 'bg-red-500 text-white animate-bounce' : 'bg-white dark:bg-zinc-800 text-black dark:text-white'
                             }`}>
@@ -551,7 +314,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                             btnClass = "bg-red-500 text-white border-red-600 shadow-[2px_2px_0px_#000000] scale-100";
                                             icon = <XCircle size={16} className="text-white shrink-0" />;
                                         } else {
-                                            btnClass = "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border-zinc-200 dark:border-zinc-950 opacity-45 shadow-none pointer-events-none";
+                                            btnClass = "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border-zinc-250 dark:border-zinc-950 opacity-45 shadow-none pointer-events-none";
                                         }
                                     }
 
@@ -572,7 +335,6 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                 })}
                             </div>
 
-                            {/* Next CTA */}
                             {locked && (
                                 <button
                                     onClick={nextQuestion}
@@ -596,7 +358,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                         <div className="absolute -top-24 -left-24 w-64 h-64 bg-violet-600/10 rounded-full blur-[80px] pointer-events-none" />
                         <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-fuchsia-600/10 rounded-full blur-[80px] pointer-events-none" />
 
-                        <canvas ref={confettiCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 rounded-3xl" />
+                        <ConfettiCanvas />
 
                         <div className="w-16 h-16 bg-amber-500 border-2.5 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_#000000] z-10 animate-bounce relative">
                             <Trophy className="text-black" size={28} />
@@ -607,7 +369,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                             <h2 className="font-mouse-memoirs text-6xl text-zinc-900 dark:text-white">
                                 {score} <span className="text-2xl text-zinc-600 dark:text-zinc-500">points</span>
                             </h2>
-                            <p className="text-zinc-650 dark:text-zinc-400 font-extrabold text-sm uppercase tracking-wide">
+                            <p className="text-zinc-655 dark:text-zinc-400 font-extrabold text-sm uppercase tracking-wide">
                                 {correctAnswersCount} / {questions.length} albums trouvés
                             </p>
                             <p className={`text-sm font-bold mt-3 ${getScoreFeedback().color}`}>
@@ -634,16 +396,13 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
 
                     {/* Summary list */}
                     <div className="neobrutal-card bg-zinc-100/50 dark:bg-zinc-950/40 border-2.5 border-zinc-250 dark:border-white/10 p-6 rounded-2xl space-y-4">
-                        <h3 className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-white/10 pb-2">
+                        <h3 className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-900 dark:text-white border-b border-zinc-205 dark:border-white/10 pb-2">
                             Récapitulatif des Découvertes
                         </h3>
 
                         <div data-lenis-prevent className="space-y-3 max-h-96 overflow-y-auto no-scrollbar pr-1">
                             {answersHistory.map((hItem, idx) => (
-                                <div 
-                                    key={idx}
-                                    className="flex items-center gap-4 bg-white dark:bg-zinc-900/50 p-3.5 rounded-xl border border-zinc-200 dark:border-white/5 shadow-inner"
-                                >
+                                <div key={idx} className="flex items-center gap-4 bg-white dark:bg-zinc-900/50 p-3.5 rounded-xl border border-zinc-200 dark:border-white/5 shadow-inner">
                                     <div className="w-14 h-14 bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-white/15 rounded-lg overflow-hidden flex-shrink-0 shadow-md">
                                         <img src={hItem.albumCover} alt={hItem.correctAnswer} className="w-full h-full object-cover" />
                                     </div>
@@ -651,7 +410,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
                                     <div className="flex-1 min-w-0">
                                         <h4 className="font-bold text-xs text-zinc-900 dark:text-white truncate uppercase tracking-wider">{hItem.correctAnswer}</h4>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <p className="text-[10px] text-zinc-600 dark:text-zinc-400 truncate">
+                                            <p className="text-[10px] text-zinc-655 dark:text-zinc-400 truncate">
                                                 Choix : <span className={hItem.correct ? "text-emerald-500 font-extrabold" : "text-red-500 font-extrabold"}>{hItem.userChoice}</span>
                                             </p>
                                             {hItem.correct && (
