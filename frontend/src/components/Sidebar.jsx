@@ -14,28 +14,18 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     useEffect(() => {
         const root = document.documentElement;
         const body = document.body;
-        
-        // Clean up existing theme classes
-        root.classList.remove('light', 'vocaloid');
-        body.classList.remove('light', 'vocaloid');
-        
         if (theme === 'light') {
             root.classList.add('light');
             body.classList.add('light');
-        } else if (theme === 'vocaloid') {
-            root.classList.add('vocaloid');
-            body.classList.add('vocaloid');
+        } else {
+            root.classList.remove('light');
+            body.classList.remove('light');
         }
-        
         localStorage.setItem('theme', theme);
     }, [theme]);
 
     const toggleTheme = () => {
-        setTheme(prev => {
-            if (prev === 'dark') return 'light';
-            if (prev === 'light') return 'vocaloid';
-            return 'dark';
-        });
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
     };
 
     // Fetch live playback status from Spotify
@@ -180,9 +170,7 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                 className="md:hidden fixed top-4 right-4 z-50 p-2.5 rounded-xl border-2 border-white/10 bg-zinc-950/80 text-zinc-400 shadow-lg backdrop-blur-md cursor-pointer theme-toggle-btn"
                 aria-label="Toggle Theme"
             >
-                {theme === 'dark' && <Moon size={18} className="text-indigo-400" />}
-                {theme === 'light' && <Sun size={18} className="text-amber-400 animate-spin-slow" style={{ animationDuration: '6s' }} />}
-                {theme === 'vocaloid' && <Disc size={18} className="text-teal-400 animate-spin-slow" style={{ animationDuration: '3s' }} />}
+                {theme === 'dark' ? <Sun size={18} className="text-amber-400 animate-spin-slow" style={{ animationDuration: '6s' }} /> : <Moon size={18} className="text-indigo-400" />}
             </button>
 
             {/* Desktop Sidebar Placeholder (takes up space in flex container) */}
@@ -244,21 +232,19 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                         {/* Theme Toggle Switch */}
                         <div className="w-full flex items-center justify-between px-4 py-2 rounded-xl font-mouse-memoirs uppercase tracking-widest text-xs border border-white/10 bg-zinc-900/30 text-zinc-400 theme-toggle-container select-none">
                             <span className="flex items-center gap-2">
-                                {theme === 'dark' && <Moon size={14} className="text-indigo-400" />}
-                                {theme === 'light' && <Sun size={14} className="text-amber-500 animate-spin-slow" style={{ animationDuration: '6s' }} />}
-                                {theme === 'vocaloid' && <Disc size={14} className="text-teal-400 animate-spin-slow" style={{ animationDuration: '3s' }} />}
-                                {theme === 'dark' && 'Mode Sombre'}
-                                {theme === 'light' && 'Mode Clair'}
-                                {theme === 'vocaloid' && 'Mode Vocaloid'}
+                                {theme === 'dark' ? (
+                                    <Moon size={14} className="text-indigo-400" />
+                                ) : (
+                                    <Sun size={14} className="text-amber-500 animate-spin-slow" style={{ animationDuration: '6s' }} />
+                                )}
+                                {theme === 'dark' ? 'Mode Sombre' : 'Mode Clair'}
                             </span>
                             
                             {/* Sliding Track */}
                             <button
                                 onClick={toggleTheme}
-                                className={`w-14 h-6 p-0 rounded-full border-2 transition-colors duration-300 relative flex items-center cursor-pointer outline-none focus:outline-none ${
-                                    theme === 'dark' ? 'bg-violet-600 border-white/20' : 
-                                    theme === 'light' ? 'bg-zinc-300 border-zinc-400' :
-                                    'bg-teal-950 border-teal-400/30'
+                                className={`w-10 h-6 p-0 rounded-full border-2 transition-colors duration-300 relative flex items-center cursor-pointer outline-none focus:outline-none ${
+                                    theme === 'dark' ? 'bg-violet-600 border-white/20' : 'bg-zinc-300 border-zinc-400'
                                 }`}
                                 aria-label="Toggle Theme"
                             >
@@ -266,8 +252,8 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                 <div 
                                     className="w-4 h-4 rounded-full transition-all duration-300 shadow-md absolute top-[2px]"
                                     style={{ 
-                                        left: theme === 'dark' ? '34px' : theme === 'light' ? '2px' : '18px',
-                                        backgroundColor: theme === 'dark' ? '#ffffff' : theme === 'light' ? '#12101b' : '#39c5bb'
+                                        left: theme === 'dark' ? '18px' : '2px',
+                                        backgroundColor: theme === 'dark' ? '#ffffff' : '#12101b'
                                     }}
                                 />
                             </button>
