@@ -12,10 +12,25 @@ Music Diary est une application web moderne de journal intime musical et de rés
 - **Spotify Wrapped** : Rétrospective visuelle des statistiques musicales de l'utilisateur.
 - **Classement des tendances** : Intégration en temps réel du **Top 50 Global** via le flux de charts public de Spotify.
 
+### 🎯 Blind Test Musical
+- **Jeu interactif** : Testez votre connaissance des morceaux de votre artiste favori via des extraits audio iTunes (30s).
+- **10 questions** à choix multiples avec un chronomètre de 15 secondes par question.
+- **Animations immersives** : Platine vinyle animée, rideau GSAP entre les parties, confettis canvas sur les résultats.
+- **Score & récapitulatif** : Historique détaillé de chaque réponse avec pochettes d'album.
+
+### 🎤 Artiste Favori
+- **Sélection depuis le profil** : Choisissez votre artiste n°1 via la recherche Spotify intégrée.
+- **Profil d'artiste dédié** : Page de détail avec biographie, discographie et statistiques.
+- **Synchronisation en temps réel** : Le Blind Test relit automatiquement le profil mis à jour pour ne jamais utiliser de données périmées.
+
+### 👥 Réseau Social
+- **Fil d'activité** : Suivez d'autres membres pour voir leurs dernières critiques.
+- **Modal de followers/abonnements** : Consultez et gérez vos connexions directement depuis le profil.
+- **Mur de Paroles (Lyric Wall)** : Épinglez vos citations de chansons préférées sur votre profil public.
+
 ### 📝 Journal & Critiques
 - **Journal musical** : Ajoutez, modifiez ou supprimez des chroniques d'albums avec une note sur 5 et un commentaire textuel.
-- **Fil d'activité social** : Suivez d'autres membres de la communauté pour voir leurs dernières critiques dans votre flux d'actualités.
-- **Mur de Paroles (Lyric Wall)** : Épinglez vos citations de chansons préférées directement sur votre profil public.
+- **Exploration communautaire** : Parcourez les critiques et profils des autres membres.
 
 ### 🛡️ Dashboard d'Administration & Modération
 - **Supervision globale** : Visualisation des statistiques clés (utilisateurs inscrits, critiques publiées, comptes Spotify associés).
@@ -36,6 +51,7 @@ Music Diary est une application web moderne de journal intime musical et de rés
 - **Framework** : Node.js / Express
 - **Base de données & ORM** : Prisma (avec base de données relationnelle)
 - **Sécurité** : Authentification par jeton JWT
+- **API externes** : Spotify Web API, iTunes Search API (extraits audio Blind Test)
 
 ---
 
@@ -46,7 +62,7 @@ Pour garantir une maintenance optimale et un code propre, la base de code fronte
   - `useHomeData.js`
   - `useProfileData.js`
   - `useAdminDashboard.js`
-- **Composants de présentation (`src/components/`)** : Les composants d'interface utilisateur complexes ont été extraits dans des fichiers autonomes réutilisables (ex. `AdminUsersTab`, `ProfileModals`, `AdminFilters`).
+- **Composants de présentation (`src/components/`)** : Les composants d'interface utilisateur complexes ont été extraits dans des fichiers autonomes réutilisables (ex. `AdminUsersTab`, `ProfileModals`, `AdminFilters`, `BlindTestTab`, `FollowModal`, `ArtistDetailModal`).
 - **Impact** : Cette organisation a permis de réduire les fichiers de pages principaux à **moins de 150 lignes de code** chacun, facilitant grandement la lisibilité.
 
 ---
