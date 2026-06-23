@@ -9,31 +9,132 @@ gsap.registerPlugin(ScrollTrigger);
 function LandingPage() {
     const navigate = useNavigate();
     const containerRef = useRef(null);
+    const glowRef = useRef(null);
+    const cursorRef = useRef(null);
+
+    const handleMouseMove = (e) => {
+        const { clientX, clientY, target } = e;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        // Calculate normalized offset from center (-1 to 1)
+        const xPercent = (clientX / width - 0.5) * 2;
+        const yPercent = (clientY / height - 0.5) * 2;
+
+        // Animate floating mockup cards slightly to create depth (parallax)
+        gsap.to('.floating-card-1', {
+            x: xPercent * 20,
+            y: yPercent * 20,
+            duration: 1.2,
+            ease: 'power2.out',
+            overwrite: 'auto'
+        });
+        
+        gsap.to('.floating-card-2', {
+            x: -xPercent * 25,
+            y: -yPercent * 25,
+            duration: 1.4,
+            ease: 'power2.out',
+            overwrite: 'auto'
+        });
+
+        // Smoothly position the glowing background orb under the cursor
+        if (glowRef.current) {
+            gsap.to(glowRef.current, {
+                x: clientX - width / 2,
+                y: clientY - height / 2,
+                duration: 1.8,
+                ease: 'power2.out',
+                overwrite: 'auto'
+            });
+        }
+
+        // Custom Beat Wave Cursor tracking + interactive hover state
+        if (cursorRef.current) {
+            const isInteractive = target.closest('button, a, [role="button"], input, select, textarea');
+            gsap.to(cursorRef.current, {
+                x: clientX,
+                y: clientY,
+                opacity: 1,
+                scale: isInteractive ? 1.6 : 1,
+                borderColor: isInteractive ? '#ec4899' : '#8b5cf6', // Fuchsia on hover, violet normally
+                duration: 0.15,
+                ease: 'power2.out',
+                overwrite: 'auto'
+            });
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (cursorRef.current) {
+            gsap.to(cursorRef.current, {
+                opacity: 0,
+                duration: 0.3
+            });
+        }
+    };
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            // Animate hero text and cards on load
-            gsap.fromTo('.hero-anim', 
-                { y: 50, opacity: 0 }, 
-                { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
+            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+            // Initial header slide down
+            tl.fromTo('header', 
+                { y: -30, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1, ease: 'power3.out' }
             );
 
-            // Animate the floating cards in hero
+            // Sticker badge rotates and pops
+            tl.fromTo('.hero-badge-anim',
+                { scale: 0, rotation: -15, opacity: 0 },
+                { scale: 1, rotation: -3, opacity: 1, duration: 0.8, ease: 'back.out(1.5)' },
+                '-=0.7'
+            );
+
+            // Masked title lines reveal
+            tl.fromTo('.hero-title-line',
+                { y: '100%', opacity: 0 },
+                { y: '0%', opacity: 1, duration: 1.2, stagger: 0.15 },
+                '-=0.6'
+            );
+
+            // Subtitle text reveal
+            tl.fromTo('.hero-desc-anim',
+                { y: 20, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.8 },
+                '-=0.8'
+            );
+
+            // CTA Buttons pop in
+            tl.fromTo('.hero-cta-btn',
+                { scale: 0.9, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'back.out(1.3)' },
+                '-=0.6'
+            );
+
+            // Floating Mockups translate and scale up
+            tl.fromTo(['.floating-card-1', '.floating-card-2'],
+                { scale: 0.8, opacity: 0, y: 60 },
+                { scale: 1, opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: 'back.out(1.2)' },
+                '-=1'
+            );
+
+            // Subtle bobbing loop for floating cards
             gsap.to('.floating-card-1', {
-                y: -15, rotation: -5, duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut'
+                y: '-=15', rotation: -5, duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1
             });
             gsap.to('.floating-card-2', {
-                y: 15, rotation: 8, duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1
+                y: '+=15', rotation: 8, duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 2
             });
 
             // Scroll animations for features
             gsap.fromTo('.feature-card', 
-                { y: 100, opacity: 0, scale: 0.9 },
+                { y: 80, opacity: 0, scale: 0.95, rotation: -2 },
                 {
-                    y: 0, opacity: 1, scale: 1,
+                    y: 0, opacity: 1, scale: 1, rotation: 0,
                     duration: 0.8,
-                    stagger: 0.2,
-                    ease: 'back.out(1.2)',
+                    stagger: 0.15,
+                    ease: 'power3.out',
                     scrollTrigger: {
                         trigger: '.features-section',
                         start: 'top 75%',
@@ -44,7 +145,7 @@ function LandingPage() {
 
             // Scroll animation for the bottom CTA
             gsap.fromTo('.cta-section',
-                { scale: 0.9, opacity: 0, rotationX: 15 },
+                { scale: 0.93, opacity: 0, rotationX: 10 },
                 {
                     scale: 1, opacity: 1, rotationX: 0,
                     duration: 1, ease: 'power3.out',
@@ -61,8 +162,32 @@ function LandingPage() {
     }, []);
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-[#07050f] text-white font-sans overflow-x-hidden relative flex flex-col justify-between select-none">
+        <div ref={containerRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className="min-h-screen bg-[#07050f] text-white font-sans overflow-x-hidden relative flex flex-col justify-between select-none cursor-none">
+            {/* Custom Beat Wave Cursor */}
+            <div ref={cursorRef} className="fixed left-0 top-0 w-8 h-8 rounded-full border-2 border-violet-500/80 pointer-events-none z-50 hidden md:flex items-center justify-center opacity-0" style={{ transform: 'translate(-50%, -50%)' }}>
+                <div className="absolute inset-0 rounded-full border border-fuchsia-500 animate-[cursor-wave_1.5s_infinite]"></div>
+                {/* Glowing neon dot in the center */}
+                <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#fff]"></div>
+            </div>
+
+            <style>{`
+                .cursor-none, .cursor-none * {
+                    cursor: none !important;
+                }
+                @keyframes cursor-wave {
+                    0% {
+                        transform: scale(0.6);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: scale(2.2);
+                        opacity: 0;
+                    }
+                }
+            `}</style>
+
             {/* Background glowing blobs */}
+            <div ref={glowRef} className="absolute w-[450px] h-[450px] bg-violet-600/10 rounded-full blur-[110px] pointer-events-none z-0" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}></div>
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/5 rounded-full blur-[130px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-fuchsia-600/5 rounded-full blur-[130px] pointer-events-none"></div>
 
@@ -165,7 +290,7 @@ function LandingPage() {
                         </div>
 
                         {/* Card 2: Lyric Pin Mockup */}
-                        <div className="floating-card-2 hero-anim absolute bottom-6 right-4 md:right-10 w-[240px] bg-gradient-to-tr from-violet-600/90 to-fuchsia-500/85 p-5 rounded-2xl transform rotate-6 hover:rotate-3 transition-all duration-300 border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] text-white">
+                        <div className="floating-card-2 opacity-0 absolute bottom-6 right-4 md:right-10 w-[240px] bg-gradient-to-tr from-violet-600/90 to-fuchsia-500/85 p-5 rounded-2xl transform rotate-6 hover:rotate-3 transition-all duration-300 border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] text-white">
                             <Quote size={20} className="text-white/40 mb-2.5" />
                             <p className="font-black text-sm leading-snug tracking-tight">
                                 "We've come too far to give up who we are. So let's raise the bar..."

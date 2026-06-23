@@ -1,6 +1,7 @@
 import API_URL from '../../config.js';
-import { useEffect, useRef, useState } from 'react';
-import { Play, RotateCcw, Trophy, CheckCircle2, XCircle, ArrowRight, Music, AlertTriangle, Disc, Timer, Target } from 'lucide-react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { RotateCcw, Trophy, CheckCircle2, XCircle, ArrowRight, Music, AlertTriangle, Disc, Timer, Target, X } from 'lucide-react';
+import gsap from 'gsap';
 
 export default function BlindTestTab({ user, onBackToHome }) {
     const [gameState, setGameState] = useState('LOBBY'); // LOBBY | LOADING | PLAYING | RESULTS
@@ -16,6 +17,70 @@ export default function BlindTestTab({ user, onBackToHome }) {
 
     const audioRef = useRef(null);
     const timerRef = useRef(null);
+    const gameContainerRef = useRef(null);
+    const confettiCanvasRef = useRef(null);
+    const curtainRef = useRef(null);
+    const curtainTriggered = useRef(false);
+
+    // Dynamic layout state switch transitions
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            // Entrance transition of the active game container screen
+            gsap.fromTo('.game-card-anim',
+                { opacity: 0, scale: 0.96, y: 25 },
+                { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.15)', clearProps: 'transform' }
+            );
+
+            // Left/Right Neobrutalist decor side cards bobbing timelines
+            gsap.fromTo('.float-accent-left',
+                { x: -40, opacity: 0, rotate: -15 },
+                { x: 0, opacity: 1, rotate: -8, duration: 0.8, ease: 'back.out(1.3)', delay: 0.15 }
+            );
+            gsap.fromTo('.float-accent-right',
+                { x: 40, opacity: 0, rotate: 15 },
+                { x: 0, opacity: 1, rotate: 12, duration: 0.8, ease: 'back.out(1.3)', delay: 0.25 }
+            );
+
+            gsap.to('.float-accent-left', {
+                y: '-=12', duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut'
+            });
+            gsap.to('.float-accent-right', {
+                y: '+=12', duration: 3.5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.5
+            });
+
+            // Background Floating Shapes
+            gsap.fromTo('.bg-shape-float',
+                { opacity: 0, scale: 0 },
+                { opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.4)', stagger: 0.05, delay: 0.1 }
+            );
+
+            // Infinite loops
+            gsap.to('.bg-shape-float-1', { y: '+=15', rotate: 360, duration: 12, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('.bg-shape-float-2', { y: '-=15', rotate: -15, duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('.bg-shape-float-3', { x: '+=10', y: '-=15', rotate: 180, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('.bg-shape-float-4', { x: '-=10', y: '+=10', rotate: 90, duration: 6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('.bg-shape-float-5', { y: '-=20', rotate: -360, duration: 14, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('.bg-shape-float-6', { y: '+=12', rotate: 20, duration: 4.5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.5 });
+            gsap.to('.bg-shape-float-7', { x: '-=12', y: '+=15', rotate: -180, duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('.bg-shape-float-8', { x: '+=8', y: '-=8', rotate: -90, duration: 7, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        }, gameContainerRef);
+
+        return () => ctx.revert();
+    }, [gameState]);
+
+    // Lift curtain up once PLAYING/LOBBY/RESULTS is reached (after a drop was triggered)
+    useEffect(() => {
+        if (!curtainRef.current) return;
+        if (!curtainTriggered.current) return; // Don't lift on initial mount
+        if (gameState === 'PLAYING' || gameState === 'LOBBY' || gameState === 'RESULTS') {
+            gsap.to(curtainRef.current, {
+                y: '-100vh',
+                duration: 0.65,
+                ease: 'power3.inOut',
+                delay: gameState === 'PLAYING' ? 0.1 : 0,
+            });
+        }
+    }, [gameState]);
 
     // Initial check for favorite artist presence
     useEffect(() => {
@@ -28,6 +93,113 @@ export default function BlindTestTab({ user, onBackToHome }) {
         };
     }, [user]);
 
+    // HTML5 Canvas Confetti Explosion when RESULTS state is reached
+    useEffect(() => {
+        if (gameState !== 'RESULTS') return;
+
+        const canvas = confettiCanvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let isActive = true;
+        let particles = [];
+        let particlesInitialized = false;
+
+        const initParticles = (width, height) => {
+            const colors = ['#8b5cf6', '#ec4899', '#facc15', '#3b82f6', '#10b981'];
+            const count = 120;
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.random() * 120 + 30) * Math.PI / 180;
+                const speed = Math.random() * 14 + 6;
+                particles.push({
+                    x: width / 2,
+                    y: height + 10,
+                    sizeX: Math.random() * 6 + 4,
+                    sizeY: Math.random() * 10 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: Math.cos(angle) * speed,
+                    vy: -Math.sin(angle) * speed,
+                    gravity: 0.35,
+                    drag: 0.98,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.15,
+                    wobble: Math.random() * Math.PI * 2,
+                    wobbleSpeed: Math.random() * 0.08 + 0.04
+                });
+            }
+            particlesInitialized = true;
+        };
+
+        const render = () => {
+            if (!isActive) return;
+            
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+
+            if (width === 0 || height === 0) {
+                animationFrameId = requestAnimationFrame(render);
+                return;
+            }
+
+            const targetWidth = Math.floor(width * dpr);
+            const targetHeight = Math.floor(height * dpr);
+
+            if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                ctx.scale(dpr, dpr);
+            }
+
+            if (!particlesInitialized) {
+                initParticles(width, height);
+            }
+
+            ctx.clearRect(0, 0, width, height);
+
+            let activeParticles = 0;
+            particles.forEach(p => {
+                if (p.y < height + 20) {
+                    activeParticles++;
+
+                    p.vx *= p.drag;
+                    p.vy *= p.drag;
+                    p.vy += p.gravity;
+                    p.x += p.vx + Math.sin(p.wobble) * 0.6;
+                    p.y += p.vy;
+                    p.rotation += p.rotationSpeed;
+                    p.wobble += p.wobbleSpeed;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.sizeX / 2, -p.sizeY / 2, p.sizeX, p.sizeY);
+                    ctx.restore();
+                }
+            });
+
+            if (activeParticles > 0) {
+                animationFrameId = requestAnimationFrame(render);
+            }
+        };
+
+        // Delay starting slightly for transition
+        const timerId = setTimeout(() => {
+            render();
+        }, 150);
+
+        return () => {
+            isActive = false;
+            clearTimeout(timerId);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        };
+    }, [gameState]);
+
     const stopAudioAndTimer = () => {
         if (audioRef.current) {
             audioRef.current.pause();
@@ -38,28 +210,40 @@ export default function BlindTestTab({ user, onBackToHome }) {
         }
     };
 
-    const startNewGame = async () => {
-        setError(null);
-        setGameState('LOADING');
-        setScore(0);
-        setCurrentQuestionIdx(0);
-        setAnswersHistory([]);
-        setSelectedOption(null);
-        setLocked(false);
-        stopAudioAndTimer();
+    const startNewGame = () => {
+        if (!curtainRef.current) return;
+        curtainTriggered.current = true;
 
+        // Position curtain above the viewport then drop it down
+        gsap.set(curtainRef.current, { y: '-100vh' });
+        gsap.to(curtainRef.current, {
+            y: '0vh',
+            duration: 0.6,
+            ease: 'power4.inOut',
+            onComplete: () => {
+                // Once covered, reset state and fetch data
+                setError(null);
+                setGameState('LOADING');
+                setScore(0);
+                setCurrentQuestionIdx(0);
+                setAnswersHistory([]);
+                setSelectedOption(null);
+                setLocked(false);
+                stopAudioAndTimer();
+                _fetchAndStartGame();
+            }
+        });
+    };
+
+    const _fetchAndStartGame = async () => {
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${API_URL}/api/game/blindtest`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            if (!res.ok) {
-                throw new Error(data.error || "Erreur lors de la récupération des morceaux.");
-            }
-            if (!data.questions || data.questions.length === 0) {
-                throw new Error("Aucun extrait audio disponible pour cet artiste.");
-            }
+            if (!res.ok) throw new Error(data.error || "Erreur lors de la récupération des morceaux.");
+            if (!data.questions || data.questions.length === 0) throw new Error("Aucun extrait audio disponible pour cet artiste.");
             setArtist(data.artist);
             setQuestions(data.questions);
             setGameState('PLAYING');
@@ -69,6 +253,26 @@ export default function BlindTestTab({ user, onBackToHome }) {
             setError(err.message);
             setGameState('LOBBY');
         }
+    };
+
+    const quitGame = () => {
+        if (!curtainRef.current) return;
+        curtainTriggered.current = true;
+        gsap.set(curtainRef.current, { y: '-100vh' });
+        gsap.to(curtainRef.current, {
+            y: '0vh',
+            duration: 0.5,
+            ease: 'power4.inOut',
+            onComplete: () => {
+                stopAudioAndTimer();
+                setGameState('LOBBY');
+                setScore(0);
+                setCurrentQuestionIdx(0);
+                setAnswersHistory([]);
+                setSelectedOption(null);
+                setLocked(false);
+            }
+        });
     };
 
     const startQuestion = (questionsList, idx) => {
@@ -169,13 +373,63 @@ export default function BlindTestTab({ user, onBackToHome }) {
     };
 
     return (
-        <div className="max-w-4xl mx-auto w-full px-4 py-6 font-sans">
+        <div ref={gameContainerRef} className="max-w-4xl mx-auto w-full px-4 py-6 font-sans relative">
+            {/* Full-screen absolute Background Grid Overlay */}
+            <div className="fixed inset-0 bg-grid-pattern pointer-events-none z-[-1]" />
+
             {/* Audio Element */}
             <audio ref={audioRef} preload="auto" />
 
+            {/* Background Floating Decorative Gutter Shapes */}
+            {/* LEFT GUTTER */}
+            <div className="absolute -left-48 top-[10%] text-fuchsia-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-1 hidden xl:block z-0">
+                <div className="w-24 h-24 bg-fuchsia-600/5 border-2 border-fuchsia-500/20 rounded-full flex items-center justify-center shadow-lg">
+                    <Disc size={44} className="text-fuchsia-500/30 animate-spin-slow" style={{ animationDuration: '8s' }} />
+                </div>
+            </div>
+            <div className="absolute -left-36 top-[38%] text-violet-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-2 hidden xl:block z-0">
+                <div className="w-16 h-16 bg-violet-600/5 border-1.5 border-violet-500/20 rounded-2xl flex items-center justify-center rotate-[-12deg]">
+                    <Music size={28} className="text-violet-500/30 animate-bounce" style={{ animationDuration: '1.5s' }} />
+                </div>
+            </div>
+            <div className="absolute -left-40 top-[68%] text-yellow-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-3 hidden xl:block z-0">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" className="opacity-25">
+                    <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+                </svg>
+            </div>
+            <div className="absolute -left-28 top-[88%] text-fuchsia-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-4 hidden xl:block z-0">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" className="opacity-20">
+                    <line x1="12" y1="4" x2="12" y2="20" />
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                </svg>
+            </div>
+
+            {/* RIGHT GUTTER */}
+            <div className="absolute -right-48 top-[15%] text-yellow-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-5 hidden xl:block z-0">
+                <div className="w-24 h-24 bg-yellow-500/5 border-2 border-yellow-500/20 rounded-full flex items-center justify-center shadow-lg">
+                    <Disc size={44} className="text-yellow-500/30 animate-spin-slow" style={{ animationDuration: '12s' }} />
+                </div>
+            </div>
+            <div className="absolute -right-36 top-[42%] text-fuchsia-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-6 hidden xl:block z-0">
+                <div className="w-16 h-16 bg-fuchsia-600/5 border-1.5 border-fuchsia-500/20 rounded-2xl flex items-center justify-center rotate-[15deg]">
+                    <Music size={28} className="text-fuchsia-500/30 animate-bounce" style={{ animationDuration: '2s' }} />
+                </div>
+            </div>
+            <div className="absolute -right-40 top-[72%] text-violet-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-7 hidden xl:block z-0">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" className="opacity-25">
+                    <path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+                </svg>
+            </div>
+            <div className="absolute -right-28 top-[90%] text-yellow-500/20 pointer-events-none select-none bg-shape-float bg-shape-float-8 hidden xl:block z-0">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" className="opacity-20">
+                    <line x1="12" y1="4" x2="12" y2="20" />
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                </svg>
+            </div>
+
             {/* ERROR CARD */}
             {error && (
-                <div className="neobrutal-card border-red-500 bg-red-500/10 text-white p-6 rounded-2xl flex flex-col items-center gap-4 text-center mb-6">
+                <div className="neobrutal-card border-red-500 bg-red-500/10 text-white p-6 rounded-2xl flex flex-col items-center gap-4 text-center mb-6 game-card-anim">
                     <AlertTriangle className="text-red-500" size={48} />
                     <h3 className="font-mouse-memoirs text-3xl uppercase tracking-wider text-red-500">Erreur</h3>
                     <p className="font-medium">{error}</p>
@@ -190,7 +444,19 @@ export default function BlindTestTab({ user, onBackToHome }) {
 
             {/* LOBBY SCREEN */}
             {gameState === 'LOBBY' && !error && (
-                <div className="neobrutal-card bg-zinc-900 border-4 border-black p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-6">
+                <div className="relative">
+                    {/* Decorative floating side elements (visible on large viewports) */}
+                    <div className="hidden lg:flex absolute -left-28 top-12 w-24 h-24 bg-[#facc15] border-3 border-black rounded-2xl shadow-[4px_4px_0px_#000000] p-4 flex-col items-center justify-center float-accent-left rotate-[-8deg] z-0 select-none">
+                        <Disc size={32} className="text-black animate-spin-slow" style={{ animationDuration: '6s' }} />
+                        <span className="font-mouse-memoirs text-xs text-black uppercase tracking-wider mt-1.5 font-black">PLAY</span>
+                    </div>
+
+                    <div className="hidden lg:flex absolute -right-28 top-28 w-24 h-24 bg-[#ec4899] border-3 border-black rounded-2xl shadow-[4px_4px_0px_#000000] p-4 flex-col items-center justify-center float-accent-right rotate-[12deg] z-0 select-none">
+                        <Music size={32} className="text-white animate-bounce" style={{ animationDuration: '1.2s' }} />
+                        <span className="font-mouse-memoirs text-xs text-white uppercase tracking-wider mt-1.5 font-black">BEAT</span>
+                    </div>
+
+                    <div className="neobrutal-card bg-zinc-900 border-4 border-black p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-6 game-card-anim z-10">
                     {/* Background Glow */}
                     <div className="absolute -top-24 -left-24 w-64 h-64 bg-violet-600/15 rounded-full blur-[80px] pointer-events-none" />
                     <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-fuchsia-600/15 rounded-full blur-[80px] pointer-events-none" />
@@ -246,11 +512,12 @@ export default function BlindTestTab({ user, onBackToHome }) {
                         DÉMARRER LA PARTIE
                     </button>
                 </div>
+                </div>
             )}
 
             {/* LOADING SCREEN */}
             {gameState === 'LOADING' && (
-                <div className="neobrutal-card bg-zinc-900 border-4 border-black p-12 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center justify-center text-center gap-6">
+                <div className="neobrutal-card bg-zinc-900 border-4 border-black p-12 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center justify-center text-center gap-6 game-card-anim">
                     <div className="relative w-24 h-24 flex items-center justify-center">
                         <div className="w-20 h-20 border-4 border-t-violet-500 border-r-fuchsia-500 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
                         <Disc className="absolute text-violet-400 animate-spin-slow" size={28} />
@@ -262,9 +529,20 @@ export default function BlindTestTab({ user, onBackToHome }) {
                 </div>
             )}
 
-            {/* PLAYING SCREEN */}
+            {/* PLAYING SCREEN - Full Screen Immersive Mode */}
             {gameState === 'PLAYING' && questions.length > 0 && (
-                <div className="space-y-6">
+                <div className="fixed inset-0 z-40 bg-zinc-950 bg-grid-pattern flex flex-col justify-center items-center overflow-y-auto py-8 game-card-anim">
+
+                {/* Quit button - fixed top-right */}
+                <button
+                    onClick={quitGame}
+                    className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-zinc-900 hover:bg-red-600 text-white font-mouse-memoirs uppercase tracking-widest text-xs border-2 border-white/20 hover:border-red-500 rounded-xl shadow-[3px_3px_0px_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0px_#dc2626] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200 cursor-pointer group"
+                >
+                    <X size={14} className="group-hover:rotate-90 transition-transform duration-200" />
+                    Quitter
+                </button>
+
+                <div className="w-full max-w-2xl px-4 space-y-5">
                     {/* Header bar / Progress */}
                     <div className="flex items-center justify-between gap-4">
                         <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-400">
@@ -288,22 +566,46 @@ export default function BlindTestTab({ user, onBackToHome }) {
 
                         {/* Visual representation of audio playing */}
                         <div className="flex flex-col items-center gap-4 mt-2">
-                            {/* Spinning Disc vinyl */}
-                            <div className={`w-28 h-28 rounded-full bg-zinc-950 border-3 border-black shadow-[4px_4px_0px_#000000] flex items-center justify-center relative ${!locked ? 'animate-spin-slow' : ''}`} style={{ animationDuration: '6s' }}>
-                                {/* Center groove */}
-                                <div className="absolute inset-2.5 rounded-full border border-white/5" />
-                                <div className="absolute inset-5 rounded-full border border-white/5" />
-                                <div className="absolute inset-8 rounded-full border border-white/10" />
+                            {/* Record Player Body Container */}
+                            <div className="relative flex items-center justify-center w-56 h-36 border-2 border-black/10 bg-black/10 rounded-2xl p-4">
+                                {/* Spinning Disc vinyl */}
+                                <div className="relative z-10">
+                                    <div className={`w-28 h-28 rounded-full bg-zinc-950 border-3 border-black ring-4 ring-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.2),4px_4px_0px_#000000] flex items-center justify-center relative ${!locked ? 'animate-spin-slow' : ''}`} style={{ animationDuration: '6s' }}>
+                                        {/* Center groove */}
+                                        <div className="absolute inset-2.5 rounded-full border border-white/5" />
+                                        <div className="absolute inset-5 rounded-full border border-white/5" />
+                                        <div className="absolute inset-8 rounded-full border border-white/10" />
 
-                                {/* Artist image in center */}
-                                <div className="w-10 h-10 rounded-full overflow-hidden border border-black/80 flex-shrink-0 relative bg-zinc-900">
-                                    {artist?.image ? (
-                                        <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Music className="text-zinc-600 w-full h-full p-2" />
-                                    )}
+                                        {/* Artist image in center */}
+                                        <div className="w-10 h-10 rounded-full overflow-hidden border border-black/80 flex-shrink-0 relative bg-zinc-900">
+                                            {artist?.image ? (
+                                                <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Music className="text-zinc-600 w-full h-full p-2" />
+                                            )}
+                                        </div>
+                                        <div className="absolute w-1.5 h-1.5 bg-black rounded-full center" />
+                                    </div>
                                 </div>
-                                <div className="absolute w-1.5 h-1.5 bg-black rounded-full center" />
+
+                                {/* Mechanical Tone Arm */}
+                                <div 
+                                    className="absolute right-4 top-4 w-16 h-20 origin-top-right transition-transform duration-700 ease-out z-20 pointer-events-none"
+                                    style={{
+                                        transform: !locked ? 'rotate(24deg)' : 'rotate(0deg)'
+                                    }}
+                                >
+                                    {/* Base pivot */}
+                                    <div className="absolute right-0 top-0 w-6 h-6 bg-zinc-800 border-2.5 border-black rounded-full shadow-[2px_2px_0px_#000000] flex items-center justify-center">
+                                        <div className="w-2 h-2 bg-zinc-500 rounded-full border border-black" />
+                                    </div>
+                                    {/* Arm line */}
+                                    <div className="absolute right-2 top-2 w-1.5 h-14 bg-zinc-400 border-x border-b border-black origin-top shadow-[1px_1px_0px_rgba(0,0,0,0.5)]" />
+                                    {/* Stylized cartridge head */}
+                                    <div className="absolute right-[5px] top-[54px] w-3 h-5 bg-[#ec4899] border-2 border-black rounded-sm shadow-[1.5px_1.5px_0px_#000000] flex flex-col items-center justify-end">
+                                        <div className="w-1 h-1.5 bg-zinc-300 border-x border-black" />
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Bouncing audio wave bars */}
@@ -388,18 +690,22 @@ export default function BlindTestTab({ user, onBackToHome }) {
                         )}
                     </div>
                 </div>
+                </div>
             )}
 
             {/* RESULTS SCREEN */}
             {gameState === 'RESULTS' && (
-                <div className="space-y-6">
+                <div className="space-y-6 game-card-anim">
                     {/* Score Card */}
                     <div className="neobrutal-card bg-zinc-900 border-4 border-black p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-5">
                         {/* Background sparkles */}
                         <div className="absolute -top-24 -left-24 w-64 h-64 bg-violet-600/10 rounded-full blur-[80px] pointer-events-none" />
                         <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-fuchsia-600/10 rounded-full blur-[80px] pointer-events-none" />
 
-                        <div className="w-16 h-16 bg-amber-500 border-2.5 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_#000000] z-10 animate-bounce">
+                        {/* Interactive Confetti Canvas */}
+                        <canvas ref={confettiCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 rounded-3xl" />
+
+                        <div className="w-16 h-16 bg-amber-500 border-2.5 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_#000000] z-10 animate-bounce relative">
                             <Trophy className="text-black" size={28} />
                         </div>
 
@@ -469,6 +775,25 @@ export default function BlindTestTab({ user, onBackToHome }) {
                     </div>
                 </div>
             )}
+
+            {/* GSAP Stage Curtain — always in DOM, slides in/out via transform */}
+            <div
+                ref={curtainRef}
+                className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center gap-6 border-b-8 border-white/10 shadow-2xl"
+                style={{ transform: 'translateY(-100vh)', willChange: 'transform' }}
+            >
+                {/* Curtain content: animated disc only */}
+                <div className="w-24 h-24 rounded-full bg-white/5 border-4 border-white/10 flex items-center justify-center shadow-2xl">
+                    <Disc size={52} className="text-white/50 animate-spin-slow" style={{ animationDuration: '2s' }} />
+                </div>
+                <p className="font-mouse-memoirs text-5xl text-white uppercase tracking-widest">Blind Test</p>
+                {/* Decorative dots */}
+                <div className="flex gap-3">
+                    <div className="w-3 h-3 bg-white/20 rounded-full animate-bounce" style={{ animationDelay: '0s' }} />
+                    <div className="w-3 h-3 bg-white/20 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
+                    <div className="w-3 h-3 bg-white/20 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
+                </div>
+            </div>
         </div>
     );
 }

@@ -232,39 +232,45 @@ function ArtistPage() {
                 {!loading && artist && (
                     <>
                         {/* ── Hero ── */}
-                        <div ref={heroRef} className="relative w-full h-64 md:h-80 flex-shrink-0 overflow-hidden">
-                            {artist.images?.[0]?.url ? (
-                                <img
-                                    src={artist.images[0].url}
-                                    alt={artist.name}
-                                    className="w-full h-full object-cover object-center"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
-                                    <Disc size={96} className="text-zinc-700 animate-spin" style={{ animationDuration: '8s' }} />
-                                </div>
-                            )}
-
-                            {/* Gradient overlays */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#12101b] via-[#12101b]/60 to-transparent" />
-                            <div className="absolute inset-0 bg-black/20" />
-
+                        <div ref={heroRef} className="relative w-full flex-shrink-0 bg-[#12101b] border-b-4 border-black p-6 md:p-10 flex items-center">
                             {/* Back button */}
                             <button
                                 onClick={() => navigate(-1)}
-                                className="absolute top-5 left-5 bg-black/60 hover:bg-black/80 text-white p-2.5 rounded-full border border-zinc-700/40 transition-all duration-200 hover:scale-105 cursor-pointer shadow-lg z-10 flex items-center gap-2"
+                                className="absolute top-5 left-5 bg-zinc-900 hover:bg-zinc-800 text-white p-2.5 rounded-full border-2 border-black transition-all duration-200 hover:scale-105 cursor-pointer shadow-[3px_3px_0px_#000000] z-20 flex items-center"
                             >
                                 <ArrowLeft size={18} />
                             </button>
 
-                            {/* Artist name + badge */}
-                            <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-2">
-                                <span className={`self-start text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border ${popDetails.badge}`}>
-                                    {popDetails.label}
-                                </span>
-                                <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight drop-shadow-2xl">
-                                    {artist.name}
-                                </h1>
+                            <div className="w-full flex flex-col sm:flex-row items-center gap-6 md:gap-8 mt-6">
+                                {/* Left Image Column - Neobrutalist Square Card */}
+                                <div className="flex-shrink-0">
+                                    <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_rgba(255,255,255,0.15)] hover:shadow-[10px_10px_0px_rgba(255,255,255,0.25)] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 bg-zinc-900 flex items-center justify-center">
+                                        {artist.images?.[0]?.url ? (
+                                            <img
+                                                src={artist.images[0].url}
+                                                alt={artist.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+                                                <Disc size={48} className="text-zinc-700 animate-spin" style={{ animationDuration: '8s' }} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Right Info column */}
+                                <div className="flex flex-col gap-3 text-center sm:text-left min-w-0">
+                                    <span className="self-center sm:self-start text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md border-2 border-black bg-[#8B5CF6] text-white shadow-[2px_2px_0px_#000000]">
+                                        {popDetails.label}
+                                    </span>
+                                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase leading-none truncate">
+                                        {artist.name}
+                                    </h1>
+                                    <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-wider hidden md:block">
+                                        Artiste Spotify • {artist.genres?.[0] || 'Général'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 

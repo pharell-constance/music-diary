@@ -94,43 +94,42 @@ function ArtistDetailModal({ artist, onClose }) {
             <div ref={modalRef} data-lenis-prevent className="bg-[#12101b] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
                 
                 {/* Header d'artiste avec couverture et overlay dégradé */}
-                <div className="relative h-48 md:h-56 w-full flex-shrink-0">
-                    {artist.images?.[0]?.url ? (
-                        <img 
-                            src={artist.images[0].url} 
-                            alt={artist.name} 
-                            className="w-full h-full object-cover" 
-                        />
-                    ) : (
-                        <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
-                            <Disc size={80} className="text-zinc-700 animate-spin" style={{ animationDuration: '8s' }} />
+                <div className="relative w-full bg-[#12101b] border-b-4 border-black p-6 flex items-center justify-between gap-6 flex-shrink-0">
+                    {/* Left Info Column */}
+                    <div className="flex flex-col gap-3 z-10 flex-1 min-w-0">
+                        <span className={`self-start text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded bg-[#8B5CF6] text-white border-2 border-black shadow-[2px_2px_0px_#000000]`}>
+                            {popDetails.label}
+                        </span>
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight truncate uppercase leading-none">
+                            {artist.name}
+                        </h2>
+                    </div>
+
+                    {/* Right Image Column - Neobrutalist Square Card */}
+                    <div className="flex-shrink-0 relative z-10">
+                        <div className="w-18 h-18 md:w-24 md:h-24 rounded-xl overflow-hidden border-3 border-black shadow-[4px_4px_0px_rgba(255,255,255,0.15)] hover:shadow-[8px_8px_0px_rgba(255,255,255,0.25)] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 bg-zinc-900 flex items-center justify-center">
+                            {artist.images?.[0]?.url ? (
+                                <img 
+                                    src={artist.images[0].url} 
+                                    alt={artist.name} 
+                                    className="w-full h-full object-cover" 
+                                />
+                            ) : (
+                                <Disc size={36} className="text-zinc-700 animate-spin" style={{ animationDuration: '8s' }} />
+                            )}
                         </div>
-                    )}
-                    
-                    {/* Dégradés Spotify styles */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#12101b] via-[#12101b]/50 to-transparent"></div>
-                    <div className="absolute inset-0 bg-black/30"></div>
-                    
-                    {/* Bouton Fermer */}
+                    </div>
+
+                    {/* Close Button */}
                     <button 
                         onClick={() => {
                             if (audio) audio.pause();
                             onClose();
                         }}
-                        className="absolute top-4 right-4 bg-black/60 hover:bg-black/80 hover:scale-105 text-white p-2.5 rounded-full border border-zinc-700/40 transition duration-200 cursor-pointer shadow-lg z-10"
+                        className="absolute top-4 right-4 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white p-2 rounded-lg border-2 border-black transition duration-200 cursor-pointer shadow-[2px_2px_0px_#000000] z-20"
                     >
-                        <X size={18} />
+                        <X size={14} />
                     </button>
-                    
-                    {/* Infos textuelles sur l'image */}
-                    <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-2">
-                        <span className={`self-start text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border ${popDetails.textClass}`}>
-                            {popDetails.label}
-                        </span>
-                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight drop-shadow-md">
-                            {artist.name}
-                        </h2>
-                    </div>
                 </div>
 
                 {/* Zone de scroll */}

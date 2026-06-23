@@ -3,10 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 export default function useHomeData() {
-    const [user] = useState(() => {
+    const [user, setUser] = useState(() => {
         const savedUser = localStorage.getItem('user');
         return savedUser ? JSON.parse(savedUser) : null;
     });
+
+    const refreshUser = () => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) setUser(JSON.parse(savedUser));
+    };
     const location = useLocation();
     const [currentTab, setCurrentTab] = useState(() => {
         return location.state?.tab || 'home';
@@ -68,6 +73,9 @@ export default function useHomeData() {
 
     useEffect(() => {
         if (currentTab === 'home') fetchTrending(20);
+        // Rafraîchir le profil utilisateur quand on navigue vers le blind test
+        // pour s'assurer que l'artiste favori est bien à jour
+        if (currentTab === 'blindtest') refreshUser();
     }, [currentTab]);
 
     useEffect(() => {
@@ -323,6 +331,7 @@ export default function useHomeData() {
 
     return {
         user,
+        refreshUser,
         currentTab,
         setCurrentTab,
         searchQuery,

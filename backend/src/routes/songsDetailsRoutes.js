@@ -5,16 +5,111 @@ const { authenticateToken } = require('../middlewares/auth');
 const { getSpotifyToken, getValidUserAccessToken } = require('../services/spotifyAuthService');
 const { getArtistGenres, getArtistStats } = require('../services/spotifyDataService');
 
+async function getArtistEmbedFallback(artistId) {
+    try {
+        const url = `https://open.spotify.com/embed/artist/${artistId}`;
+        const res = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+        });
+        if (!res.ok) return null;
+        const html = await res.text();
+        const startTag = '<script id="__NEXT_DATA__" type="application/json">';
+        const endTag = '</script>';
+        const startIndex = html.indexOf(startTag);
+        if (startIndex === -1) return null;
+        
+        const jsonStart = startIndex + startTag.length;
+        const jsonEnd = html.indexOf(endTag, jsonStart);
+        if (jsonEnd === -1) return null;
+        
+        const jsonText = html.substring(jsonStart, jsonEnd);
+        const parsed = JSON.parse(jsonText);
+        
+        const entity = parsed.props?.pageProps?.state?.data?.entity;
+        if (!entity || entity.type !== 'artist') return null;
+        
+        const name = entity.name;
+        const images = entity.visualIdentity?.image || [];
+        const trackList = entity.trackList || [];
+        
+        const artistCover = images[0]?.url || "";
+        const topTracks = await Promise.all(trackList.map(async track => {
+            const trackId = track.uri?.split(':').pop() || '';
+            let albumCover = "";
+            let albumName = "";
+            try {
+                const localReview = await prisma.review.findFirst({
+                    where: { spotifyAlbumId: trackId },
+                    select: { albumCover: true, albumName: true }
+                });
+                if (localReview) {
+                    albumCover = localReview.albumCover || "";
+                    albumName = localReview.albumName || "";
+                }
+            } catch (dbErr) {
+                console.error("Failed to query local review cover:", dbErr);
+            }
+            return {
+                id: trackId,
+                name: track.title,
+                albumName: albumName,
+                albumCover: albumCover || artistCover,
+                durationMs: track.duration,
+                previewUrl: track.audioPreview?.url || ""
+            };
+        }));
+        
+        return {
+            id: artistId,
+            name: name,
+            images: images,
+            topTracks: topTracks
+        };
+    } catch (err) {
+        console.error("Embed fallback failed:", err);
+        return null;
+    }
+}
+
 router.get('/artists/:artistId/details', authenticateToken, async (req, res) => {
     try {
         const artistId = req.params.artistId;
         const clientToken = await getSpotifyToken();
 
-        const artistResponse = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
-            headers: { 'Authorization': `Bearer ${clientToken}` }
-        });
+        let artistResponse = null;
+        try {
+            artistResponse = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+                headers: { 'Authorization': `Bearer ${clientToken}` }
+            });
+        } catch (fetchErr) {
+            console.error("Spotify API fetch failed directly:", fetchErr);
+        }
 
-        if (!artistResponse.ok) {
+        // If Spotify API call fails or returns non-ok (like 429 Rate Limit)
+        if (!artistResponse || !artistResponse.ok) {
+            const status = artistResponse ? artistResponse.status : 500;
+            console.warn(`Spotify API artist details returned non-OK status: ${status}. Trying public embed fallback...`);
+            
+            const fallbackData = await getArtistEmbedFallback(artistId);
+            if (fallbackData) {
+                const genres = getArtistGenres({ name: fallbackData.name });
+                const stats = getArtistStats(fallbackData.name);
+                
+                return res.json({
+                    id: fallbackData.id,
+                    name: fallbackData.name,
+                    images: fallbackData.images || [],
+                    followers: stats.followers,
+                    popularity: stats.popularity,
+                    monthlyListeners: stats.monthlyListeners,
+                    genres: genres,
+                    topTracks: fallbackData.topTracks
+                });
+            }
+
+            // Fallback to database user favorite artist if any
             const userWithFav = await prisma.user.findFirst({
                 where: { favArtistId: artistId }
             });
@@ -30,61 +125,78 @@ router.get('/artists/:artistId/details', authenticateToken, async (req, res) => 
                     topTracks: []
                 });
             }
-            return res.status(artistResponse.status).json({ error: "Impossible de récupérer les détails de l'artiste depuis Spotify (Erreur 429 Rate Limit)" });
+
+            return res.status(status).json({ error: "Impossible de récupérer les détails de l'artiste depuis Spotify (Erreur 429 Rate Limit)" });
         }
+
         const artistData = await artistResponse.json();
 
         let topTracks = [];
         const userToken = await getValidUserAccessToken(req.user.userId);
         if (userToken) {
-            const tracksResponse = await fetch(`https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=FR`, {
-                headers: { 'Authorization': `Bearer ${userToken}` }
-            });
-            if (tracksResponse.ok) {
-                const tracksData = await tracksResponse.json();
-                topTracks = (tracksData.tracks || []).slice(0, 10).map(track => ({
-                    id: track.id,
-                    name: track.name,
-                    albumName: track.album?.name || "",
-                    albumCover: track.album?.images?.[0]?.url || "",
-                    durationMs: track.duration_ms,
-                    previewUrl: track.preview_url
-                }));
+            try {
+                const tracksResponse = await fetch(`https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=FR`, {
+                    headers: { 'Authorization': `Bearer ${userToken}` }
+                });
+                if (tracksResponse.ok) {
+                    const tracksData = await tracksResponse.json();
+                    topTracks = (tracksData.tracks || []).slice(0, 10).map(track => ({
+                        id: track.id,
+                        name: track.name,
+                        albumName: track.album?.name || "",
+                        albumCover: track.album?.images?.[0]?.url || "",
+                        durationMs: track.duration_ms,
+                        previewUrl: track.preview_url
+                    }));
+                }
+            } catch (err) {
+                console.error("Failed to fetch top tracks with userToken:", err);
             }
         }
 
         if (topTracks.length === 0) {
-            const artistName = encodeURIComponent(artistData.name);
-            const searchRes = await fetch(
-                `https://api.spotify.com/v1/search?q=artist:${artistName}&type=track&market=FR&limit=10`,
-                { headers: { 'Authorization': `Bearer ${clientToken}` } }
-            );
-            if (searchRes.ok) {
-                const searchData = await searchRes.json();
-                const filtered = (searchData.tracks?.items || [])
-                    .filter(t => t.artists?.some(a => a.id === artistId))
-                    .slice(0, 10);
-                topTracks = filtered.map(track => ({
-                    id: track.id,
-                    name: track.name,
-                    albumName: track.album?.name || "",
-                    albumCover: track.album?.images?.[0]?.url || "",
-                    durationMs: track.duration_ms,
-                    previewUrl: track.preview_url
-                }));
+            try {
+                const artistName = encodeURIComponent(artistData.name);
+                const searchRes = await fetch(
+                    `https://api.spotify.com/v1/search?q=artist:${artistName}&type=track&market=FR&limit=10`,
+                    { headers: { 'Authorization': `Bearer ${clientToken}` } }
+                );
+                if (searchRes.ok) {
+                    const searchData = await searchRes.json();
+                    const filtered = (searchData.tracks?.items || [])
+                        .filter(t => t.artists?.some(a => a.id === artistId))
+                        .slice(0, 10);
+                    topTracks = filtered.map(track => ({
+                        id: track.id,
+                        name: track.name,
+                        albumName: track.album?.name || "",
+                        albumCover: track.album?.images?.[0]?.url || "",
+                        durationMs: track.duration_ms,
+                        previewUrl: track.preview_url
+                    }));
+                }
+            } catch (err) {
+                console.error("Failed to search top tracks fallback:", err);
             }
         }
 
-        const genres = getArtistGenres(artistData);
+        // Use real Spotify info instead of fake mocked statistics when Spotify returns data
         const stats = getArtistStats(artistData.name);
+        const realFollowers = artistData.followers?.total || stats.followers;
+        const realPopularity = artistData.popularity || stats.popularity;
+        const genres = artistData.genres && artistData.genres.length > 0 ? artistData.genres : getArtistGenres(artistData);
+
+        // Estimate monthly listeners based on real followers and popularity
+        const mult = 0.4 + (realPopularity / 100) * 0.8;
+        const realMonthlyListeners = realFollowers > 0 ? Math.round(realFollowers * mult) : stats.monthlyListeners;
 
         res.json({
             id: artistData.id,
             name: artistData.name,
             images: artistData.images || [],
-            followers: stats.followers,
-            popularity: stats.popularity,
-            monthlyListeners: stats.monthlyListeners,
+            followers: realFollowers,
+            popularity: realPopularity,
+            monthlyListeners: realMonthlyListeners,
             genres: genres,
             topTracks: topTracks
         });
