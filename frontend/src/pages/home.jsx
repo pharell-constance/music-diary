@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import ReviewModal from '../components/ReviewModal';
 import ConfirmModal from '../components/ConfirmModal';
@@ -12,10 +12,17 @@ import HomeJournalTab from '../components/home/HomeJournalTab';
 import useHomeData from '../hooks/useHomeData';
 import NeobrutalLoader from '../components/NeobrutalLoader';
 import BlindTestTab from '../components/home/BlindTestTab';
+import ArcadeHubTab from '../components/home/ArcadeHubTab';
+import GuessTheCoverTab from '../components/home/GuessTheCoverTab';
 
 function Home() {
     const navigate = useNavigate();
     const home = useHomeData();
+    const [activeGame, setActiveGame] = useState(null);
+
+    useEffect(() => {
+        setActiveGame(null);
+    }, [home.currentTab]);
 
     useEffect(() => {
         if (home.user && (home.user.role === 'ADMIN' || home.user.role === 'OWNER')) {
@@ -79,12 +86,28 @@ function Home() {
                     <NotificationsTab />
                 )}
 
-                {/* Blind Test */}
+                {/* Jeux (Hub Arcade / Blind Test / Devine la Pochette) */}
                 {home.currentTab === 'blindtest' && (
-                    <BlindTestTab
-                        user={home.user}
-                        onBackToHome={() => home.setCurrentTab('home')}
-                    />
+                    <>
+                        {activeGame === null && (
+                            <ArcadeHubTab
+                                user={home.user}
+                                onSelectGame={setActiveGame}
+                            />
+                        )}
+                        {activeGame === 'blindtest' && (
+                            <BlindTestTab
+                                user={home.user}
+                                onBackToHome={() => setActiveGame(null)}
+                            />
+                        )}
+                        {activeGame === 'guessthecover' && (
+                            <GuessTheCoverTab
+                                user={home.user}
+                                onBackToHome={() => setActiveGame(null)}
+                            />
+                        )}
+                    </>
                 )}
             </div>
 
