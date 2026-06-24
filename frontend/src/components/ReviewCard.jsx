@@ -9,11 +9,32 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
         if (!review.likes || !currentUserId) return false;
         return review.likes.some(l => l.userId === currentUserId);
     });
+
     const [likesCount, setLikesCount] = useState(review.likes?.length || 0);
     const [showComments, setShowComments] = useState(false);
     const [commentsList, setCommentsList] = useState(review.comments || []);
     const [newComment, setNewComment] = useState('');
     const [loadingComments, setLoadingComments] = useState(false);
+    const [loadingArtist, setLoadingArtist] = useState(false);
+
+    const handleArtistClick = async () => {
+        if (!review.artistName || loadingArtist) return;
+        setLoadingArtist(true);
+        try {
+            const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(review.artistName)}&type=artist`);
+            if (res.ok) {
+                const data = await res.json();
+                const artist = data.artists?.items?.[0];
+                if (artist && artist.id) {
+                    navigate(`/artist/${artist.id}`, { state: { artistData: artist } });
+                }
+            }
+        } catch (err) {
+            console.error("Error navigating to artist:", err);
+        } finally {
+            setLoadingArtist(false);
+        }
+    };
 
     const handleLikeToggle = async () => {
         const token = localStorage.getItem('token');
@@ -88,7 +109,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
     return (
         <div className="neobrutal-card bg-[#121214] flex flex-col relative group transition-all duration-300 overflow-hidden">
             <div className="p-5 md:p-6 flex flex-col gap-4">
-            <div className="flex gap-5">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
                 {/* ZONE ACTIONS (Modifier / Supprimer / Signaler) */}
                 {onEdit && onDelete ? (
                     <div className="absolute top-5 right-5 md:top-6 md:right-6 flex items-center gap-3 md:opacity-0 md:group-hover:opacity-100 transition focus-within:opacity-100 z-10">
@@ -146,7 +167,7 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                 </div>
 
                 {/* Infos */}
-                <div className="flex flex-col justify-between overflow-hidden pr-12 md:pr-14 flex-1 min-w-0">
+                <div className="flex flex-col justify-between overflow-hidden pr-0 sm:pr-12 md:pr-14 flex-1 min-w-0 w-full">
                     <div className="space-y-2">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-violet-400/80 mb-0.5">Album</p>
@@ -168,7 +189,16 @@ function ReviewCard({ review, onEdit, onDelete, onReport, currentUserId, current
                             >
                                 {review.albumName}
                             </h3>
-                            <p className="text-sm text-zinc-400 truncate mt-0.5 font-medium">{review.artistName}</p>
+                            <p 
+                                onClick={handleArtistClick}
+                                className={`text-sm truncate mt-0.5 font-medium transition-colors ${
+                                    loadingArtist 
+                                        ? 'text-violet-400 cursor-wait animate-pulse' 
+                                        : 'text-zinc-400 cursor-pointer hover:text-violet-400'
+                                }`}
+                            >
+                                {review.artistName}
+                            </p>
                         </div>
 
                         <div className="flex items-center gap-1.5">

@@ -1,10 +1,11 @@
 import API_URL from '../config.js';
 import { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Headphones, Users, Play, Pause, Disc, Music, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Headphones, Users, Play, Pause, Disc, Music, ExternalLink, Sparkles } from 'lucide-react';
 import gsap from 'gsap';
 import Sidebar from '../components/Sidebar';
 import NeobrutalLoader from '../components/NeobrutalLoader';
+import MikuBeamTransition from '../components/MikuBeamTransition';
 
 function ArtistPage() {
     const { artistId } = useParams();
@@ -21,6 +22,18 @@ function ArtistPage() {
     const [error, setError] = useState('');
     const [playingId, setPlayingId] = useState(null);
     const [audio, setAudio] = useState(null);
+    const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+    const [showMikuBeam, setShowMikuBeam] = useState(false);
+
+    useEffect(() => {
+        const syncTheme = (e) => {
+            if (e.detail) {
+                setCurrentTheme(e.detail);
+            }
+        };
+        window.addEventListener('theme-changed', syncTheme);
+        return () => window.removeEventListener('theme-changed', syncTheme);
+    }, []);
 
     // GSAP refs
     const heroRef = useRef(null);
@@ -195,6 +208,25 @@ function ArtistPage() {
         }
     };
 
+    const isHatsuneMiku = artist && (
+        artist.id === '1Y87576PzvkZ2R9ysL7xtv' || 
+        artist.name?.toLowerCase().includes('hatsune miku') || 
+        artist.name?.includes('初音ミク')
+    );
+
+    const handleToggleMikuTheme = () => {
+        const nextTheme = currentTheme === 'miku' ? 'dark' : 'miku';
+        
+        if (nextTheme === 'miku') {
+            setShowMikuBeam(true);
+        } else {
+            // Immediate change when turning OFF the theme
+            setCurrentTheme(nextTheme);
+            localStorage.setItem('theme', nextTheme);
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: nextTheme }));
+        }
+    };
+
     const popDetails = artist ? getPopDetails(artist.popularity) : null;
 
     return (
@@ -241,7 +273,7 @@ function ArtistPage() {
                                 <ArrowLeft size={18} />
                             </button>
 
-                            <div className="w-full flex flex-col sm:flex-row items-center gap-6 md:gap-8 mt-6">
+                             <div className="w-full flex flex-col sm:flex-row items-center gap-6 md:gap-8 mt-12 sm:mt-6">
                                 {/* Left Image Column - Neobrutalist Square Card */}
                                 <div className="flex-shrink-0">
                                     <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_rgba(255,255,255,0.15)] hover:shadow-[10px_10px_0px_rgba(255,255,255,0.25)] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 bg-zinc-900 flex items-center justify-center">
@@ -270,6 +302,20 @@ function ArtistPage() {
                                     <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-wider hidden md:block">
                                         Artiste Spotify • {artist.genres?.[0] || 'Général'}
                                     </p>
+                                    {isHatsuneMiku && (
+                                        <button
+                                            onClick={handleToggleMikuTheme}
+                                            className={`self-center sm:self-start flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest border-2 border-black rounded-xl shadow-[3px_3px_0px_#000000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#000000] active:translate-y-0.5 active:shadow-none transition-all duration-150 cursor-pointer ${
+                                                currentTheme === 'miku'
+                                                    ? 'bg-red-500 text-white'
+                                                    : 'bg-[#39C5BB] text-black hover:bg-[#2eb3a9]'
+                                            }`}
+                                            title="Activer/Désactiver le Thème Secret Hatsune Miku"
+                                        >
+                                            <Sparkles size={11} className={currentTheme === 'miku' ? 'animate-pulse' : 'animate-spin-slow'} style={{ animationDuration: '6s' }} />
+                                            <span>{currentTheme === 'miku' ? 'Désactiver le secret' : 'Activer le secret'}</span>
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -432,6 +478,18 @@ function ArtistPage() {
                     </>
                 )}
             </div>
+
+            {showMikuBeam && (
+                <MikuBeamTransition
+                    onThemeSwap={() => {
+                        const nextTheme = 'miku';
+                        setCurrentTheme(nextTheme);
+                        localStorage.setItem('theme', nextTheme);
+                        window.dispatchEvent(new CustomEvent('theme-changed', { detail: nextTheme }));
+                    }}
+                    onComplete={() => setShowMikuBeam(false)}
+                />
+            )}
         </div>
     );
 }

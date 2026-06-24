@@ -284,22 +284,28 @@ export default function useHomeData() {
         setLoading(true);
         console.log(`[Search] query: "${query}", type: "${type}"`);
         const token = localStorage.getItem('token');
+        
+        let apiQuery = query;
+        if ((type === 'albums' || type === 'members') && query.startsWith('genre:')) {
+            apiQuery = query.replace(/^genre:/, '');
+        }
+
         try {
             if (type === 'albums') {
-                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&type=album`);
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(apiQuery)}&type=album`);
                 const data = await response.json();
                 if (data.albums?.items) setAlbums(data.albums.items);
             } else if (type === 'artists') {
-                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&type=artist`);
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(apiQuery)}&type=artist`);
                 const data = await response.json();
                 if (data.artists?.items) setArtists(data.artists.items);
             } else if (type === 'tracks') {
-                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&type=track`);
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(apiQuery)}&type=track`);
                 const data = await response.json();
                 console.log("[Search] tracks returned:", data.tracks?.items?.length || 0);
                 if (data.tracks?.items) setTracks(data.tracks.items);
             } else {
-                const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(query)}`, {
+                const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(apiQuery)}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await response.json();
@@ -389,6 +395,7 @@ export default function useHomeData() {
         handleSearch,
         handleSwitchSearchType,
         fetchMyReviews,
-        fetchExploreUsers
+        fetchExploreUsers,
+        triggerSearch
     };
 }

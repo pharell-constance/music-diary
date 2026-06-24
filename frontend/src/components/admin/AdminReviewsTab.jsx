@@ -8,7 +8,7 @@ function AdminReviewsTab({ paginatedReviews, onDeleteReview }) {
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60">
+                    <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60 whitespace-nowrap">
                         <th className="py-4 px-6">Album / Artiste</th>
                         <th className="py-4 px-6 text-center">Note</th>
                         <th className="py-4 px-6">Critique</th>

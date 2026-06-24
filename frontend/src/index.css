@@ -736,7 +736,9 @@ body.light .text-purple-400 {
 /* Ensure outlined text headings inside light theme keep their styles */
 body.light .text-stroke-dark,
 body.light .text-stroke-black {
-  color: #ffffff !important;
+  -webkit-text-stroke: none !important;
+  color: #000000 !important;
+  text-shadow: none !important;
 }
 
 /* Neobrutalist card, button and modal layouts overrides */
@@ -967,6 +969,34 @@ body.light .theme-toggle-container {
   border-color: #000000 !important;
   color: #000000 !important;
   box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.light .theme-toggle-container .bg-zinc-950\/40 {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+body.light .theme-toggle-container button {
+  color: #71717a !important;
+}
+
+body.light .theme-toggle-container button:hover {
+  color: #000000 !important;
+}
+
+body.light .theme-toggle-container button.bg-zinc-800 {
+  background-color: #e4e4e7 !important;
+  color: #000000 !important;
+}
+
+body.light .theme-toggle-container button.bg-zinc-300 {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.light .theme-toggle-container button.bg-pink-500 {
+  background-color: #db2777 !important;
+  color: #ffffff !important;
 }
 
 /* Specific elements & custom neobrutalist styling exceptions */
@@ -1642,4 +1672,2698 @@ body.light .text-emerald-600 {
 /* Red border override for incorrect options in light mode */
 body.light .border-red-600 {
   border-color: #dc2626 !important;
+}
+
+/* =============================================
+   ANIME THEME (VOCALOID POP - JESUSP "RIMOKON")
+   ============================================= */
+
+body.anime {
+  background-color: #ffe100 !important;
+  color: #000000 !important;
+  background-attachment: fixed;
+
+  /* Rin/Len High-Contrast Palette Overrides for Tailwind Components */
+  --color-violet-50: #fffbeb;
+  --color-violet-100: #fef3c7;
+  --color-violet-200: #fde68a;
+  --color-violet-300: #fcd34d;
+  --color-violet-400: #fbbf24;
+  --color-violet-500: #000000; /* Primary actions are solid black */
+  --color-violet-600: #1a1a1a;
+  --color-violet-700: #262626;
+  --color-violet-800: #404040;
+  --color-violet-900: #525252;
+  --color-violet-950: #737373;
+
+  --color-fuchsia-50: #ecfeff;
+  --color-fuchsia-100: #cffafe;
+  --color-fuchsia-200: #a5f3fc;
+  --color-fuchsia-300: #67e8f9;
+  --color-fuchsia-400: #22d3ee;
+  --color-fuchsia-500: #00bcd4; /* Len Cyan Accent */
+  --color-fuchsia-600: #00acc1;
+  --color-fuchsia-700: #0097a7;
+  --color-fuchsia-800: #00838f;
+  --color-fuchsia-900: #006064;
+  --color-fuchsia-950: #083344;
+}
+
+/* Reset cosmic ambient glows for body::before and body::after */
+body.anime::before,
+body.anime::after {
+  border-radius: 0 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+}
+
+/* Solid Yellow Background layer */
+body.anime::before {
+  content: '' !important;
+  z-index: -2 !important;
+  background-color: #ffe100 !important;
+  background-image: none !important;
+}
+
+/* Floating Retro Controller Silhouettes in Background */
+body.anime::after {
+  content: '' !important;
+  z-index: -1 !important;
+  background-image: 
+    /* D-pad silhouette */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M9,3h6v6h6v6h-6v6H9v-6H3V9h6V3z' fill='%23000000' opacity='0.035'/%3E%3C/svg%3E"),
+    /* Cassette silhouette */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='28' height='28'%3E%3Crect x='2' y='4' width='20' height='16' rx='2' fill='%23000000' opacity='0.035'/%3E%3Ccircle cx='8' cy='11' r='2' fill='%23000000' opacity='0.035'/%3E%3Ccircle cx='16' cy='11' r='2' fill='%23000000' opacity='0.035'/%3E%3C/svg%3E"),
+    /* Retro remote controller silhouette */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' height='20'%3E%3Crect x='7' y='2' width='10' height='20' rx='2' fill='%23000000' opacity='0.035'/%3E%3Ccircle cx='12' cy='6' r='2' fill='%23000000' opacity='0.035'/%3E%3Crect x='10' y='11' width='4' height='6' rx='1' fill='%23000000' opacity='0.035'/%3E%3C/svg%3E") !important;
+  animation: retro-float 35s linear infinite !important;
+}
+
+@keyframes retro-float {
+  0% {
+    background-position: 0px 0px, 0px 0px, 0px 0px;
+  }
+  100% {
+    background-position: 150px 500px, -100px 300px, 50px 400px;
+  }
+}
+
+/* Page container backgrounds override to ensure the background is solid yellow */
+body.anime .bg-black,
+body.anime .bg-\[\#12101b\],
+body.anime .bg-\[\#07050f\],
+body.anime .bg-\[\#07050f\]\/80,
+body.anime .bg-zinc-900,
+body.anime .bg-zinc-950,
+body.anime .bg-zinc-950\/40,
+body.anime .bg-zinc-900\/50,
+body.anime .bg-black\/40,
+body.anime .bg-black\/70,
+body.anime .bg-white\/2,
+body.anime .bg-white\/\[0\.03\],
+body.anime .bg-white\/\[0\.01\],
+body.anime .bg-black\/20,
+body.anime .bg-zinc-900\/30,
+body.anime .bg-\[\#0c0c0e\],
+body.anime .bg-\[\#121214\],
+body.anime .bg-\[\#0e0e11\] {
+  background-color: #ffe100 !important;
+}
+
+/* Eradicate gradients inside layout pages */
+body.anime .bg-gradient-to-br,
+body.anime .bg-gradient-to-r,
+body.anime .bg-gradient-to-tr,
+body.anime .bg-gradient-to-t,
+body.anime .bg-gradient-to-b {
+  background-image: none !important;
+}
+
+/* Bold heavy titles with white backing shadows */
+body.anime h1, 
+body.anime h2, 
+body.anime h3, 
+body.anime h4, 
+body.anime h5, 
+body.anime h6 {
+  color: #000000 !important;
+  text-shadow: 2px 2px 0px #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* Outline text-stroke logic for pop titles */
+body.anime .text-stroke-dark,
+body.anime .text-stroke-black,
+body.anime .text-stroke-white {
+  -webkit-text-stroke: none !important;
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Horizontal Katakana Decal Sticker placed cleanly under the logo */
+body.anime .sidebar-container::after {
+  content: 'リモコン' !important; /* "Remote Controller" in Japanese */
+  position: absolute !important;
+  top: 78px !important;
+  left: 20px !important;
+  transform: rotate(-4deg) !important;
+  background: #000000 !important;
+  color: #ffe100 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #ffffff !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  padding: 4px 10px !important;
+  border-radius: 4px !important;
+  z-index: 20 !important;
+  white-space: nowrap !important;
+}
+
+/* High Contrast Vocaloid Cards */
+body.anime .neobrutal-card {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 5px 5px 0px 0px #000000 !important;
+  border-radius: 12px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.anime .neobrutal-card:hover {
+  transform: translate(-3px, -3px) !important;
+  border-color: #000000 !important;
+  box-shadow: 8px 8px 0px 0px #00bcd4 !important; /* Len Cyan glow shadow on hover */
+}
+
+/* High Contrast Outlined Buttons */
+body.anime .neobrutal-btn {
+  border: 3px solid #000000 !important;
+  background-color: #00bcd4 !important; /* Cyan button */
+  color: #000000 !important;
+  box-shadow: 3px 3px 0px 0px #000000 !important;
+  border-radius: 10px !important;
+  font-weight: 900 !important;
+  transform: none !important;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+body.anime .neobrutal-btn:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 5px 5px 0px 0px #000000 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.anime .neobrutal-btn.text-white {
+  color: #000000 !important;
+}
+
+/* Sticker Badges */
+body.anime .neo-badge {
+  background-color: #ffe100 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  font-weight: 800 !important;
+  transform: none !important;
+}
+
+/* Yellow Sidebar with Black borders */
+body.anime .sidebar-container {
+  background-color: #ffe100 !important;
+  border-right: 4px solid #000000 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.anime .mobile-nav-container {
+  background-color: #ffe100 !important;
+  border-top: 4px solid #000000 !important;
+}
+
+body.anime .sidebar-container .bg-zinc-950\/40 {
+  background-color: #ffffff !important;
+  border: 2.5px solid #000000 !important;
+  border-radius: 10px !important;
+}
+
+/* Active navigation item in sidebar (Solid Black with white text) */
+body.anime .sidebar-container button.border-violet-400 {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 3px 3px 0px #ffffff !important;
+}
+body.anime .sidebar-container button.border-violet-400 svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+body.anime .sidebar-container button.border-violet-400 span {
+  color: #ffffff !important;
+}
+
+/* Inactive navigation items in sidebar */
+body.anime .sidebar-container button:not(.border-violet-400) {
+  color: #000000 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+body.anime .sidebar-container button:not(.border-violet-400) svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+body.anime .sidebar-container button:not(.border-violet-400) span {
+  color: #000000 !important;
+}
+body.anime .sidebar-container button:not(.border-violet-400):hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #000000 !important;
+}
+
+/* White background Input Fields */
+body.anime input[type="text"],
+body.anime input[type="password"],
+body.anime input[type="email"],
+body.anime input[type="search"],
+body.anime input[type="number"],
+body.anime textarea {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  color: #000000 !important;
+  border-radius: 8px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.anime input:focus,
+body.anime textarea:focus {
+  border-color: #00bcd4 !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+  background: #ffffff !important;
+}
+
+body.anime input::placeholder,
+body.anime textarea::placeholder {
+  color: #737373 !important;
+}
+
+/* Override text colors to solid black for perfect readability */
+body.anime .text-white,
+body.anime .text-zinc-100,
+body.anime .text-zinc-200,
+body.anime .text-zinc-300,
+body.anime .text-zinc-400,
+body.anime .text-zinc-550,
+body.anime .text-zinc-500,
+body.anime .text-zinc-650,
+body.anime .text-zinc-600 {
+  color: #000000 !important;
+}
+
+body.anime .sidebar-container .text-zinc-400 {
+  color: #000000 !important;
+}
+
+body.anime .neobrutal-card .text-white,
+body.anime .neobrutal-card .text-zinc-300,
+body.anime .neobrutal-card .text-zinc-400 {
+  color: #000000 !important;
+}
+
+/* Keep dark elements texts white */
+body.anime button.bg-black .text-white,
+body.anime .bg-zinc-950 .text-white,
+body.anime .bg-black:not(.min-h-screen) .text-white,
+body.anime .bg-zinc-900 .text-white {
+  color: #ffffff !important;
+}
+
+body.anime .min-w-5.h-5.bg-red-500 .text-white,
+body.anime .min-w-5.h-5.bg-red-500 {
+  color: #ffffff !important;
+}
+
+/* High contrast highlight colors (e.g. for LEN name highlight or ALBUM label) */
+body.anime .text-violet-400,
+body.anime .text-violet-500,
+body.anime .text-fuchsia-400,
+body.anime .text-fuchsia-500,
+body.anime .text-yellow-400,
+body.anime .text-yellow-500,
+body.anime .text-amber-400,
+body.anime .text-amber-500,
+body.anime .text-amber-600 {
+  color: #db2777 !important; /* Hot pink/magenta highlight for high contrast */
+}
+
+/* Icons styling - Force SVG stroke to black (except inside dark elements) */
+body.anime svg {
+  stroke: #000000 !important;
+}
+body.anime .sidebar-container button.border-violet-400 svg {
+  stroke: #ffffff !important;
+}
+
+/* Subtabs / pill-btn overrides (white buttons with solid black borders) */
+body.anime .pill-btn.inactive {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+body.anime .pill-btn.inactive:hover {
+  background: #00bcd4 !important;
+  color: #000000 !important;
+}
+body.anime .pill-btn.active {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #ffe100 !important;
+}
+
+/* Grid background override */
+body.anime .bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px) !important;
+}
+
+/* Thick black scrollbar */
+body.anime .custom-scrollbar::-webkit-scrollbar-track {
+  background: #ffe100 !important;
+}
+
+body.anime .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #000000 !important;
+  border: 2px solid #ffe100 !important;
+}
+
+body.anime .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #00bcd4 !important;
+}
+
+/* List Items */
+body.anime .neo-list-item {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.anime .neo-list-item:hover {
+  border-color: #000000 !important;
+  background-color: #fffbeb !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+}
+
+/* High Contrast Stats Cards */
+body.anime .neo-stat-card {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+}
+
+body.anime .neo-stat-card:hover {
+  border-color: #000000 !important;
+  box-shadow: 6px 6px 0px #00bcd4 !important;
+  transform: translate(-2px, -2px) !important;
+}
+
+/* Outlined Modal */
+body.anime .neo-modal {
+  background: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.anime .neo-divider {
+  background: #000000 !important;
+  height: 3px !important;
+  opacity: 1 !important;
+}
+
+/* Search Tab & Spotify selectors */
+body.anime .spotify-subtab-btn {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.anime .spotify-subtab-btn:hover {
+  background: #f4f4f5 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.anime .spotify-subtab-btn.active {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  border-color: #000000 !important;
+}
+
+body.anime .spotify-time-range-container {
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.anime .spotify-time-range-btn {
+  color: #000000 !important;
+}
+
+body.anime .spotify-time-range-btn:hover {
+  color: #000000 !important;
+}
+
+body.anime .spotify-time-range-btn.active {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Theme toggle segment control styles */
+body.anime .theme-toggle-container {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.anime .theme-toggle-container span,
+body.anime .theme-toggle-container div {
+  color: #000000 !important;
+}
+
+body.anime .theme-toggle-container button {
+  color: #71717a !important;
+  border: 2px solid transparent !important;
+}
+
+body.anime .theme-toggle-container button:hover {
+  color: #000000 !important;
+}
+
+body.anime .theme-toggle-container button.bg-zinc-800 {
+  background-color: #e4e4e7 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.anime .theme-toggle-container button.bg-zinc-300 {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.anime .theme-toggle-container button.bg-pink-500 {
+  background-color: #ffe100 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 1px 1px 0px #000000 !important;
+}
+
+body.anime .theme-toggle-btn {
+  background-color: #ffe100 !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+/* Hide blur background glow elements in Anime theme to keep yellow background clean */
+body.anime [class*="blur-"]:not([class*="backdrop-blur"]) {
+  display: none !important;
+}
+
+/* White background overrides for section card and empty state containers */
+body.anime .neo-section {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  border-radius: 16px !important;
+}
+
+body.anime .neo-empty {
+  background-color: #ffffff !important;
+  border: 3px dashed #000000 !important;
+  color: #000000 !important;
+  border-radius: 20px !important;
+}
+
+/* =============================================
+   ANIME THEME ADDITIONAL REFINEMENTS (REVIEW CARDS & COMMENTS)
+   ============================================= */
+
+/* Review card footer */
+body.anime .neobrutal-card div.bg-black\/20.py-3 {
+  background-color: #f4f4f5 !important;
+  border: none !important;
+  border-top: 3px solid #000000 !important;
+  border-radius: 0 0 9px 9px !important;
+}
+
+/* Comment drawer border */
+body.anime .neobrutal-card .border-t.border-white\/\[0\.05\],
+body.anime .neobrutal-card .border-t.border-white\/\[0\.06\] {
+  border-top: 3px solid #000000 !important;
+}
+
+/* Comment items & suggested album boxes */
+body.anime .neobrutal-card div.bg-black\/20.p-2\.5 {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+body.anime .neobrutal-card div.bg-black\/20.p-2\.5:hover {
+  background-color: #ffe100 !important;
+  border-color: #00bcd4 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+
+/* Comment Form Submit Button */
+body.anime .neobrutal-card form button[type="submit"] {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+body.anime .neobrutal-card form button[type="submit"]:hover:not(:disabled) {
+  background-color: #ffe100 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.anime .neobrutal-card form button[type="submit"]:disabled {
+  background-color: #e4e4e7 !important;
+  color: #a1a1aa !important;
+  border-color: #a1a1aa !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Inactive comments action buttons */
+body.anime .neobrutal-card button svg {
+  stroke: #000000 !important;
+}
+
+body.anime .neobrutal-card button:hover svg {
+  stroke: #db2777 !important;
+}
+
+/* General bg-black/20 labels in profiles */
+body.anime .bg-black\/20:not(.neobrutal-card div) {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  border-radius: 9999px !important;
+}
+
+/* =============================================
+   SEARCH TAB & GENRE SELECTION & MEMBER CARD REFINEMENTS
+   ============================================= */
+
+/* Genre buttons text color and hover states in Search */
+body.anime .neobrutal-card.hover\:bg-pink-500\/20:hover {
+  background-color: #db2777 !important; /* Pop */
+}
+body.anime .neobrutal-card.hover\:bg-amber-500\/20:hover {
+  background-color: #f59e0b !important; /* Hip Hop */
+}
+body.anime .neobrutal-card.hover\:bg-red-500\/20:hover {
+  background-color: #ef4444 !important; /* Rock */
+}
+body.anime .neobrutal-card.hover\:bg-cyan-500\/20:hover {
+  background-color: #00bcd4 !important; /* Electro */
+}
+body.anime .neobrutal-card.hover\:bg-emerald-500\/20:hover {
+  background-color: #10b981 !important; /* Vocaloid */
+}
+body.anime .neobrutal-card.hover\:bg-purple-500\/20:hover {
+  background-color: #8b5cf6 !important; /* J-Pop */
+}
+body.anime .neobrutal-card.hover\:bg-orange-500\/20:hover {
+  background-color: #f97316 !important; /* Jazz */
+}
+body.anime .neobrutal-card.hover\:bg-indigo-500\/20:hover {
+  background-color: #6366f1 !important; /* Lo-Fi */
+}
+
+/* Force dark text for all genre labels to ensure contrast on white cards */
+body.anime .neobrutal-card .text-pink-400,
+body.anime .neobrutal-card .text-amber-400,
+body.anime .neobrutal-card .text-red-400,
+body.anime .neobrutal-card .text-cyan-400,
+body.anime .neobrutal-card .text-emerald-400,
+body.anime .neobrutal-card .text-purple-400,
+body.anime .neobrutal-card .text-orange-400,
+body.anime .neobrutal-card .text-indigo-400 {
+  color: #000000 !important;
+}
+
+/* White text for genre labels on hover when button gets filled background */
+body.anime .neobrutal-card:hover .text-pink-400,
+body.anime .neobrutal-card:hover .text-amber-400,
+body.anime .neobrutal-card:hover .text-red-400,
+body.anime .neobrutal-card:hover .text-cyan-400,
+body.anime .neobrutal-card:hover .text-emerald-400,
+body.anime .neobrutal-card:hover .text-purple-400,
+body.anime .neobrutal-card:hover .text-orange-400,
+body.anime .neobrutal-card:hover .text-indigo-400 {
+  color: #ffffff !important;
+}
+
+/* Recommended members cards & profile details */
+body.anime .neobrutal-card .bg-gradient-to-br:not(.neobrutal-btn) {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border: 2px solid #000000 !important;
+  color: #ffffff !important;
+}
+
+body.anime .neobrutal-card .border-white {
+  border-color: #000000 !important;
+}
+
+/* Also style the hero avatar container */
+body.anime .hero-avatar {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Hide duplicated Journal de Bord heading under Anime theme */
+body.anime .space-y-8 .space-y-4 > .flex.items-center.gap-2\.5 {
+  display: none !important;
+}
+
+/* =============================================
+   ARCADE & GAMES REFINEMENTS (BLIND TEST / GUESS THE COVER)
+   ============================================= */
+
+/* Game Card Icon Containers */
+body.anime .neobrutal-card .bg-violet-600 {
+  background-color: #db2777 !important; /* Rin Pink/Magenta */
+}
+body.anime .neobrutal-card .bg-fuchsia-600 {
+  background-color: #00bcd4 !important; /* Len Cyan */
+}
+
+/* Badges inside game cards */
+body.anime .neobrutal-card span[class*="bg-violet-100"],
+body.anime .neobrutal-card span[class*="bg-violet-950"] {
+  background-color: #db2777 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+body.anime .neobrutal-card span[class*="bg-fuchsia-100"],
+body.anime .neobrutal-card span[class*="bg-fuchsia-950"] {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+body.anime .neobrutal-card span[class*="bg-zinc-100"],
+body.anime .neobrutal-card span[class*="bg-zinc-800"] {
+  background-color: #f4f4f5 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Game lobby helper box inside cards */
+body.anime .neobrutal-card .bg-zinc-50,
+body.anime .neobrutal-card .bg-black\/20 {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Warning card for missing favorite artist */
+body.anime .neobrutal-card.border-amber-500 {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+body.anime .neobrutal-card.border-amber-500 h4,
+body.anime .neobrutal-card.border-amber-500 p {
+  color: #b91c1c !important;
+}
+body.anime .neobrutal-card.border-amber-500 svg {
+  stroke: #ef4444 !important;
+}
+
+/* Standard Game Buttons (neobrutal-button) */
+body.anime .neobrutal-button:not(.bg-emerald-500):not(.bg-red-500):not(:disabled) {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  font-weight: 900 !important;
+  border-radius: 10px !important;
+}
+body.anime .neobrutal-button:not(.bg-emerald-500):not(.bg-red-500):not(:disabled):hover {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Ensure white stroke inside dark game blocks */
+body.anime .bg-violet-600 svg,
+body.anime .bg-fuchsia-600 svg {
+  stroke: #ffffff !important;
+}
+
+/* =============================================
+   ARTIST PAGE REFINEMENTS
+   ============================================= */
+
+/* Artist Page Hero section background & borders */
+body.anime div[ref="heroRef"],
+body.anime .w-full.flex-shrink-0.bg-\[\#12101b\] {
+  background-color: #ffe100 !important;
+  border-bottom: 4px solid #000000 !important;
+}
+
+/* Artist main image neobrutalist shadow */
+body.anime .w-full.flex-shrink-0.bg-\[\#12101b\] .relative.w-36.h-36 {
+  border: 4px solid #000000 !important;
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+/* Artist Page pop details badge */
+body.anime span.bg-\[\#8B5CF6\] {
+  background-color: #db2777 !important; /* magenta/pink label */
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+
+/* Statistic cards on Artist Page */
+body.anime .bg-\[\#1a1824\] {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  border-radius: 12px !important;
+}
+
+/* Statistic icon wrappers */
+body.anime .bg-\[\#1a1824\] .bg-emerald-500\/10 {
+  background-color: #db2777 !important; /* pink */
+  border: 2px solid #000000 !important;
+  color: #ffffff !important;
+}
+body.anime .bg-\[\#1a1824\] .bg-blue-500\/10 {
+  background-color: #00bcd4 !important; /* cyan */
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+body.anime .bg-\[\#1a1824\] .bg-emerald-500\/10 svg {
+  stroke: #ffffff !important;
+}
+body.anime .bg-\[\#1a1824\] .bg-blue-500\/10 svg {
+  stroke: #000000 !important;
+}
+
+/* Popularity score progress bar wrapper & fill */
+body.anime .bg-\[\#1a1824\] .bg-zinc-800 {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+}
+body.anime .bg-\[\#1a1824\] .bg-gradient-to-r {
+  background-color: #00bcd4 !important;
+  background-image: none !important;
+}
+
+/* Genres capsules */
+body.anime span.bg-\[\#292738\] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  opacity: 1 !important;
+}
+body.anime span.bg-\[\#292738\]:hover {
+  background-color: #ffe100 !important;
+}
+
+/* Top 10 Tracks Container */
+body.anime div.bg-\[\#1a1824\]\/70 {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 5px 5px 0px #000000 !important;
+  border-radius: 16px !important;
+}
+body.anime div.bg-\[\#1a1824\]\/70 > div {
+  border-color: #000000 !important;
+}
+body.anime .track-row:hover {
+  background-color: #fffbeb !important;
+}
+
+/* Track row active playing state */
+body.anime .track-row .text-emerald-400 {
+  color: #db2777 !important; /* active playing title is pink */
+}
+
+/* Track row play/pause circles */
+body.anime .track-row button.bg-emerald-500 {
+  background-color: #00bcd4 !important;
+  border: 2px solid #000000 !important;
+}
+body.anime .track-row span.bg-emerald-500 {
+  background-color: #db2777 !important;
+}
+
+/* External link text color */
+body.anime a[href*="spotify.com/artist"] {
+  color: #000000 !important;
+}
+body.anime a[href*="spotify.com/artist"]:hover {
+  color: #db2777 !important;
+}
+
+/* =============================================
+   PROFILE EDIT MODAL REFINEMENTS
+   ============================================= */
+
+body.anime .profile-edit-modal {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+/* Headings & labels */
+body.anime .profile-edit-modal h3,
+body.anime .profile-edit-modal h4,
+body.anime .profile-edit-modal label {
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* Inner containers (Avatar preview wrapper, status select wrapper, fav artist select wrapper) */
+body.anime .profile-edit-modal div.bg-\[\#292738\]\/40,
+body.anime .profile-edit-modal div.bg-\[\#292738\]\/20,
+body.anime .profile-edit-modal div.bg-\[\#292738\]\/40 p-4 {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Inner selected artist container card */
+body.anime .profile-edit-modal div.bg-\[\#292738\]\/40.p-3.rounded-lg.border {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Search suggestions box */
+body.anime .profile-edit-modal div.max-h-48 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+body.anime .profile-edit-modal div.max-h-48 > div:hover {
+  background-color: #fffbeb !important;
+}
+
+/* General inputs & textareas inside edit profile */
+body.anime .profile-edit-modal input,
+body.anime .profile-edit-modal textarea {
+  background-color: #ffffff !important;
+  border: 2.5px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Action Buttons (Save/Submit) */
+body.anime .profile-edit-modal button.bg-\[\#8B5CF6\] {
+  background-color: #00bcd4 !important; /* Len Cyan */
+  color: #000000 !important;
+  border: 2.5px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  font-weight: 900 !important;
+}
+body.anime .profile-edit-modal button.bg-\[\#8B5CF6\]:hover:not(:disabled) {
+  background-color: #ffe100 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+/* Cancel Button */
+body.anime .profile-edit-modal button.text-\[\#A7A7A7\] {
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+/* Upload Avatar Button */
+body.anime .profile-edit-modal label.bg-zinc-800 {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.anime .profile-edit-modal label.bg-zinc-800:hover {
+  background-color: #ffffff !important;
+}
+
+/* Delete Avatar/PFP & Clear Status button */
+body.anime .profile-edit-modal button.bg-red-950\/30,
+body.anime .profile-edit-modal button.bg-red-950\/20,
+body.anime .profile-edit-modal button.bg-red-950\/20.border-red-900\/30 {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  opacity: 1 !important;
+}
+body.anime .profile-edit-modal button.bg-red-950\/30:hover,
+body.anime .profile-edit-modal button.bg-red-950\/20:hover {
+  background-color: #ffffff !important;
+  color: #ef4444 !important;
+}
+
+/* Status quick-select pills */
+body.anime .profile-edit-modal button.bg-\[\#292738\] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.anime .profile-edit-modal button.bg-\[\#292738\]:hover {
+  background-color: #00bcd4 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+/* Spotify Search inside Modal button */
+body.anime .profile-edit-modal button.bg-zinc-800:not(.bg-red-950\/30):not(label) {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+
+/* =============================================
+   FOLLOW MODAL DIVISION LINE REFINEMENTS
+   ============================================= */
+
+body.anime .neo-modal .border-b-2.border-white\/\[0\.07\] {
+  border-color: #000000 !important;
+}
+body.anime .neo-modal .bg-gradient-to-br {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-color: #000000 !important;
+}
+
+/* =============================================
+   GAMEPLAY SCREEN REFINEMENTS (dark: bg and text classes)
+   ============================================= */
+
+/* Force page background to yellow for gameplay screens with dark:bg classes */
+body.anime .dark\:bg-zinc-950,
+body.anime .dark\:bg-black,
+body.anime .dark\:bg-zinc-900 {
+  background-color: #ffe100 !important;
+}
+
+/* Force dark text color for all dark:text labels outside cards on yellow background */
+body.anime .dark\:text-zinc-400,
+body.anime .dark\:text-white,
+body.anime .dark\:text-zinc-300,
+body.anime .dark\:text-zinc-550,
+body.anime .dark\:text-zinc-500 {
+  color: #000000 !important;
+}
+
+/* Specific items inside gameplay/lobby cards that have dark backgrounds */
+body.anime .neobrutal-card .dark\:bg-zinc-950,
+body.anime .neobrutal-card .dark\:bg-zinc-900,
+body.anime .neobrutal-card .dark\:bg-black {
+  background-color: #ffffff !important;
+}
+
+/* Results summaries & list items in GuessTheCover/BlindTest */
+body.anime .neobrutal-card .dark\:bg-zinc-950\/40,
+body.anime .neobrutal-card .dark\:bg-zinc-950\/20,
+body.anime .neobrutal-card .dark\:bg-zinc-900\/50,
+body.anime .neobrutal-card .dark\:bg-zinc-800,
+body.anime .neobrutal-card .dark\:bg-\[\#110e19\] {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Force black stroke for SVGs inside results cards */
+body.anime .neobrutal-card .dark\:bg-zinc-900\/50 svg,
+body.anime .neobrutal-card .dark\:bg-zinc-800 svg {
+  stroke: #000000 !important;
+}
+
+/* White text for options list indices (A, B, C, D) inside cards */
+body.anime .neobrutal-card .dark\:bg-zinc-950\/20 {
+  color: #000000 !important;
+}
+
+/* Results text highlighting */
+body.anime .dark\:text-fuchsia-400,
+body.anime .dark\:text-violet-400 {
+  color: #db2777 !important;
+}
+
+/* =============================================
+   ANIME THEME ADDITIONAL REFINEMENTS (GAMEPLAY & MODALS)
+   ============================================= */
+
+/* Game screen fixed container force yellow background */
+body.anime .game-screen-fixed-container {
+  background-color: #ffe100 !important;
+}
+
+/* Eliminate radial gradients under anime theme */
+body.anime [class*="bg-[radial-gradient"] {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* Force text-white-always inside neobrutal-cards to black (e.g. score capsule) */
+body.anime .neobrutal-card .text-white-always,
+body.anime .neobrutal-card.text-white-always {
+  color: #000000 !important;
+}
+
+/* General neo-modal overrides under anime theme (FollowModal, ConfirmModal, ReportModal) */
+body.anime .neo-modal {
+  background: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.anime .neo-modal .text-white,
+body.anime .neo-modal h3,
+body.anime .neo-modal h4 {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.anime .neo-modal .text-zinc-300,
+body.anime .neo-modal .text-zinc-400,
+body.anime .neo-modal .text-zinc-500,
+body.anime .neo-modal .text-zinc-650 {
+  color: #000000 !important;
+}
+
+body.anime .neo-modal .border-b-2,
+body.anime .neo-modal .border-t-2,
+body.anime .neo-modal .border-b,
+body.anime .neo-modal .border-t {
+  border-color: #000000 !important;
+}
+
+/* Close buttons in modals */
+body.anime .neo-modal button.text-zinc-400,
+body.anime .neo-modal button.border-white\/20 {
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  border-radius: 12px !important;
+  background-color: #ffffff !important;
+}
+
+body.anime .neo-modal button.text-zinc-400:hover,
+body.anime .neo-modal button.border-white\/20:hover {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+}
+
+/* Lists and list items in modals (Followers/Following) */
+body.anime .neo-modal .neo-list-item {
+  border-bottom: 2px solid #000000 !important;
+  background-color: #ffffff !important;
+}
+
+body.anime .neo-modal .neo-list-item:hover {
+  background-color: #00bcd4 !important;
+}
+
+body.anime .neo-modal .neo-list-item:hover .text-white {
+  color: #000000 !important;
+}
+
+body.anime .neo-modal .neo-list-item .bg-gradient-to-br {
+  background-color: #ffe100 !important;
+  background-image: none !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.anime .neo-modal .neo-list-item .bg-gradient-to-br svg {
+  stroke: #000000 !important;
+}
+
+/* ConfirmModal specific badges (Trash, Alert, Info) */
+body.anime .neo-modal .bg-red-500\/10,
+body.anime .neo-modal .bg-amber-500\/10,
+body.anime .neo-modal .bg-violet-500\/10,
+body.anime .neo-modal .bg-fuchsia-500\/10 {
+  background-color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.anime .neo-modal .bg-red-500\/10 svg,
+body.anime .neo-modal .bg-amber-500\/10 svg,
+body.anime .neo-modal .bg-violet-500\/10 svg,
+body.anime .neo-modal .bg-fuchsia-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+/* Preset reasons buttons in ReportModal */
+body.anime .neo-modal form button:not([type="submit"]):not(.neobrutal-btn) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 12px !important;
+}
+
+body.anime .neo-modal form button:not([type="submit"]):not(.neobrutal-btn):hover {
+  background-color: #f4f4f5 !important;
+}
+
+body.anime .neo-modal form button.bg-red-500\/10 {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+body.anime .neo-modal form button.bg-red-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+/* Modal Form Inputs/Textarea */
+body.anime .neo-modal textarea,
+body.anime .neo-modal input {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.anime .neo-modal textarea::placeholder,
+body.anime .neo-modal input::placeholder {
+  color: #737373 !important;
+}
+
+/* Standard Cancel Buttons in Modals */
+body.anime .neo-modal form button[type="button"],
+body.anime .neo-modal button.neobrutal-btn,
+body.anime .neo-modal button.border-zinc-600 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+}
+
+body.anime .neo-modal form button[type="button"]:hover,
+body.anime .neo-modal button.neobrutal-btn:hover,
+body.anime .neo-modal button.border-zinc-600:hover {
+  background-color: #f4f4f5 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+/* Standard Confirm/Action Buttons in Modals */
+body.anime .neo-modal form button[type="submit"],
+body.anime .neo-modal button.bg-red-500,
+body.anime .neo-modal button.bg-amber-500,
+body.anime .neo-modal button.bg-violet-500,
+body.anime .neo-modal button.bg-fuchsia-600 {
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+  font-weight: 900 !important;
+}
+
+body.anime .neo-modal form button[type="submit"]:hover:not(:disabled),
+body.anime .neo-modal button.bg-red-500:hover,
+body.anime .neo-modal button.bg-amber-500:hover,
+body.anime .neo-modal button.bg-violet-500:hover,
+body.anime .neo-modal button.bg-fuchsia-600:hover {
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+body.anime .neo-modal button.bg-red-500 {
+  background-color: #ef4444 !important;
+}
+body.anime .neo-modal button.bg-red-500:hover {
+  background-color: #dc2626 !important;
+}
+body.anime .neo-modal button.bg-amber-500 {
+  background-color: #facc15 !important;
+  color: #000000 !important;
+}
+body.anime .neo-modal button.bg-amber-500:hover {
+  background-color: #eab308 !important;
+}
+body.anime .neo-modal button.bg-violet-500 {
+  background-color: #00bcd4 !important; /* cyan for success action */
+  color: #000000 !important;
+}
+body.anime .neo-modal button.bg-violet-500:hover {
+  background-color: #00acc1 !important;
+}
+body.anime .neo-modal button.bg-fuchsia-600 {
+  background-color: #db2777 !important; /* pink/magenta for standard action */
+}
+body.anime .neo-modal button.bg-fuchsia-600:hover {
+  background-color: #c2185b !important;
+}
+
+/* Stories Wrapped card overrides */
+body.anime .wrapped-card {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 8px 8px 0px #000000 !important;
+  border-radius: 24px !important;
+}
+
+body.anime .wrapped-card h2,
+body.anime .wrapped-card h3,
+body.anime .wrapped-card p,
+body.anime .wrapped-card span,
+body.anime .wrapped-card div {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.anime .wrapped-card button {
+  background-color: #00bcd4 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+}
+
+body.anime .wrapped-card button:hover {
+  background-color: #00acc1 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+/* =============================================
+   LIGHT THEME ADDITIONAL REFINEMENTS (GAMEPLAY & MODALS)
+   ============================================= */
+
+/* Hide duplicated Journal de Bord heading under Light theme */
+body.light .space-y-8 .space-y-4 > .flex.items-center.gap-2\.5 {
+  display: none !important;
+}
+
+/* Game screen fixed container force white background */
+body.light .game-screen-fixed-container {
+  background-color: #ffffff !important;
+}
+
+/* Eliminate radial gradients under light theme */
+body.light [class*="bg-[radial-gradient"] {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* Force text-white-always inside neobrutal-cards to black (e.g. score capsule) */
+body.light .neobrutal-card .text-white-always,
+body.light .neobrutal-card.text-white-always {
+  color: #000000 !important;
+}
+
+/* Force dark text color for all dark:text labels outside cards on light background */
+body.light .dark\:text-zinc-400,
+body.light .dark\:text-white,
+body.light .dark\:text-zinc-300,
+body.light .dark\:text-zinc-550,
+body.light .dark\:text-zinc-500 {
+  color: #000000 !important;
+}
+
+/* Specific items inside gameplay/lobby cards that have dark backgrounds in light mode */
+body.light .neobrutal-card .dark\:bg-zinc-950,
+body.light .neobrutal-card .dark\:bg-zinc-900,
+body.light .neobrutal-card .dark\:bg-black {
+  background-color: #ffffff !important;
+}
+
+body.light .neobrutal-card .dark\:bg-zinc-950\/40,
+body.light .neobrutal-card .dark\:bg-zinc-950\/20,
+body.light .neobrutal-card .dark\:bg-zinc-900\/50,
+body.light .neobrutal-card .dark\:bg-zinc-800,
+body.light .neobrutal-card .dark\:bg-\[\#110e19\] {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.light .neobrutal-card .dark\:bg-zinc-900\/50 svg,
+body.light .neobrutal-card .dark\:bg-zinc-800 svg {
+  stroke: #000000 !important;
+}
+
+body.light .neobrutal-card .dark\:bg-zinc-950\/20 {
+  color: #000000 !important;
+}
+
+/* Gameplay option buttons and countdown overrides inside cards under light theme */
+body.light .neobrutal-button:not(.bg-emerald-500):not(.bg-red-500):not(:disabled) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.light .neobrutal-button:not(.bg-emerald-500):not(.bg-red-500):not(:disabled):hover {
+  background-color: #f4f4f5 !important;
+}
+
+body.light .neobrutal-button:disabled {
+  background-color: #f4f4f5 !important;
+  color: #a1a1aa !important;
+  border-color: #e4e4e7 !important;
+}
+
+body.light .neobrutal-card .w-14.h-14.rounded-full:not(.bg-red-500) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* General neo-modal overrides under light theme (FollowModal, ConfirmModal, ReportModal) */
+body.light .neo-modal {
+  background: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.light .neo-modal .text-white,
+body.light .neo-modal h3,
+body.light .neo-modal h4 {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light .neo-modal .text-zinc-300,
+body.light .neo-modal .text-zinc-400,
+body.light .neo-modal .text-zinc-500,
+body.light .neo-modal .text-zinc-650 {
+  color: #000000 !important;
+}
+
+body.light .neo-modal .border-b-2,
+body.light .neo-modal .border-t-2,
+body.light .neo-modal .border-b,
+body.light .neo-modal .border-t {
+  border-color: #000000 !important;
+}
+
+/* Close buttons in modals under light theme */
+body.light .neo-modal button.text-zinc-400,
+body.light .neo-modal button.border-white\/20 {
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  border-radius: 12px !important;
+  background-color: #ffffff !important;
+}
+
+body.light .neo-modal button.text-zinc-400:hover,
+body.light .neo-modal button.border-white\/20:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* Lists and list items in modals (Followers/Following) in light theme */
+body.light .neo-modal .neo-list-item {
+  border-bottom: 2px solid #000000 !important;
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+body.light .neo-modal .neo-list-item:hover {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+}
+
+body.light .neo-modal .neo-list-item:hover .text-white {
+  color: #000000 !important;
+}
+
+body.light .neo-modal .neo-list-item .bg-gradient-to-br {
+  background-color: #7c3aed !important;
+  background-image: none !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  color: #ffffff !important;
+}
+
+body.light .neo-modal .neo-list-item .bg-gradient-to-br svg {
+  stroke: #ffffff !important;
+}
+
+/* ConfirmModal specific badges (Trash, Alert, Info) under light theme */
+body.light .neo-modal .bg-red-500\/10,
+body.light .neo-modal .bg-amber-500\/10,
+body.light .neo-modal .bg-violet-500\/10,
+body.light .neo-modal .bg-fuchsia-500\/10 {
+  background-color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .neo-modal .bg-red-500\/10 svg,
+body.light .neo-modal .bg-amber-500\/10 svg,
+body.light .neo-modal .bg-violet-500\/10 svg,
+body.light .neo-modal .bg-fuchsia-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+/* Preset reasons buttons in ReportModal under light theme */
+body.light .neo-modal form button:not([type="submit"]):not(.neobrutal-btn) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 12px !important;
+}
+
+body.light .neo-modal form button:not([type="submit"]):not(.neobrutal-btn):hover {
+  background-color: #f4f4f5 !important;
+}
+
+body.light .neo-modal form button.bg-red-500\/10 {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+body.light .neo-modal form button.bg-red-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+/* Modal Form Inputs/Textarea under light theme */
+body.light .neo-modal textarea,
+body.light .neo-modal input {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.light .neo-modal textarea::placeholder,
+body.light .neo-modal input::placeholder {
+  color: #737373 !important;
+}
+
+/* Standard Cancel Buttons in Modals under light theme */
+body.light .neo-modal form button[type="button"],
+body.light .neo-modal button.neobrutal-btn,
+body.light .neo-modal button.border-zinc-600 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+}
+
+body.light .neo-modal form button[type="button"]:hover,
+body.light .neo-modal button.neobrutal-btn:hover,
+body.light .neo-modal button.border-zinc-600:hover {
+  background-color: #f4f4f5 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+/* Standard Confirm/Action Buttons in Modals under light theme */
+body.light .neo-modal form button[type="submit"],
+body.light .neo-modal button.bg-red-500,
+body.light .neo-modal button.bg-amber-500,
+body.light .neo-modal button.bg-violet-500,
+body.light .neo-modal button.bg-fuchsia-600 {
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+  font-weight: 900 !important;
+}
+
+body.light .neo-modal form button[type="submit"]:hover:not(:disabled),
+body.light .neo-modal button.bg-red-500:hover,
+body.light .neo-modal button.bg-amber-500:hover,
+body.light .neo-modal button.bg-violet-500:hover,
+body.light .neo-modal button.bg-fuchsia-600:hover {
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+body.light .neo-modal button.bg-red-500 {
+  background-color: #ef4444 !important;
+}
+body.light .neo-modal button.bg-red-500:hover {
+  background-color: #dc2626 !important;
+}
+body.light .neo-modal button.bg-amber-500 {
+  background-color: #facc15 !important;
+  color: #000000 !important;
+}
+body.light .neo-modal button.bg-amber-500:hover {
+  background-color: #eab308 !important;
+}
+body.light .neo-modal button.bg-violet-500 {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+body.light .neo-modal button.bg-violet-500:hover {
+  background-color: #6d28d9 !important;
+}
+body.light .neo-modal button.bg-fuchsia-600 {
+  background-color: #db2777 !important;
+}
+body.light .neo-modal button.bg-fuchsia-600:hover {
+  background-color: #c2185b !important;
+}
+
+/* Stories Wrapped card overrides under light theme */
+body.light .wrapped-card {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 8px 8px 0px #000000 !important;
+  border-radius: 24px !important;
+}
+
+body.light .wrapped-card h2,
+body.light .wrapped-card h3,
+body.light .wrapped-card p,
+body.light .wrapped-card span,
+body.light .wrapped-card div {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light .wrapped-card button {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+}
+
+body.light .wrapped-card button:hover {
+  background-color: #6d28d9 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+/* Ensure the condensed font Mouse Memoirs is never bolded synthetically by the browser */
+body.anime .font-mouse-memoirs,
+body.light .font-mouse-memoirs {
+  font-weight: normal !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* =============================================
+   HATSUNE MIKU SECRET THEME (VIBRANT TEAL & BLACK)
+   ============================================= */
+
+body.miku {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+  background-attachment: fixed;
+}
+
+body.miku .custom-scrollbar::-webkit-scrollbar-track {
+  background: #39C5BB !important;
+}
+
+/* Disable cosmic ambient background glows in Hatsune Miku mode */
+body.miku::before,
+body.miku::after,
+body.miku [class*="blur-"]:not([class*="backdrop-blur"]) {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+  filter: none !important;
+}
+
+/* Eradicate background gradients inside Miku theme */
+body.miku .bg-gradient-to-br,
+body.miku .bg-gradient-to-r,
+body.miku .bg-gradient-to-tr,
+body.miku .bg-gradient-to-t,
+body.miku .bg-gradient-to-b {
+  background-image: none !important;
+}
+
+/* Standard solid colors for specific layout components */
+body.miku .bg-black,
+body.miku .bg-\[\#12101b\],
+body.miku .bg-\[\#07050f\],
+body.miku .bg-\[\#07050f\]\/80,
+body.miku .bg-zinc-900,
+body.miku .bg-zinc-950,
+body.miku .bg-zinc-950\/40,
+body.miku .bg-zinc-900\/50,
+body.miku .bg-black\/40,
+body.miku .bg-black\/70,
+body.miku .bg-white\/2,
+body.miku .bg-white\/\[0\.03\],
+body.miku .bg-white\/\[0\.01\],
+body.miku .bg-black\/20,
+body.miku .bg-zinc-900\/30,
+body.miku .bg-\[\#0c0c0e\],
+body.miku .bg-\[\#121214\],
+body.miku .bg-\[\#0e0e11\],
+body.miku .game-screen-fixed-container {
+  background-color: #39C5BB !important;
+}
+
+body.miku [class*="bg-[radial-gradient"] {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* Typography, contrast and text readability overrides */
+body.miku h1, 
+body.miku h2, 
+body.miku h3, 
+body.miku h4, 
+body.miku h5, 
+body.miku h6 {
+  color: #000000 !important;
+  text-shadow: 2px 2px 0px #ffffff !important;
+  font-weight: 900 !important;
+}
+
+body.miku .text-stroke-dark,
+body.miku .text-stroke-black,
+body.miku .text-stroke-white {
+  -webkit-text-stroke: none !important;
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Neobrutalist cards */
+body.miku .neobrutal-card {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 6px 6px 0px 0px #ff007f !important; /* Ribbon Pink shadow */
+  border-radius: 16px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.miku .neobrutal-card:hover {
+  transform: translate(-3px, -3px) !important;
+  border-color: #000000 !important;
+  box-shadow: 9px 9px 0px 0px #000000 !important;
+}
+
+/* Fix white-on-white text inside neobrutal cards in Miku mode */
+body.miku .neobrutal-card .text-white,
+body.miku .neobrutal-card .text-zinc-300,
+body.miku .neobrutal-card .text-zinc-400 {
+  color: #000000 !important;
+}
+
+/* Outlined Buttons */
+body.miku .neobrutal-btn {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+}
+
+body.miku .neobrutal-btn:hover {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+  box-shadow: 6px 6px 0px 0px #000000 !important;
+}
+
+body.miku .neobrutal-btn:active {
+  transform: translate(3px, 3px) !important;
+  box-shadow: none !important;
+}
+
+body.miku .neobrutal-btn.border-red-500 {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+}
+
+body.miku .neobrutal-btn.border-red-500:hover {
+  background-color: #dc2626 !important;
+  box-shadow: 6px 6px 0px 0px #000000 !important;
+}
+
+/* Anthracite Sidebar (matching sleeves and headphones) */
+body.miku .sidebar-container {
+  background-color: #12161a !important;
+  border-right: 4px solid #000000 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.miku .mobile-nav-container {
+  background-color: #12161a !important;
+  border-top: 4px solid #000000 !important;
+}
+
+body.miku .sidebar-container .bg-zinc-950\/40 {
+  background-color: #1c2228 !important;
+  border: 2.5px solid #000000 !important;
+  border-radius: 10px !important;
+}
+
+/* Active navigation item in sidebar (Teal with black text, pink shadow) */
+body.miku .sidebar-container button.border-violet-400 {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 3px 3px 0px #ff007f !important;
+}
+body.miku .sidebar-container button.border-violet-400 svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+body.miku .sidebar-container button.border-violet-400 span {
+  color: #000000 !important;
+}
+
+/* Inactive navigation items in sidebar */
+body.miku .sidebar-container button:not(.border-violet-400) {
+  color: #ffffff !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+body.miku .sidebar-container button:not(.border-violet-400) svg {
+  color: #39C5BB !important;
+  stroke: #39C5BB !important;
+}
+body.miku .sidebar-container button:not(.border-violet-400) span {
+  color: #b0c0cf !important;
+}
+body.miku .sidebar-container button:not(.border-violet-400):hover {
+  background-color: rgba(57, 197, 187, 0.12) !important;
+  color: #ffffff !important;
+}
+body.miku .sidebar-container button:not(.border-violet-400):hover span {
+  color: #ffffff !important;
+}
+
+/* Footer Profile Widget in Sidebar */
+body.miku .sidebar-container .neobrutal-card {
+  background: #1c2228 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px 0px #39C5BB !important; /* Teal shadow */
+  color: #ffffff !important;
+}
+body.miku .sidebar-container .neobrutal-card .text-zinc-100,
+body.miku .sidebar-container .neobrutal-card .text-white {
+  color: #ffffff !important;
+}
+body.miku .sidebar-container .neobrutal-card .text-zinc-500 {
+  color: #b0c0cf !important;
+}
+
+/* Inputs and Forms */
+body.miku input[type="text"],
+body.miku input[type="password"],
+body.miku input[type="email"],
+body.miku input[type="search"],
+body.miku input[type="number"],
+body.miku textarea {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  color: #000000 !important;
+  border-radius: 8px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.miku input:focus,
+body.miku textarea:focus {
+  border-color: #ff007f !important;
+  box-shadow: 4px 4px 0px 0px #000000 !important;
+  background: #ffffff !important;
+}
+
+body.miku input::placeholder,
+body.miku textarea::placeholder {
+  color: #737373 !important;
+}
+
+/* Text coloring overrides for absolute readability */
+body.miku .text-white,
+body.miku .text-zinc-100,
+body.miku .text-zinc-200,
+body.miku .text-zinc-300,
+body.miku .text-zinc-400,
+body.miku .text-zinc-550,
+body.miku .text-zinc-500,
+body.miku .text-zinc-650,
+body.miku .text-zinc-600 {
+  color: #000000 !important;
+}
+
+/* Keep dark elements texts white */
+body.miku button.bg-black .text-white,
+body.miku .bg-zinc-950 .text-white,
+body.miku .bg-black:not(.min-h-screen) .text-white,
+body.miku .bg-zinc-900 .text-white {
+  color: #ffffff !important;
+}
+
+body.miku .min-w-5.h-5.bg-red-500 .text-white,
+body.miku .min-w-5.h-5.bg-red-500 {
+  color: #ffffff !important;
+}
+
+/* Pink highlights for high contrast visual indicators */
+body.miku .text-violet-400,
+body.miku .text-violet-500,
+body.miku .text-fuchsia-400,
+body.miku .text-fuchsia-500,
+body.miku .text-yellow-400,
+body.miku .text-yellow-500,
+body.miku .text-amber-400,
+body.miku .text-amber-500,
+body.miku .text-amber-600 {
+  color: #ff007f !important;
+}
+
+body.miku .text-emerald-400 {
+  color: #038c82 !important;
+}
+
+body.miku .text-red-400,
+body.miku .text-red-200 {
+  color: #dc2626 !important;
+}
+
+/* SVGs coloring */
+body.miku svg {
+  stroke: #000000 !important;
+}
+
+body.miku .sidebar-container svg,
+body.miku .mobile-nav-container svg {
+  stroke: #39C5BB !important;
+}
+
+body.miku .sidebar-container button.border-violet-400 svg {
+  stroke: #000000 !important;
+}
+
+body.miku .sidebar-container button.border-red-500 svg,
+body.miku .sidebar-container button.bg-red-500\/10 svg {
+  stroke: #ef4444 !important;
+}
+
+/* General containers & Modals */
+body.miku .neo-section {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.miku .neo-list-item {
+  border: 3px solid #000000 !important;
+  background: #ffffff !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.miku .neo-list-item:hover {
+  border-color: #ff007f !important;
+  background: rgba(255, 0, 127, 0.05) !important;
+  box-shadow: 5px 5px 0px #000000 !important;
+}
+
+body.miku .neo-stat-card {
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 5px 5px 0px #000000 !important;
+}
+
+body.miku .neo-stat-card:hover {
+  border-color: #ff007f !important;
+  box-shadow: 7px 7px 0px #000000 !important;
+}
+
+body.miku .neo-empty {
+  background: #ffffff !important;
+  border: 3px dashed #000000 !important;
+}
+
+body.miku .neo-modal {
+  background: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px 0px #ff007f !important;
+  color: #000000 !important;
+}
+
+body.miku .neo-modal .text-white,
+body.miku .neo-modal h3,
+body.miku .neo-modal h4 {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.miku .neo-modal .text-zinc-300,
+body.miku .neo-modal .text-zinc-400,
+body.miku .neo-modal .text-zinc-500,
+body.miku .neo-modal .text-zinc-650 {
+  color: #000000 !important;
+}
+
+body.miku .neo-modal .border-b-2,
+body.miku .neo-modal .border-t-2,
+body.miku .neo-modal .border-b,
+body.miku .neo-modal .border-t {
+  border-color: #000000 !important;
+}
+
+/* Close buttons in modals under Miku theme */
+body.miku .neo-modal button.text-zinc-400,
+body.miku .neo-modal button.border-white\/20 {
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  border-radius: 12px !important;
+  background-color: #ffffff !important;
+}
+
+body.miku .neo-modal button.text-zinc-400:hover,
+body.miku .neo-modal button.border-white\/20:hover {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+}
+
+/* Lists and list items in modals (Followers/Following) in Miku theme */
+body.miku .neo-modal .neo-list-item {
+  border-bottom: 2px solid #000000 !important;
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+body.miku .neo-modal .neo-list-item:hover {
+  background-color: rgba(255, 0, 127, 0.08) !important;
+}
+
+body.miku .neo-modal .neo-list-item:hover .text-white {
+  color: #000000 !important;
+}
+
+body.miku .neo-modal .neo-list-item .bg-gradient-to-br {
+  background-color: #39C5BB !important;
+  background-image: none !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  color: #ffffff !important;
+}
+
+body.miku .neo-modal .neo-list-item .bg-gradient-to-br svg {
+  stroke: #ffffff !important;
+}
+
+/* ConfirmModal specific badges (Trash, Alert, Info) under Miku theme */
+body.miku .neo-modal .bg-red-500\/10,
+body.miku .neo-modal .bg-amber-500\/10,
+body.miku .neo-modal .bg-violet-500\/10,
+body.miku .neo-modal .bg-fuchsia-500\/10 {
+  background-color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku .neo-modal .bg-red-500\/10 svg,
+body.miku .neo-modal .bg-amber-500\/10 svg,
+body.miku .neo-modal .bg-violet-500\/10 svg,
+body.miku .neo-modal .bg-fuchsia-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+/* Preset reasons buttons in ReportModal under Miku theme */
+body.miku .neo-modal form button:not([type="submit"]):not(.neobrutal-btn) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 12px !important;
+}
+
+body.miku .neo-modal form button:not([type="submit"]):not(.neobrutal-btn):hover {
+  background-color: #f4f4f5 !important;
+}
+
+body.miku .neo-modal form button.bg-red-500\/10 {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+body.miku .neo-modal form button.bg-red-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+/* Modal Form Inputs/Textarea */
+body.miku .neo-modal textarea,
+body.miku .neo-modal input {
+  background-color: #f5f5f5 !important;
+  color: #000000 !important;
+  border-color: #cccccc !important;
+}
+
+body.miku .neo-modal textarea::placeholder,
+body.miku .neo-modal input::placeholder {
+  color: #999999 !important;
+}
+
+body.miku .neo-modal form button[type="button"],
+body.miku .neo-modal button.border-zinc-600 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku .neo-modal form button[type="button"]:hover,
+body.miku .neo-modal button.neobrutal-btn:hover,
+body.miku .neo-modal button.border-zinc-600:hover {
+  background-color: #f4f4f5 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+/* Standard Confirm/Action Buttons in Modals under Miku theme */
+body.miku .neo-modal form button[type="submit"],
+body.miku .neo-modal button.bg-red-500,
+body.miku .neo-modal button.bg-amber-500,
+body.miku .neo-modal button.bg-violet-500,
+body.miku .neo-modal button.bg-fuchsia-600 {
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+  font-weight: 900 !important;
+}
+
+body.miku .neo-modal form button[type="submit"]:hover:not(:disabled),
+body.miku .neo-modal button.bg-red-500:hover,
+body.miku .neo-modal button.bg-amber-500:hover,
+body.miku .neo-modal button.bg-violet-500:hover,
+body.miku .neo-modal button.bg-fuchsia-600:hover {
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+body.miku .neo-modal button.bg-red-500 {
+  background-color: #ef4444 !important;
+}
+body.miku .neo-modal button.bg-red-500:hover {
+  background-color: #dc2626 !important;
+}
+body.miku .neo-modal button.bg-amber-500 {
+  background-color: #facc15 !important;
+  color: #000000 !important;
+}
+body.miku .neo-modal button.bg-amber-500:hover {
+  background-color: #eab308 !important;
+}
+body.miku .neo-modal button.bg-violet-500 {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+}
+body.miku .neo-modal button.bg-violet-500:hover {
+  background-color: #e60073 !important;
+}
+body.miku .neo-modal button.bg-fuchsia-600 {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+}
+body.miku .neo-modal button.bg-fuchsia-600:hover {
+  background-color: #2eb3a9 !important;
+}
+
+/* Stories Wrapped card overrides under Miku theme */
+body.miku .wrapped-card {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 8px 8px 0px #000000 !important;
+  border-radius: 24px !important;
+}
+
+body.miku .wrapped-card h2,
+body.miku .wrapped-card h3,
+body.miku .wrapped-card p,
+body.miku .wrapped-card span,
+body.miku .wrapped-card div {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.miku .wrapped-card button {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+}
+
+body.miku .wrapped-card button:hover {
+  background-color: #e60073 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+body.miku .font-mouse-memoirs {
+  font-weight: normal !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* Custom scrollbar thumb for Miku theme */
+body.miku .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ff007f !important;
+  border-radius: 9999px;
+  border: 2px solid #000000 !important;
+}
+
+/* Subtabs / pill-btn overrides for Miku theme */
+body.miku .pill-btn.inactive {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.miku .pill-btn.inactive:hover {
+  background: #ff007f !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+body.miku .pill-btn.active {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 3px 3px 0px #ff007f !important;
+}
+
+/* Gameplay options & countdown buttons overrides */
+body.miku .neobrutal-button:not(.bg-emerald-500):not(.bg-red-500):not(:disabled) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  font-weight: 900 !important;
+  border-radius: 10px !important;
+}
+body.miku .neobrutal-button:not(.bg-emerald-500):not(.bg-red-500):not(:disabled):hover {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+}
+body.miku .neobrutal-button:disabled {
+  background-color: #f4f4f5 !important;
+  color: #a1a1aa !important;
+  border-color: #e4e4e7 !important;
+}
+body.miku .neobrutal-card .w-14.h-14.rounded-full:not(.bg-red-500) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Gameplay screen refinements (dark: bg and text classes) for Miku theme */
+body.miku .dark\:bg-zinc-950,
+body.miku .dark\:bg-black,
+body.miku .dark\:bg-zinc-900 {
+  background-color: #39C5BB !important;
+}
+
+body.miku .dark\:text-zinc-400,
+body.miku .dark\:text-white,
+body.miku .dark\:text-zinc-300,
+body.miku .dark\:text-zinc-550,
+body.miku .dark\:text-zinc-500 {
+  color: #000000 !important;
+}
+
+body.miku .neobrutal-card .dark\:bg-zinc-950,
+body.miku .neobrutal-card .dark\:bg-zinc-900,
+body.miku .neobrutal-card .dark\:bg-black {
+  background-color: #ffffff !important;
+}
+
+body.miku .neobrutal-card .dark\:bg-zinc-950\/40,
+body.miku .neobrutal-card .dark\:bg-zinc-950\/20,
+body.miku .neobrutal-card .dark\:bg-zinc-900\/50,
+body.miku .neobrutal-card .dark\:bg-zinc-800,
+body.miku .neobrutal-card .dark\:bg-\[\#110e19\] {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .neobrutal-card .dark\:bg-zinc-900\/50 svg,
+body.miku .neobrutal-card .dark\:bg-zinc-800 svg {
+  stroke: #000000 !important;
+}
+
+body.miku .neobrutal-card .dark\:bg-zinc-950\/20 {
+  color: #000000 !important;
+}
+
+body.miku .dark\:text-fuchsia-400,
+body.miku .dark\:text-violet-400 {
+  color: #ff007f !important;
+}
+
+/* Specific Hatsune Miku overrides for components and containers */
+body.miku .bg-\[\#1a1824\] {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #ff007f !important;
+  border-radius: 12px !important;
+}
+
+body.miku .bg-\[\#1a1824\] .bg-emerald-500\/10 {
+  background-color: #ff007f !important;
+  border: 2px solid #000000 !important;
+  color: #ffffff !important;
+}
+
+body.miku .bg-\[\#1a1824\] .bg-blue-500\/10 {
+  background-color: #39C5BB !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .bg-\[\#1a1824\] .bg-emerald-500\/10 svg {
+  stroke: #ffffff !important;
+}
+
+body.miku .bg-\[\#1a1824\] .bg-blue-500\/10 svg {
+  stroke: #000000 !important;
+}
+
+body.miku .bg-\[\#1a1824\] .bg-zinc-800 {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku span.bg-\[\#292738\] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #ff007f !important;
+  opacity: 1 !important;
+}
+
+body.miku span.bg-\[\#292738\]:hover {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.miku div.bg-\[\#1a1824\]\/70 {
+  background-color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 5px 5px 0px #ff007f !important;
+  border-radius: 16px !important;
+}
+
+body.miku div.bg-\[\#1a1824\]\/70 > div {
+  border-color: #000000 !important;
+}
+
+body.miku .track-row:hover {
+  background-color: #fff0f5 !important;
+}
+
+body.miku .track-row .text-emerald-400 {
+  color: #ff007f !important;
+}
+
+body.miku .track-row button.bg-emerald-500 {
+  background-color: #39C5BB !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku .track-row span.bg-emerald-500 {
+  background-color: #ff007f !important;
+}
+
+/* Lyrics hover overrides */
+body.miku .neobrutal-card .hover\:text-white:hover,
+body.miku .song-page-content .hover\:text-white:hover {
+  color: #ff007f !important;
+}
+
+/* Sidebar legibility for mini-player under Miku theme */
+body.miku .sidebar-container,
+body.miku .mobile-nav-container {
+  color: #ffffff !important;
+}
+
+body.miku .sidebar-container h1,
+body.miku .sidebar-container h2,
+body.miku .sidebar-container h3,
+body.miku .sidebar-container h4,
+body.miku .sidebar-container h5,
+body.miku .sidebar-container h6,
+body.miku .mobile-nav-container h1,
+body.miku .mobile-nav-container h2,
+body.miku .mobile-nav-container h3,
+body.miku .mobile-nav-container h4,
+body.miku .mobile-nav-container h5,
+body.miku .mobile-nav-container h6 {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+body.miku .sidebar-container .text-white,
+body.miku .sidebar-container .text-zinc-100,
+body.miku .sidebar-container .text-zinc-200,
+body.miku .sidebar-container .text-zinc-300,
+body.miku .mobile-nav-container .text-white,
+body.miku .mobile-nav-container .text-zinc-100,
+body.miku .mobile-nav-container .text-zinc-200,
+body.miku .mobile-nav-container .text-zinc-300 {
+  color: #ffffff !important;
+}
+
+body.miku .sidebar-container .text-zinc-400,
+body.miku .mobile-nav-container .text-zinc-400 {
+  color: #b0c0cf !important;
+}
+
+body.miku .sidebar-container .text-zinc-500,
+body.miku .mobile-nav-container .text-zinc-500 {
+  color: #8c9ba5 !important;
+}
+
+/* General Profile Edit Modal overrides under Miku theme */
+body.miku .profile-edit-modal {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .profile-edit-modal h3,
+body.miku .profile-edit-modal h4,
+body.miku .profile-edit-modal label {
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+body.miku .profile-edit-modal div.bg-\[\#292738\]\/40,
+body.miku .profile-edit-modal div.bg-\[\#292738\]\/20,
+body.miku .profile-edit-modal div.bg-\[\#292738\]\/40 p-4 {
+  background-color: #f4f4f5 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .profile-edit-modal div.bg-\[\#292738\]\/40.p-3.rounded-lg.border {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku .profile-edit-modal div.max-h-48 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+body.miku .profile-edit-modal div.max-h-48 > div:hover {
+  background-color: rgba(57, 197, 187, 0.1) !important;
+}
+
+body.miku .profile-edit-modal input,
+body.miku .profile-edit-modal textarea {
+  background-color: #ffffff !important;
+  border: 2.5px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .profile-edit-modal button.bg-\[\#8B5CF6\] {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  border: 2.5px solid #000000 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  font-weight: 900 !important;
+}
+body.miku .profile-edit-modal button.bg-\[\#8B5CF6\]:hover:not(:disabled) {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+body.miku .profile-edit-modal button.text-\[\#A7A7A7\] {
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+body.miku .profile-edit-modal label.bg-zinc-800 {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.miku .profile-edit-modal label.bg-zinc-800:hover {
+  background-color: #ffffff !important;
+}
+
+body.miku .profile-edit-modal button.bg-red-950\/30,
+body.miku .profile-edit-modal button.bg-red-950\/20,
+body.miku .profile-edit-modal button.bg-red-950\/20.border-red-900\/30 {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  opacity: 1 !important;
+}
+body.miku .profile-edit-modal button.bg-red-950\/30:hover,
+body.miku .profile-edit-modal button.bg-red-950\/20:hover {
+  background-color: #ffffff !important;
+  color: #ef4444 !important;
+}
+
+body.miku .profile-edit-modal button.bg-\[\#292738\] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.miku .profile-edit-modal button.bg-\[\#292738\]:hover {
+  background-color: #39C5BB !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+body.miku .profile-edit-modal button.bg-zinc-800:not(.bg-red-950\/30):not(label) {
+  background-color: #39C5BB !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+
+/* Artist Detail Modal overrides for Hatsune Miku theme */
+body.miku .artist-detail-modal {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 10px 10px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .artist-detail-modal-header {
+  background-color: #39C5BB !important;
+  border-bottom: 4px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .artist-detail-modal-header h2 {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.miku .artist-detail-modal-header button {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+body.miku .artist-detail-modal-header button:hover {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\],
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 {
+  background-color: #f4f4f5 !important;
+  border: 3px solid #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  color: #000000 !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\] h4,
+body.miku .artist-detail-modal div.bg-\[\#1a1824\] span,
+body.miku .artist-detail-modal div.bg-\[\#1a1824\] p {
+  color: #000000 !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\] .text-white {
+  color: #000000 !important;
+}
+
+body.miku .artist-detail-modal .bg-zinc-800 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku .artist-detail-modal .bg-gradient-to-r {
+  background-color: #ff007f !important;
+  background-image: none !important;
+}
+
+body.miku .artist-detail-modal span.bg-\[\#292738\] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #ff007f !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div {
+  border-bottom: 2px solid #000000 !important;
+}
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div:last-child {
+  border-bottom: none !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div:hover {
+  background-color: #fff0f5 !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div .text-white {
+  color: #000000 !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div .text-zinc-500 {
+  color: #666666 !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div button.bg-emerald-500 {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div button.bg-emerald-500 svg {
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+body.miku .artist-detail-modal div.bg-\[\#1a1824\]\/60 > div span.bg-emerald-500 {
+  background-color: #ff007f !important;
+}
+
+/* Stories Wrapped card overrides under Miku theme */
+body.miku .wrapped-card {
+  background-color: #ffffff !important;
+  border: 4px solid #000000 !important;
+  box-shadow: 8px 8px 0px #000000 !important;
+  border-radius: 24px !important;
+}
+
+body.miku .wrapped-card h2,
+body.miku .wrapped-card h3,
+body.miku .wrapped-card p,
+body.miku .wrapped-card span,
+body.miku .wrapped-card div {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.miku .wrapped-card button {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-radius: 9999px !important;
+}
+
+body.miku .wrapped-card button:hover {
+  background-color: #e60073 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transform: translate(-1px, -1px);
+}
+
+body.miku .wrapped-card .bg-zinc-800 {
+  background-color: #e4e4e7 !important;
+  border: 1px solid #000000 !important;
+}
+
+body.miku .wrapped-card .bg-emerald-400 {
+  background-color: #ff007f !important;
+}
+
+body.miku .wrapped-card button.bg-zinc-900\/60 {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+body.miku .wrapped-card button.bg-zinc-900\/60:hover {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+}
+
+body.miku .wrapped-card .bg-gradient-to-br.from-emerald-400.to-teal-500 {
+  background-color: #39C5BB !important;
+  background-image: none !important;
+  border: 3.5px solid #000000 !important;
+  box-shadow: 4px 4px 0px #ff007f !important;
+  color: #000000 !important;
+}
+
+body.miku .wrapped-card .bg-emerald-500\/10,
+body.miku .wrapped-card .bg-yellow-500\/10,
+body.miku .wrapped-card .bg-purple-500\/10 {
+  background-color: rgba(57, 197, 187, 0.15) !important;
+  border: 2px solid #000000 !important;
+}
+
+body.miku .wrapped-card .bg-yellow-500\/10 {
+  background-color: rgba(255, 0, 127, 0.15) !important;
+}
+
+body.miku .wrapped-card .text-emerald-400,
+body.miku .wrapped-card .text-yellow-400,
+body.miku .wrapped-card .text-purple-400 {
+  color: #ff007f !important;
+}
+
+body.miku .wrapped-card .vinyl-spin {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+body.miku .wrapped-card .vinyl-spin .bg-zinc-900 {
+  background-color: #ff007f !important;
+}
+
+/* Star rating reviews under Miku theme */
+body.miku .hover\:scale-125 svg[fill="#8B5CF6"],
+body.miku .hover\:scale-125 svg .text-violet-400,
+body.miku svg.text-pink-500 {
+  fill: #ff007f !important;
+  color: #ff007f !important;
+}
+
+/* Global button inputs and comment items inside modals under Miku theme */
+body.miku button[type="submit"]:not(.neobrutal-btn) {
+  background-color: #ff007f !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+}
+body.miku button[type="submit"]:not(.neobrutal-btn):disabled {
+  background-color: #f4f4f5 !important;
+  color: #a1a1aa !important;
+  border-color: #e4e4e7 !important;
+  box-shadow: none !important;
+}
+body.miku button[type="submit"]:not(.neobrutal-btn) svg {
+  stroke: #ffffff !important;
+}
+body.miku button[type="submit"]:not(.neobrutal-btn):disabled svg {
+  stroke: #a1a1aa !important;
 }

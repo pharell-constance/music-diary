@@ -55,6 +55,7 @@ function Home() {
                 {/* Vue Recherche */}
                 {home.currentTab === 'search' && (
                     <SearchTab
+                        home={home}
                         searchQuery={home.searchQuery}
                         setSearchQuery={home.setSearchQuery}
                         searchType={home.searchType}

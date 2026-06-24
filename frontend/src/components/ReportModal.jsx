@@ -67,7 +67,7 @@ function ReportModal({ reportedType, reportedName, onSubmit, onClose }) {
 
     return (
         <div ref={backdropRef} className="fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div ref={modalRef} className="bg-[#1a1824] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4">
+            <div ref={modalRef} className="neo-modal bg-[#1a1824] border border-zinc-800 p-6 rounded-2xl w-full max-w-md relative shadow-2xl flex flex-col gap-4">
                 
                 {/* Close Button */}
                 <button 

@@ -14,7 +14,7 @@ export default function BlindTestLobby({ user, startNewGame }) {
                 <span className="font-mouse-memoirs text-xs text-white-always uppercase tracking-wider mt-1.5 font-black">BEAT</span>
             </div>
 
-            <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-6 game-card-anim z-10">
+            <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-5 sm:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-6 game-card-anim z-10">
                 {/* Background Glow */}
                 <div className="absolute -top-24 -left-24 w-64 h-64 bg-violet-600/15 rounded-full blur-[80px] pointer-events-none" />
                 <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-fuchsia-600/15 rounded-full blur-[80px] pointer-events-none" />
@@ -24,7 +24,7 @@ export default function BlindTestLobby({ user, startNewGame }) {
                 </div>
 
                 <div className="z-10">
-                    <h2 className="font-mouse-memoirs text-[52px] leading-none uppercase tracking-wider text-zinc-900 dark:text-white">
+                    <h2 className="font-mouse-memoirs text-4xl sm:text-[52px] leading-none uppercase tracking-wider text-zinc-900 dark:text-white">
                         Blind Test de l'Artiste n°1
                     </h2>
                     <p className="text-zinc-650 dark:text-zinc-400 mt-2 text-sm font-medium tracking-wide">

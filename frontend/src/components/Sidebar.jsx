@@ -1,7 +1,7 @@
 import API_URL from '../config.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music, Sun, Moon, Trophy } from 'lucide-react';
+import { Home as HomeIcon, Search, Library, LogOut, Shield, Bell, User, Disc, Music, Sun, Moon, Trophy, Sparkles } from 'lucide-react';
 
 function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     const navigate = useNavigate();
@@ -14,18 +14,41 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
     useEffect(() => {
         const root = document.documentElement;
         const body = document.body;
+        
+        // Clear previous theme classes
+        root.classList.remove('light', 'anime', 'miku');
+        body.classList.remove('light', 'anime', 'miku');
+        
         if (theme === 'light') {
             root.classList.add('light');
             body.classList.add('light');
-        } else {
-            root.classList.remove('light');
-            body.classList.remove('light');
+        } else if (theme === 'anime') {
+            root.classList.add('anime');
+            body.classList.add('anime');
+        } else if (theme === 'miku') {
+            root.classList.add('miku');
+            body.classList.add('miku');
         }
+        
         localStorage.setItem('theme', theme);
     }, [theme]);
 
+    useEffect(() => {
+        const handleThemeChange = (e) => {
+            if (e.detail) {
+                setTheme(e.detail);
+            }
+        };
+        window.addEventListener('theme-changed', handleThemeChange);
+        return () => window.removeEventListener('theme-changed', handleThemeChange);
+    }, []);
+
     const toggleTheme = () => {
-        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+        setTheme(prev => {
+            if (prev === 'dark') return 'light';
+            if (prev === 'light') return 'anime';
+            return 'dark';
+        });
     };
 
     // Fetch live playback status from Spotify
@@ -170,7 +193,9 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                 className="md:hidden fixed top-4 right-4 z-50 p-2.5 rounded-xl border-2 border-white/10 bg-zinc-950/80 text-zinc-400 shadow-lg backdrop-blur-md cursor-pointer theme-toggle-btn"
                 aria-label="Toggle Theme"
             >
-                {theme === 'dark' ? <Sun size={18} className="text-amber-400 animate-spin-slow" style={{ animationDuration: '6s' }} /> : <Moon size={18} className="text-indigo-400" />}
+                {theme === 'dark' && <Moon size={18} className="text-indigo-400" />}
+                {theme === 'light' && <Sun size={18} className="text-amber-400 animate-spin-slow" style={{ animationDuration: '6s' }} />}
+                {theme === 'anime' && <Sparkles size={18} className="text-pink-400 animate-pulse" />}
             </button>
 
             {/* Desktop Sidebar Placeholder (takes up space in flex container) */}
@@ -230,33 +255,49 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                         })}
                         
                         {/* Theme Toggle Switch */}
-                        <div className="w-full flex items-center justify-between px-4 py-2 rounded-xl font-mouse-memoirs uppercase tracking-widest text-xs border border-white/10 bg-zinc-900/30 text-zinc-400 theme-toggle-container select-none">
-                            <span className="flex items-center gap-2">
-                                {theme === 'dark' ? (
-                                    <Moon size={14} className="text-indigo-400" />
-                                ) : (
-                                    <Sun size={14} className="text-amber-500 animate-spin-slow" style={{ animationDuration: '6s' }} />
-                                )}
-                                {theme === 'dark' ? 'Mode Sombre' : 'Mode Clair'}
-                            </span>
+                        <div className="w-full flex flex-col gap-2 p-3 rounded-xl border border-white/10 bg-zinc-900/30 text-zinc-400 theme-toggle-container select-none">
+                            <div className="flex items-center justify-between text-xs font-mouse-memoirs uppercase tracking-widest px-1">
+                                <span className="flex items-center gap-1.5">
+                                    {theme === 'dark' && <Moon size={12} className="text-indigo-400" />}
+                                    {theme === 'light' && <Sun size={12} className="text-amber-500 animate-spin-slow" style={{ animationDuration: '6s' }} />}
+                                    {theme === 'anime' && <Sparkles size={12} className="text-pink-400 animate-pulse" />}
+                                    Thème: {theme === 'dark' ? 'Sombre' : theme === 'light' ? 'Clair' : 'Anime'}
+                                </span>
+                            </div>
                             
-                            {/* Sliding Track */}
-                            <button
-                                onClick={toggleTheme}
-                                className={`w-10 h-6 p-0 rounded-full border-2 transition-colors duration-300 relative flex items-center cursor-pointer outline-none focus:outline-none ${
-                                    theme === 'dark' ? 'bg-violet-600 border-white/20' : 'bg-zinc-300 border-zinc-400'
-                                }`}
-                                aria-label="Toggle Theme"
-                            >
-                                {/* Sliding Thumb */}
-                                <div 
-                                    className="w-4 h-4 rounded-full transition-all duration-300 shadow-md absolute top-[2px]"
-                                    style={{ 
-                                        left: theme === 'dark' ? '18px' : '2px',
-                                        backgroundColor: theme === 'dark' ? '#ffffff' : '#12101b'
-                                    }}
-                                />
-                            </button>
+                            {/* Segmented Control (3 Buttons) */}
+                            <div className="grid grid-cols-3 gap-1 bg-zinc-950/40 p-1 rounded-lg border border-white/5 relative">
+                                <button 
+                                    onClick={() => setTheme('dark')}
+                                    className={`py-1 text-[10px] font-mouse-memoirs uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                                        theme === 'dark' 
+                                            ? 'bg-zinc-800 text-white shadow-sm' 
+                                            : 'hover:text-zinc-200 text-zinc-500'
+                                    }`}
+                                >
+                                    Sombre
+                                </button>
+                                <button 
+                                    onClick={() => setTheme('light')}
+                                    className={`py-1 text-[10px] font-mouse-memoirs uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                                        theme === 'light' 
+                                            ? 'bg-zinc-300 text-zinc-950 shadow-sm font-bold' 
+                                            : 'hover:text-zinc-200 text-zinc-500'
+                                    }`}
+                                >
+                                    Clair
+                                </button>
+                                <button 
+                                    onClick={() => setTheme('anime')}
+                                    className={`py-1 text-[10px] font-mouse-memoirs uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                                        theme === 'anime' 
+                                            ? 'bg-pink-500 text-white shadow-sm font-bold' 
+                                            : 'hover:text-zinc-200 text-zinc-500'
+                                    }`}
+                                >
+                                    Anime
+                                </button>
+                            </div>
                         </div>
                     </nav>
 
@@ -386,8 +427,8 @@ function Sidebar({ user, currentTab, setCurrentTab, handleLogout }) {
                                     </span>
                                 )}
                             </div>
-                            <span className="text-[9px] font-black uppercase tracking-wider scale-90 mt-0.5">
-                                {key === 'library' ? 'Biblio' : key === 'admin' ? 'Admin' : key === 'blindtest' ? 'Jeux' : label}
+                            <span className="text-[9px] font-black uppercase tracking-wider scale-90 mt-0.5 whitespace-nowrap">
+                                {key === 'library' ? 'Biblio' : key === 'admin' ? 'Admin' : key === 'blindtest' ? 'Jeux' : key === 'notifications' ? 'Notifs' : key === 'profile' ? 'Profil' : key === 'search' ? 'Recherche' : label}
                             </span>
                         </button>
                     );

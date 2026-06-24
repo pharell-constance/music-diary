@@ -82,7 +82,7 @@ function MusicWrappedModal({ stats, onClose }) {
             <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-[120px]"></div>
 
             {/* Stories-like card container */}
-            <div ref={containerRef} className="relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl bg-[#121214] border border-zinc-800/60 shadow-2xl flex flex-col justify-between p-6 overflow-hidden">
+            <div ref={containerRef} className="wrapped-card relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl bg-[#121214] border border-zinc-800/60 shadow-2xl flex flex-col justify-between p-6 overflow-hidden">
                 
                 {/* Progress bar container */}
                 <div className="flex gap-1.5 w-full pt-2">

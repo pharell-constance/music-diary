@@ -18,7 +18,7 @@ export default function GuessTheCoverPlaying({
     const currentBlur = locked ? 0 : Math.max(0, (timeLeft / 15) * 45);
 
     return (
-        <div className="fixed inset-0 z-40 bg-zinc-50 dark:bg-zinc-950 bg-grid-pattern flex flex-col justify-center items-center overflow-y-auto py-8 game-card-anim">
+        <div className="fixed inset-0 z-40 bg-zinc-50 dark:bg-zinc-950 bg-grid-pattern flex flex-col justify-start md:justify-center items-center overflow-y-auto pt-24 pb-12 md:py-8 game-card-anim game-screen-fixed-container">
             {/* Quit button */}
             <button
                 onClick={quitGame}
@@ -30,12 +30,12 @@ export default function GuessTheCoverPlaying({
 
             <div className="w-full max-w-2xl px-4 space-y-6">
                 {/* Header Progress / Score */}
-                <div className="flex items-center justify-between gap-4">
-                    <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-650 dark:text-zinc-400">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                    <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-655 dark:text-zinc-400 text-center sm:text-left">
                         Album <span className="text-zinc-900 dark:text-white font-black text-3xl">{currentQuestionIdx + 1}</span> / {questions.length}
                     </div>
                     
-                    <div className="flex gap-4 items-center">
+                    <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                         {/* Correct Count */}
                         <div className="flex items-center gap-1.5 text-zinc-655 dark:text-zinc-400 text-xs font-semibold">
                             <Target size={14} className="text-zinc-500" />
@@ -50,7 +50,7 @@ export default function GuessTheCoverPlaying({
                 </div>
 
                 {/* Main gameplay card */}
-                <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
+                <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-5 sm:p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
                     {/* Timer Progress Bar */}
                     <div 
                         className="absolute top-0 left-0 h-2 bg-fuchsia-600 bg-gradient-to-r from-fuchsia-600 to-pink-500 transition-all duration-1000 ease-linear"
@@ -68,7 +68,7 @@ export default function GuessTheCoverPlaying({
                     )}
 
                     {/* Cover Container */}
-                    <div className="relative w-64 h-64 md:w-72 md:h-72 bg-zinc-100 dark:bg-zinc-950 border-4 border-black rounded-2xl shadow-[6px_6px_0px_#000000] overflow-hidden flex items-center justify-center flex-shrink-0">
+                    <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 bg-zinc-100 dark:bg-zinc-950 border-4 border-black rounded-2xl shadow-[6px_6px_0px_#000000] overflow-hidden flex items-center justify-center flex-shrink-0">
                         <img 
                             src={currentQ.albumCover} 
                             onLoad={() => setImageReady(true)}

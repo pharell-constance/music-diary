@@ -171,8 +171,10 @@ function LandingPage() {
             </div>
 
             <style>{`
-                .cursor-none, .cursor-none * {
-                    cursor: none !important;
+                @media (hover: hover) {
+                    .cursor-none, .cursor-none * {
+                        cursor: none !important;
+                    }
                 }
                 @keyframes cursor-wave {
                     0% {
@@ -192,7 +194,7 @@ function LandingPage() {
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-fuchsia-600/5 rounded-full blur-[130px] pointer-events-none"></div>
 
             {/* Header */}
-            <header className="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between z-50 relative">
+            <header className="w-full max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 z-50 relative">
                 <div className="flex items-center gap-3.5 group cursor-pointer" onClick={() => navigate('/')}>
                     <div className="w-10 h-10 bg-violet-600 border-2.5 border-white rounded-xl flex items-center justify-center shadow-[3px_3px_0px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300">
                         <Disc className="text-white stroke-[2.5] animate-spin-slow" style={{ animationDuration: '8s' }} size={18} />
@@ -202,7 +204,7 @@ function LandingPage() {
                     </span>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 justify-center">
                     <button 
                         onClick={() => navigate('/login')} 
                         className="text-sm font-black uppercase tracking-wider text-zinc-400 hover:text-white transition duration-200 cursor-pointer font-mouse-memoirs text-lg"
@@ -260,7 +262,7 @@ function LandingPage() {
                         <div className="absolute w-72 h-72 bg-violet-500/5 rounded-full blur-[80px] pointer-events-none"></div>
 
                         {/* Card 1: Review Card Mockup */}
-                        <div className="floating-card-1 hero-anim absolute top-6 left-4 md:left-10 w-[280px] sm:w-[320px] neobrutal-card p-5 transform -rotate-3 hover:-rotate-1 duration-300">
+                        <div className="floating-card-1 hero-anim absolute top-6 left-2 sm:left-10 w-[270px] sm:w-[320px] scale-[0.85] sm:scale-100 origin-top-left neobrutal-card p-5 transform -rotate-3 hover:-rotate-1 duration-300">
                             <div className="flex gap-4">
                                 <div className="w-16 h-16 rounded-lg bg-zinc-800 overflow-hidden shadow-md border border-zinc-800/60 flex-shrink-0 relative">
                                     <img src="https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937" alt="Random Access Memories" className="w-full h-full object-cover" />
@@ -290,7 +292,7 @@ function LandingPage() {
                         </div>
 
                         {/* Card 2: Lyric Pin Mockup */}
-                        <div className="floating-card-2 opacity-0 absolute bottom-6 right-4 md:right-10 w-[240px] bg-gradient-to-tr from-violet-600/90 to-fuchsia-500/85 p-5 rounded-2xl transform rotate-6 hover:rotate-3 transition-all duration-300 border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] text-white">
+                        <div className="floating-card-2 opacity-0 absolute bottom-6 right-2 sm:right-10 w-[220px] sm:w-[240px] scale-[0.85] sm:scale-100 origin-bottom-right bg-gradient-to-tr from-violet-600/90 to-fuchsia-500/85 p-5 rounded-2xl transform rotate-6 hover:rotate-3 transition-all duration-300 border-2 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)] text-white">
                             <Quote size={20} className="text-white/40 mb-2.5" />
                             <p className="font-black text-sm leading-snug tracking-tight">
                                 "We've come too far to give up who we are. So let's raise the bar..."

@@ -15,7 +15,7 @@ export default function BlindTestPlaying({
     const currentQ = questions[currentQuestionIdx];
 
     return (
-        <div className="fixed inset-0 z-40 bg-zinc-50 dark:bg-zinc-950 bg-grid-pattern flex flex-col justify-center items-center overflow-y-auto py-8 game-card-anim">
+        <div className="fixed inset-0 z-40 bg-zinc-50 dark:bg-zinc-950 bg-grid-pattern flex flex-col justify-start md:justify-center items-center overflow-y-auto pt-24 pb-12 md:py-8 game-card-anim game-screen-fixed-container">
             {/* Quit button */}
             <button
                 onClick={quitGame}
@@ -26,11 +26,11 @@ export default function BlindTestPlaying({
             </button>
 
             <div className="w-full max-w-2xl px-4 space-y-5">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                    <div className="font-mouse-memoirs text-2xl uppercase tracking-widest text-zinc-650 dark:text-zinc-400 text-center sm:text-left">
                         Question <span className="text-zinc-900 dark:text-white font-black text-3xl">{currentQuestionIdx + 1}</span> / {questions.length}
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                         <span className="text-xs uppercase font-black tracking-widest text-zinc-500">Score</span>
                         <div className="neobrutal-card border-2 border-black bg-violet-600 text-white-always px-3 py-1 font-black text-sm shadow-[2px_2px_0px_#000000]">
                             {score} pts
@@ -39,7 +39,7 @@ export default function BlindTestPlaying({
                 </div>
 
                 {/* Main playing card */}
-                <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
+                <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-5 sm:p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center gap-6 relative overflow-hidden">
                     <div 
                         className="absolute top-0 left-0 h-2 bg-violet-600 bg-gradient-to-r from-violet-600 to-fuchsia-600 transition-all duration-1000 ease-linear"
                         style={{ width: `${(timeLeft / 15) * 100}%` }}

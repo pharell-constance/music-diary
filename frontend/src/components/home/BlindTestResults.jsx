@@ -12,7 +12,7 @@ export default function BlindTestResults({
     return (
         <div className="space-y-6 game-card-anim">
             {/* Score Card */}
-            <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-5">
+            <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-5 sm:p-8 rounded-3xl shadow-[8px_8px_0px_#000000] relative overflow-hidden flex flex-col items-center text-center gap-5">
                 {/* Background sparkles */}
                 <div className="absolute -top-24 -left-24 w-64 h-64 bg-violet-600/10 rounded-full blur-[80px] pointer-events-none" />
                 <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-fuchsia-600/10 rounded-full blur-[80px] pointer-events-none" />

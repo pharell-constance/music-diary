@@ -97,7 +97,7 @@ export default function GuessTheCoverTab({ user, onBackToHome }) {
             )}
 
             {gameState === 'LOADING' && (
-                <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-12 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center justify-center text-center gap-6 game-card-anim min-h-[50vh]">
+                <div className="neobrutal-card bg-white dark:bg-zinc-900 border-4 border-black p-6 sm:p-12 rounded-3xl shadow-[8px_8px_0px_#000000] flex flex-col items-center justify-center text-center gap-6 game-card-anim min-h-[50vh]">
                     <div className="relative w-24 h-24 flex items-center justify-center">
                         <div className="w-20 h-20 border-4 border-t-fuchsia-500 border-r-violet-500 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
                         <Disc className="absolute text-fuchsia-500 dark:text-fuchsia-400 animate-spin-slow" size={28} />

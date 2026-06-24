@@ -16,7 +16,7 @@ function AdminReportsTab({
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60">
+                    <tr className="border-b border-zinc-800/40 text-[10px] uppercase tracking-wider text-zinc-500 font-bold bg-[#1a1824]/60 whitespace-nowrap">
                         <th className="py-4 px-6">Type / Cible</th>
                         <th className="py-4 px-6">Motif du signalement</th>
                         <th className="py-4 px-6">Signalé par</th>

@@ -91,10 +91,10 @@ function ArtistDetailModal({ artist, onClose }) {
 
     return (
         <div ref={backdropRef} className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <div ref={modalRef} data-lenis-prevent className="bg-[#12101b] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
+            <div ref={modalRef} data-lenis-prevent className="artist-detail-modal bg-[#12101b] border border-zinc-800/80 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl rounded-2xl max-h-[90vh]">
                 
                 {/* Header d'artiste avec couverture et overlay dégradé */}
-                <div className="relative w-full bg-[#12101b] border-b-4 border-black p-6 flex items-center justify-between gap-6 flex-shrink-0">
+                <div className="artist-detail-modal-header relative w-full bg-[#12101b] border-b-4 border-black p-6 flex items-center justify-between gap-6 flex-shrink-0">
                     {/* Left Info Column */}
                     <div className="flex flex-col gap-3 z-10 flex-1 min-w-0">
                         <span className={`self-start text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded bg-[#8B5CF6] text-white border-2 border-black shadow-[2px_2px_0px_#000000]`}>

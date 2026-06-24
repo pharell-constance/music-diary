@@ -133,7 +133,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
     return (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
             <div data-lenis-prevent className="profile-edit-modal bg-[#1a1824] border border-zinc-800 p-6 rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
-                
+
                 <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white transition cursor-pointer">
                     <X size={20} />
                 </button>
@@ -212,7 +212,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                     </div>
 
                     <div className="bg-[#292738]/20 p-4 rounded-xl border border-zinc-800/80 space-y-3">
-                        <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Statut (Style GitHub)</label>
+                        <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Statut</label>
                         <div className="flex gap-2.5">
                             {/* Emoji Picker / Select */}
                             <div className="w-16">
@@ -273,7 +273,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
                     {/* Artiste Préféré Section */}
                     <div className="bg-[#292738]/20 p-4 rounded-xl border border-zinc-800/80 space-y-4">
                         <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Artiste Préféré</label>
-                        
+
                         {/* Display currently selected artist */}
                         {favArtistId ? (
                             <div className="flex items-center justify-between bg-[#292738]/40 p-3 rounded-lg border border-zinc-800">
@@ -366,7 +366,7 @@ function ProfileEditModal({ user, onSave, onClose }) {
 
                     <div className="border-t border-zinc-800 pt-4 mt-4">
                         <h4 className="text-sm font-bold text-zinc-400 mb-3">Changer le mot de passe (optionnel)</h4>
-                        
+
                         <div className="space-y-3">
                             <div>
                                 <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Nouveau mot de passe</label>
