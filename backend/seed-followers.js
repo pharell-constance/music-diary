@@ -1,27 +1,33 @@
 /**
  * seed-followers.js
- * Crée 10 000 abonnés fictifs pour pharell.constance@laplateforme.io
+ * Crée 10 000 abonnés fictifs pour pharell
  * Usage : node seed-followers.js
  */
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('./src/config/db');
 
-const TARGET_EMAIL = 'pharell.constance@laplateforme.io';
+const TARGET_PSEUDO = 'pharell';
 const FOLLOWER_COUNT = 10000;
 const BATCH_SIZE = 500; // insère par lots pour éviter les timeouts
 
 async function main() {
     // 1. Récupérer l'utilisateur cible
-    const target = await prisma.user.findUnique({ where: { email: TARGET_EMAIL } });
+    let target = await prisma.user.findUnique({ where: { pseudo: TARGET_PSEUDO } });
     if (!target) {
-        console.error(`❌  Utilisateur "${TARGET_EMAIL}" introuvable.`);
-        process.exit(1);
+        // Fallback to first user in database
+        const firstUser = await prisma.user.findFirst();
+        if (!firstUser) {
+            console.error(`❌ Aucun utilisateur trouvé en base de données. Créez d'abord un utilisateur.`);
+            process.exit(1);
+        }
+        console.log(`ℹ️ Cible "${TARGET_PSEUDO}" introuvable, utilisation de l'utilisateur existant : ${firstUser.pseudo}`);
+        target = firstUser;
+    } else {
+        console.log(`✅ Cible trouvée : ${target.pseudo} (id=${target.id})`);
     }
-    console.log(`✅  Cible trouvée : ${target.pseudo} (id=${target.id})`);
 
     // 2. Créer les utilisateurs fictifs par lots
-    console.log(`\n⏳  Création de ${FOLLOWER_COUNT} abonnés fictifs...`);
+    console.log(`\n⏳ Création de ${FOLLOWER_COUNT} abonnés fictifs...`);
     const createdIds = [];
 
     for (let batch = 0; batch < FOLLOWER_COUNT / BATCH_SIZE; batch++) {
@@ -30,9 +36,8 @@ async function main() {
                 const n = batch * BATCH_SIZE + i + 1;
                 return prisma.user.create({
                     data: {
-                        email: `fake_follower_${n}_${Date.now()}@musicdiary.fake`,
                         password: 'hashed_placeholder',
-                        pseudo: `Fan${n}`,
+                        pseudo: `Fan_${n}_${Date.now()}`,
                     },
                     select: { id: true },
                 });
@@ -45,7 +50,7 @@ async function main() {
     console.log('\n');
 
     // 3. Insérer les relations Follows par lots
-    console.log(`⏳  Création des ${FOLLOWER_COUNT} relations "follows"...`);
+    console.log(`⏳ Création des ${FOLLOWER_COUNT} relations "follows"...`);
     let inserted = 0;
 
     for (let i = 0; i < createdIds.length; i += BATCH_SIZE) {
@@ -54,15 +59,14 @@ async function main() {
             data: slice.map(followerId => ({
                 followerId,
                 followingId: target.id,
-            })),
-            skipDuplicates: true,
+            }))
         });
         inserted += slice.length;
         process.stdout.write(`\r  → ${inserted} / ${FOLLOWER_COUNT} relations insérées`);
     }
 
     console.log('\n');
-    console.log(`🎉  Terminé ! ${target.pseudo} a maintenant ${FOLLOWER_COUNT} nouveaux abonnés.`);
+    console.log(`🎉 Terminé ! ${target.pseudo} a maintenant ${FOLLOWER_COUNT} nouveaux abonnés.`);
 }
 
 main()

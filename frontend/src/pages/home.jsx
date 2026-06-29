@@ -11,9 +11,6 @@ import LibraryTab from '../components/home/LibraryTab';
 import HomeJournalTab from '../components/home/HomeJournalTab';
 import useHomeData from '../hooks/useHomeData';
 import NeobrutalLoader from '../components/NeobrutalLoader';
-import BlindTestTab from '../components/home/BlindTestTab';
-import ArcadeHubTab from '../components/home/ArcadeHubTab';
-import GuessTheCoverTab from '../components/home/GuessTheCoverTab';
 
 function Home() {
     const navigate = useNavigate();
@@ -87,29 +84,7 @@ function Home() {
                     <NotificationsTab />
                 )}
 
-                {/* Jeux (Hub Arcade / Blind Test / Devine la Pochette) */}
-                {home.currentTab === 'blindtest' && (
-                    <>
-                        {activeGame === null && (
-                            <ArcadeHubTab
-                                user={home.user}
-                                onSelectGame={setActiveGame}
-                            />
-                        )}
-                        {activeGame === 'blindtest' && (
-                            <BlindTestTab
-                                user={home.user}
-                                onBackToHome={() => setActiveGame(null)}
-                            />
-                        )}
-                        {activeGame === 'guessthecover' && (
-                            <GuessTheCoverTab
-                                user={home.user}
-                                onBackToHome={() => setActiveGame(null)}
-                            />
-                        )}
-                    </>
-                )}
+
             </div>
 
             {home.selectedAlbum && (

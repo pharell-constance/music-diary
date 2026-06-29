@@ -4,8 +4,7 @@
  * met à jour les utilisateurs modifiés et envoie une notification système à chacun.
  */
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('./src/config/db');
 
 async function main() {
     console.log("⏳ Récupération de tous les utilisateurs...");

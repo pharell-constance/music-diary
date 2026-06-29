@@ -73,9 +73,6 @@ export default function useHomeData() {
 
     useEffect(() => {
         if (currentTab === 'home') fetchTrending(20);
-        // Rafraîchir le profil utilisateur quand on navigue vers le blind test
-        // pour s'assurer que l'artiste favori est bien à jour
-        if (currentTab === 'blindtest') refreshUser();
     }, [currentTab]);
 
     useEffect(() => {

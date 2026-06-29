@@ -22,35 +22,7 @@ function cleanEnv(value) {
 const express = require('express');
 const cors = require('cors');
 const prisma = require('./src/config/db');
-
-async function ensureSpotifySchema() {
-    const columns = await prisma.$queryRaw`
-        SELECT COLUMN_NAME
-        FROM information_schema.COLUMNS
-        WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'User'
-          AND COLUMN_NAME IN ('spotifyId', 'spotifyAccessToken', 'spotifyRefreshToken', 'spotifyTokenExpiresAt')
-    `;
-    const existing = new Set(columns.map((c) => c.COLUMN_NAME));
-
-    if (!existing.has('spotifyId')) {
-        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyId` VARCHAR(191) NULL');
-    }
-    if (!existing.has('spotifyAccessToken')) {
-        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyAccessToken` TEXT NULL');
-    } else {
-        await prisma.$executeRawUnsafe('ALTER TABLE `User` MODIFY COLUMN `spotifyAccessToken` TEXT NULL');
-    }
-    if (!existing.has('spotifyRefreshToken')) {
-        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyRefreshToken` TEXT NULL');
-    } else {
-        await prisma.$executeRawUnsafe('ALTER TABLE `User` MODIFY COLUMN `spotifyRefreshToken` TEXT NULL');
-    }
-    if (!existing.has('spotifyTokenExpiresAt')) {
-        await prisma.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `spotifyTokenExpiresAt` DATETIME(3) NULL');
-    }
-    console.log('Spotify DB columns OK');
-}
+const initDb = require('./src/config/initDb');
 
 const app = express();
 app.use(express.json());
@@ -112,8 +84,7 @@ app.use('/api', require('./src/routes/usersStatsRoutes'));
 // Notifications Router
 app.use('/api', require('./src/routes/notifications'));
 
-// Game Router
-app.use('/api', require('./src/routes/gameRoutes'));
+
 
 // Admin Routers
 app.use('/api', require('./src/routes/adminStatsRoutes'));
@@ -125,9 +96,9 @@ const DEFAULT_SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:5001/api/spotify/callback
 
 async function startServer() {
     try {
-        await ensureSpotifySchema();
+        await initDb();
     } catch (err) {
-        console.error('ensureSpotifySchema failed:', err.message);
+        console.error('Database initialization failed:', err.message);
     }
 
     app.listen(PORT, () => {
